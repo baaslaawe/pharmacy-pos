@@ -394,7 +394,12 @@ function WPOSPrint(kitchenMode) {
         var result = openCashDraw();
         if (!silentfail)
             if (!result) {
-                alert("Cash draw not connected or configured!!");
+                swal({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Cash drawer not connected or configured!!'
+                  });
+                  
             }
     };
 
@@ -458,7 +463,7 @@ function WPOSPrint(kitchenMode) {
                 if (curset.printinv) {
                     browserPrintHtml(getHtmlReceipt(record, false, true), 'WallacePOS Invoice', 600, 800);
                 } else {
-                    browserPrintHtml(getHtmlReceipt(record, false), 'WallacePOS Receipt', 310, 600);
+                    browserPrintHtml(getHtmlReceipt(record, false), 'WallacePOS Receipt', 610, 500);
                 }
                 return true;
             case "qz":
