@@ -6,3 +6,8 @@ docs/
 node_modules
 release-builds/
 mariadb/data
+poss.sqlite
+php/
+dist/
+yarn-error.log
+poss.sqlite

@@ -61,14 +61,21 @@ function WPOSItems() {
           if (filteredItems[item].code === code) {
             searchItem = filteredItems[item].id;
             if ((filteredItems[item].stockType === '1') && (filteredItems[item].stocklevel <= 0 || filteredItems[item].locationid !== WPOS.getConfigTable().locationid)) {
-              alert('Item is below 0 or belongs to another location');
+             /* alert('Item is below 0 or belongs to another location');*/
+             //changed the styling of the above message above
+             swal('Item is below 0 or belongs to another location');
               canAdd = false;
             }
           }
 
         }
         if (searchItem === null || searchItem === undefined || searchItem === "" || !canAdd) {//ADAM: Should use triple equals
-            alert("Item not found");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Item not found'
+              });
+              
             $("#codeinput").val('');
         } else {
             // add the item
@@ -94,7 +101,12 @@ function WPOSItems() {
           }
         }
         if (item === null) {
-            alert("Item not found");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Item not found'
+              });
+              
         } else {
             // add the item
             addItem(item);
@@ -159,7 +171,7 @@ function WPOSItems() {
             items[x] = tempitems[x];
           }
         }
-      sorted = this.filterStock(items);
+      var sorted = this.filterStock(items);
       // Display the items
         for (var i in sorted){
           price = (sorted[i].price==""?"??.??":parseFloat(sorted[i].price).toFixed(2));
@@ -176,7 +188,7 @@ function WPOSItems() {
     };
 
     this.generateItemGridCategories = function(){
-      var gstock = this.filterStock(stock);
+        var gstock = this.filterStock(WPOS.getItemsTable());
         var iboxitems = $("#iboxitems");
         iboxitems.html('<div class="iboxitem" onclick="WPOS.items.generateItemGrid(-1);"><h5>All Categories</h5><h6>('+Object.keys(gstock).length+' items)</h6></div>');
         var catindex = WPOS.getCategoryIndex();
@@ -188,10 +200,11 @@ function WPOSItems() {
               total += 1;
             }
           }
-            iboxitems.append('<div class="iboxitem" onclick="WPOS.items.generateItemGrid('+i+');">' +
-                '<h5>'+categories[i].name+'</h5>'+
-                '<h6>('+total+' items)</h6>'+
-                '</div>');
+          if(total >0)
+              iboxitems.append('<div class="iboxitem" onclick="WPOS.items.generateItemGrid('+i+');">' +
+                  '<h5>'+categories[i].name+'</h5>'+
+                  '<h6>('+total+' items)</h6>'+
+                  '</div>');
         }
         // var misctotal = catindex.hasOwnProperty(0)?catindex[0].length:0;
         // iboxitems.append('<div class="iboxitem" onclick="WPOS.items.generateItemGrid(0);"><h5>Miscellaneous</h5><h6>('+misctotal+' items)</h6></div>');
@@ -325,23 +338,32 @@ function WPOSItems() {
       var canSell =  true;
       // Check if item has been stocked
       if (item === null) {
-        alert(item.name + ' has not been stocked.');
+        swal(item.name + ' has not been stocked.');
         canSell = false;
       }
       if (item.stockType === '1') {
         // Check if expired
         if (new Date(item.expiryDate) <= new Date()) {
-          alert(item.name + ' expiried on ' + item.expiryDate + ' can\'t be sold');
+          swal(item.name + ' expired on ' + item.expiryDate + ' can\'t be sold');
           canSell = false;
         }
         // Prevent negative sales
         if (parseInt(item.totalStockLevel) <= 0 && canSell) {
-          alert(item.name + ' has reached 0 quantity and can\' be sold.');
+          swal(item.name + ' has reached 0 quantity and can\' be sold.');
           canSell = false;
         } else if (parseInt(item.totalStockLevel) < parseInt(item.reorderPoint) && canSell) {
-          alert(item.name + ' is below reorder point, only ' + item.totalStockLevel + ' remaining.');
+          swal({
+            type: "info",
+            title: "Inventory Alert", 
+            text: item.name + ' is below reorder point, You can sell now, but make a purchase order soon, only ' + item.totalStockLevel + ' remaining.'
+        
+        });
+
         } else if (canSell && parseInt(item.totalStockLevel) === parseInt(item.reorderPoint) && item.totalStockLevel !== undefined) {
-          alert(item.name + ' has reached reorder point. Make a purchase order, only ' + item.stocklevel + ' remaining.');
+          swal({
+            type: "info",
+            title: "Inventory Alert", 
+            text: item.name + ' has reached reorder point. You can sell now, but make a purchase order soon, only ' + item.stocklevel + ' remaining.' });
         }
       }
       if (canSell){
@@ -451,7 +473,7 @@ function WPOSItems() {
         var newqty = parseInt(qtyelem.text()) + (positive?1:-1);
         if (newqty<minqty || newqty>maxqty){
             var ismax = newqty>maxqty;
-            alert("Cannot have "+(ismax?"more":"less")+" than "+(ismax?maxqty:minqty)+" "+row.find('.modname').text());
+            swal("Cannot have "+(ismax?"more":"less")+" than "+(ismax?maxqty:minqty)+" "+row.find('.modname').text());
             return;
         }
         var modqty = newqty-defaultqty;
@@ -833,11 +855,28 @@ function WPOSSales() {
     /**
      *
      */
+   
+
     this.userAbortSale = function () {
-        var answer = confirm("Are you sure you want to abort this order?");
+        /*var answer = confirm("Are you sure you want to abort this order?");
         if (answer) {
             clearSalesForm();
-        }
+        }*/
+// Implemented new modal for aborting orders
+        swal({
+            title: 'Stop Transaction',
+            text: 'Are you sure you want to abort this sale?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, abort it!'
+          }).then(function (result) {
+            if (result.value) {
+                clearSalesForm();
+              swal('Aborted!', 'Your order has been aborted.', 'success');
+            }
+          });
     };
 
     this.resetSalesForm = function(){
@@ -909,7 +948,12 @@ function WPOSSales() {
                 else
                   $(element).find(".newItem").val("false");
                 if (newItem === "false" && qty > totalStockLevel) {
-                    alert('The store has ' + totalStockLevel + ' of ' + name + ', you can\'t sell ' + qty);
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Your inventory has only ' + totalStockLevel + ' of ' + name + ', you can\'t sell ' + qty +'. You can only sell' +' '+totalStockLevel +' '+'now and then restock your inventory to sell more.'
+                      });
+                      
                 }
                 if (newItem === "true" || (qty > 0 && qty <= totalStockLevel && name !== "" && (unit>0 || allow_negative))) {
                     // add item modification total to unit price & calculate item total
@@ -958,7 +1002,12 @@ function WPOSSales() {
             $("#paymentsdiv").dialog('open');
             $("#endsalebtn").prop("disabled", false); // make sure the damn button is active, dunno why but when the page reloads it seems to keep its state.
         } else {
-            alert("Please add some valid items to the sale before proceeding!");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Please add some valid items to the sale before proceeding!'
+              });
+              
         }
     };
 
@@ -1013,7 +1062,7 @@ function WPOSSales() {
                             $(".keypad-popup").hide();
                             var cashout =  parseFloat($("#cashoutamount").val()).toFixed(2);
                             if (cashout<0){
-                                alert("Cashout value must be positive or 0");
+                                swal("Cashout value must be positive or 0");
                                 return;
                             }
                             codialog.dialog('close');
@@ -1077,11 +1126,11 @@ function WPOSSales() {
             '<option value="mpesa" '+(method=='mpesa'?'selected':'')+'>Mpesa</option>' +
             '<option value="deposit" '+(method=='deposit'?'selected':'')+'>Deposit</option>' +
             exmethod+ '</select>' +
-            '<div class="cashvals" '+(method!='cash'?'style="display: none"':'width:150px;')+'>' +
-            '<div style="margin:5px 0px;">Tendered:</div> <input onChange="WPOS.sales.updatePaymentChange($(this).parent());" class="paytender numpad form-control" style="width:80px;display:inline;" type="text" value="'+(method!='cash'?0.00:(tender!=null?tender:value))+'" />' +
-            '<div style="margin:5px 0px;">Change:</div> <input class="paychange form-control" style="width:80px;display:inline;" type="text" value="'+(method!='cash'?0.00:(change!=null?change:0.00))+'" readonly />' +
-            '</div></td>' +
-            '<td>'+curBefore+'<input onChange="WPOS.sales.updatePaymentSums();" class="payamount numpad form-control" style="width:80px;display:inline;" type="text" value="'+value+'" autocomplete="off"/> '+curAfter+'</td>' +
+            '<div class="cashvals" '+(method!='cash'?'style="display: none"':'width:150px;')+'>'+
+            '<div style="padding:40px font-weight:bold"><h3>Tendered:<h3></div><input onChange="WPOS.sales.updatePaymentChange($(this).parent());" class="paytender form-control" style="width:80px;display:inline;" type="text" value="'+(method!='cash'?0.00:(tender!=null?tender:value))+'" />' +
+             '<div style="margin:5px 0px;"><h3><strong>Change:</strong></h3></div> <input class="paychange form-control" style="width:80px ;display:inline;" type="text" value="'+(method!='cash'?0.00:(change!=null?change:0.00))+'" readonly />' +
+             '</div></td>' +
+            '<td>'+'<input onChange="WPOS.sales.updatePaymentSums();" class="payamount numpad form-control" style="width:80px;display:inline;" type="text" value="'+value+'" autocomplete="off"/> '+curAfter+'</td>' +
             '<td><button class="btn btn-xs btn-danger" onclick="WPOS.sales.removePayment($(this));">X</button></td></tr>';
 
         $("#paymentstable").append(payrow);
@@ -1098,7 +1147,7 @@ function WPOSSales() {
     function processOrder(){
         var salesobj = getSaleObject();
         var sales_json = JSON.stringify(salesobj);
-        if (sales_json.length > 16384) return alert('Too Many Items'); // depends on database field size for sales.data
+        if (sales_json.length > 16384) return swal('Too Many Items'); // depends on database field size for sales.data
         if (curref!=null){
             salesobj.ref = curref;
             var cursale = WPOS.trans.getTransactionRecord(curref);
@@ -1123,11 +1172,19 @@ function WPOSSales() {
         $("#paymentsdiv").dialog("close");
         // process the orders
         WPOS.orders.processOrder(salesobj, cursale);
-        console.log('Sale, ', salesobj);
-        var answer = confirm("Would you like to print a receipt?");
-        if (answer){
-          WPOS.print.printReceipt(salesobj.ref, salesobj);
-        }
+
+        swal({
+          title: 'Order Receipt',
+          text: "Would you like to print an order receipt?",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, Print it!'
+        }).then(function (result) {
+          if (result.value)
+            WPOS.print.printReceipt(salesobj.ref, salesobj);
+        });
     }
 
     this.loadOrder = function(ref){
@@ -1135,11 +1192,18 @@ function WPOSSales() {
     };
 
     this.removeOrder = function(ref){
-        var answer = confirm("Are you sure you want to delete this order?");
-        if (answer){
+        swal({
+            title: 'Delete Order',
+            text: "Are you sure you want to delete this order?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Delete it!'
+        }).then(function (result) {
+         if (result.value) {
             WPOS.util.showLoader();
             WPOS.sendJsonDataAsync("orders/remove", JSON.stringify({ref: ref}), function(result){
-
                 if (result){
                     var cursale = WPOS.trans.getTransactionRecord(ref);
                     removeSalesRecord(ref);
@@ -1149,12 +1213,20 @@ function WPOSSales() {
                     // process the orders
                     WPOS.orders.processOrder(ref, cursale);
                 } else {
-                    alert("Could not delete the order!");
+                    swal({
+                      type: 'error',
+                      title: 'Oops...',
+                      text: 'Could not delete the order!'
+                    });
                 }
                 WPOS.util.hideLoader();
                 WPOS.trans.showTransactionView();
             });
-        }
+            setTimeout(function() {
+                swal('Deleted!', 'Your Order has been deleted.', 'success');
+            }, 200);
+         }
+        });
     };
 
     function loadOrder(ref){
@@ -1221,7 +1293,11 @@ function WPOSSales() {
             $("#transactiondiv").dialog('close');
             $("#cash").trigger("click");
         } else {
-            alert("Could not find the current record.");
+            swal({
+              type: 'error',
+              title: 'Oops...',
+              text: 'Could not find the current record.'
+            });
         }
     }
 
@@ -1230,12 +1306,22 @@ function WPOSSales() {
         var salebtn = $("#endsalebtn");
         salebtn.prop("disabled", true);
         if (!isSaleBalanced()){
-            alert("Please balance the sale before continuing");
+            swal({
+              type: 'error',
+              title: 'Oops...',
+              text: 'Please add a payment method before continuing'
+            });
+              
             salebtn.prop("disabled", false);
             return;
         }
         if (!validatePayments()){
-            alert("Only cash-out payments may have a negative amount");
+            swal({
+              type: 'error',
+              title: 'Oops...',
+              text: 'Only cash-out payments may have a negative amount'
+            });
+              
             salebtn.prop("disabled", false);
             return;
         }
@@ -1264,7 +1350,7 @@ function WPOSSales() {
     function ProcessSaleTransaction(){
         var salesobj = getSaleObject();
         var sales_json = JSON.stringify(salesobj);
-        if (sales_json.length > 16384) return alert('Too Many Items'); // depends on database field size for sales.data
+        if (sales_json.length > 16384) return swal('Too Many Items'); // depends on database field size for sales.data
 
         // check for sale reference, indicating an exiting order and set it's reference onto the new data
         var cursale = null;
@@ -1306,11 +1392,18 @@ function WPOSSales() {
             if (psetting == "email" && recemailed){
                 return; // receipt has been emailed
             }
-            var answer = confirm("Would you like to print a receipt?");
-            if (answer){
-                WPOS.print.printReceipt(salesobj.ref, salesobj);
-            }
-
+            swal({
+                title: 'Sale Receipt',
+                text: "Would you like to print a receipt?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Print it!'
+            }).then(function (result) {
+               if (result.value)
+                  WPOS.print.printReceipt(salesobj.ref, salesobj);
+            });
         }
     }
 
@@ -1658,7 +1751,7 @@ function WPOSSales() {
             var netqty = parseInt($(item).find('.refundsqty').val());
             // check if the amount is larger than bought qty
             if (refundqty>netqty){
-                alert("Cannot return more items than sold + returned!");
+                swal("Cannot return more items than sold + returned!");
                 $(item).find('.refundqty').val(netqty);
                 return false;
             }
@@ -1691,45 +1784,75 @@ function WPOSSales() {
         var trans = WPOS.trans.getTransactionRecord(ref);
         for (var i in trans.payments){
             if (trans.payments[i].method=="tyro"){
-                alert("Sales with Eftpos transactions cannot be voided. Refund this transaction instead.");
+                swal("Sales with Eftpos transactions cannot be voided. Refund this transaction instead.");
                 return;
             }
         }
 
         if ($("#voidreason").val()==""){
-            alert("Reason must not be blank.");
+            swal({
+              type: 'error',
+              title: 'Oops...',
+              text: 'Reason must not be blank.'
+            });
             return;
         }
-        var answer = confirm("Are you sure you want to void this transaction?");
-        if (answer){
-            $("#procvoidbtn").prop('disabled', true);
-            processVoidTransaction(ref, false);
-            $("#formdiv").dialog('close');
-            lasttransref = ref;
-            // update transaction info
-            WPOS.trans.populateTransactionInfo(ref);
-        }
+        swal({
+            title: 'Void Transaction',
+            text: "Are you sure you want to void this transaction?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Void it!'
+        }).then(function (result) {
+           if (result.value) {
+              $("#procvoidbtn").prop('disabled', true);
+              processVoidTransaction(ref, false);
+              $("#formdiv").dialog('close');
+              lasttransref = ref;
+              // update transaction info
+              WPOS.trans.populateTransactionInfo(ref);
+              setTimeout(function() {
+                swal('Voided!', 'Your Transaction has been voided.', 'success');
+              }, 200);
+           }
+        });
     };
 
     this.processRefund = function(){
         if ($("#refundreason").val()==""){
-            alert("Reason must not be blank.");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Reason must not be blank.'
+              });
+              
             return;
         }
         if ($("#refundamount").val()<=0){
-            alert("Amount must be larger than 0.");
+            swal("Amount must be larger than 0.");
             return;
         }
         var ref = $("#refundref").val();
-        var answer = confirm("Are you sure you want to refund this transaction?");
-        if (answer){
-            $("#procvoidbtn").prop('disabled', true);
-            processVoidTransaction(ref, true);
-            $("#formdiv").dialog('close');
-            lasttransref = ref;
-            // update transaction info
-            WPOS.trans.populateTransactionInfo(ref);
-        }
+        swal({
+            title: 'Refund Transaction',
+            text: "Are you sure you want to refund this transaction?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes,Refund it!'
+          }).then(function (result) {
+             if (result.value) {
+                $("#procvoidbtn").prop('disabled', true);
+                processVoidTransaction(ref, true);
+                $("#formdiv").dialog('close');
+                lasttransref = ref;
+                // update transaction info
+                WPOS.trans.populateTransactionInfo(ref);
+             }
+          });
     };
 
     this.eftposRefund = function(){
@@ -1770,6 +1893,8 @@ function WPOSSales() {
                 WPOS.print.printReceipt(refundobj.ref);
             } else {
                 var answer = confirm("Would you like to print a receipt?");
+
+                              
                 if (answer){
                     WPOS.print.printReceipt(refundobj.ref);
                 }
@@ -1846,7 +1971,12 @@ function WPOSSales() {
         if (addOfflineSale(jsondata, action)){
             if (removefromsales) removeSalesRecord(jsondata.ref);
         } else {
-            alert("Failed to update the record in offline storage, the sale has not been updated.");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Failed to update the record in offline storage, the sale has not been updated.'
+              });
+              
         }
     }
 

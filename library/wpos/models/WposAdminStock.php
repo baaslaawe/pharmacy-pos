@@ -410,13 +410,13 @@ class WposAdminStock {
         if ($stockinventoryid > 0) {
             $id = $this->stockItemsMdl->create($this->data->stockinventoryid, $this->data->amount, $this->data->expiryDate, $this->data->cost,  $this->data->price,  $this->data->code, $this->data->inventoryNo,  json_encode($this->data),  $this->data->locationid, time());
             if ($id===false){
-                $result['error'] = "Could add item to stock, error ".$this->stockItemsMdl->errorInfo;
+                $result['error'] = "Couldn't add item to stock, error ".$this->stockItemsMdl->errorInfo;
                 return $result;
             }
         }
 
         if ($this->createStockHistory($id, $this->data->locationid, 'Stock Added', $this->data->amount)===false){
-            $result['error'] = "Could not create stock history record id=".$id;
+            $result['error'] = "Could not create stock history record";
             return $result;
         }
         // Success; log data

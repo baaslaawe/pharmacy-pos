@@ -7,57 +7,39 @@
         <meta name="description" content="overview &amp; stats" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link rel="shortcut icon" href="/assets/images/favicon.ico">
-        <link rel="apple-touch-icon" href="/assets/images/pos-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/pos-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="/assets/images/pos-icon142x142.png">
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/images/pos-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/pos-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/images/pos-icon142x142.png">
 		<!-- basic styles -->
-
 		<link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
-
-		<link rel="stylesheet" href="assets/css/octicons.min.css" />
-		<link rel="stylesheet" href="assets/css/font-awesome.min.css" />
-
-		<!-- fonts -->
-
-		<link rel="stylesheet" href="assets/css/ace-fonts.css" />
-
+		<link rel="stylesheet" href="./assets/css/octicons.min.css" />
+		<link rel="stylesheet" href="./assets/css/font-awesome.min.css" />
 		<!-- ace styles -->
-
-		<link rel="stylesheet" href="assets/css/uncompressed/ace.css" />
-		<!--<link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
-		<link rel="stylesheet" href="assets/css/ace-skins.min.css" />-->
-
+		<link rel="stylesheet" href="./assets/css/uncompressed/ace.css" />
 		<!--[if lte IE 8]>
-		  <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+        <link rel="stylesheet" href="./assets/css/ace-ie.min.css" />
 		<![endif]-->
-
-		<!-- inline styles related to this page -->
-
-		<!-- ace settings handler -->
-
-		<script src="assets/js/ace-extra.min.js"></script>
-
+		<script src="./assets/js/ace-extra.min.js"></script>
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-
 		<!--[if lt IE 9]>
-		<script src="assets/js/html5shiv.js"></script>
-		<script src="assets/js/respond.min.js"></script>
+		<script src="./assets/js/html5shiv.js"></script>
+		<script src="./assets/js/respond.min.js"></script>
 		<![endif]-->
-
-        <!-- Styles used on most pages ->
-        <!-- page specific plugin styles -->
-        <link rel="stylesheet" href="/assets/css/jquery-ui-1.10.3.full.min.css" />
-        <link rel="stylesheet" href="assets/css/bootstrap-datepicker.min.css" />
-        <link rel="stylesheet" href="assets/js/select2/select2.css" />
-        <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css" />
-
-        <link rel="stylesheet" href="assets/css/wposadmin.css" />
+    <!-- Styles used on most pages ->
+    <!-- page specific plugin styles -->
+    <link rel="stylesheet" href="/assets/css/sweetalert2.css">
+    <link rel="stylesheet" href="/assets/css/jquery-ui-1.10.3.full.min.css" />
+    <link rel="stylesheet" href="./assets/css/bootstrap-datepicker.min.css" />
+    <link rel="stylesheet" href="./assets/js/select2/select2.css" />
+    <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css" />
+    <link rel="stylesheet" href="./assets/css/wposadmin.css" />
 	</head>
 
 	<body>
         <div class=container-fluid>
 		<div class="navbar navbar-default" id="navbar">
+<!--<<<<<<< HEAD-->
 			<script type="text/javascript">
 				try{ace.settings.check('navbar' , 'fixed')}catch(e){}
 			</script>
@@ -65,6 +47,20 @@
                 <h3 style="margin-left:30px; display: inline;">Biashara Retail POS Admin Dashboard <span onclick="WPOS.logout();" style="margin-right: 20px; line-height:1.5;" class="octicon octicon-sign-out pull-right"></span></h3>
             </div>
 		</div>
+<!--=======-->
+        <!--<script type="text/javascript">-->
+        <!--try{ace.settings.check('navbar' , 'fixed')}catch(e){}-->
+        <!--</script>-->
+        <!--<div style="vertical-align: middle;margin-top:10px;">-->
+            <!--<h3 style="margin-left:30px; display: inline;">-->
+                <!--Pharmacy POS Admin Dashboard-->
+                <!--<span title="Logout of your session" onclick="WPOS.logout();" style="cursor:pointer;margin:0 20px; line-height:1.5;" class="octicon octicon-sign-out pull-right"></span>-->
+                <!--<span title="Lock session" onclick="WPOS.lockSession();" style="cursor:pointer;margin:0 20px; line-height:1.5; vertical-align: middle;"><i class="icon icon-lock pull-right"></i></span>-->
+                <!--<span title="Open cashier dashboard" onclick="window.open('http://localhost:9000');" style="padding:5px 10px; margin-top:3px; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; cursor:pointer;margin-right:20px;position: relative; top: -7px;" class="btn btn-danger pull-right">Cashier</span>-->
+            <!--</h3>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--&gt;>>>>>> feature/electron-->
 
 		<div class="main-container" id="main-container">
 			<script type="text/javascript">
@@ -89,96 +85,96 @@
 							</a>
 						</li>
 
-                        <li id="menurealtime" class="privmenuitem">
-                            <a href="#!realtime" class="dropdown-toggle">
-                                <span class="octicon octicon-eye"></span>
-                                <span class="menu-text"> Realtime </span>
-                            </a>
-                        </li>
+            <li id="menurealtime" class="privmenuitem">
+                <a href="#!realtime" class="dropdown-toggle">
+                    <span class="octicon octicon-eye"></span>
+                    <span class="menu-text"> Realtime </span>
+                </a>
+            </li>
 
-                        <li id="menureports" class="privmenuitem">
-                            <a href="#!reports" class="dropdown-toggle">
-                                <span class="octicon octicon-list-ordered"></span>
-                                <span class="menu-text"> Reports </span>
-                            </a>
-                        </li>
+            <li id="menureports" class="privmenuitem">
+                <a href="#!reports" class="dropdown-toggle">
+                    <span class="octicon octicon-list-ordered"></span>
+                    <span class="menu-text"> Reports </span>
+                </a>
+            </li>
 
-                        <li id="menugraph" class="privmenuitem">
-                            <a href="#!graph" class="dropdown-toggle">
-                                <span class="octicon octicon-graph"></span>
-                                <span class="menu-text"> Graph </span>
-                            </a>
-                        </li>
+            <li id="menugraph" class="privmenuitem">
+                <a href="#!graph" class="dropdown-toggle">
+                    <span class="octicon octicon-graph"></span>
+                    <span class="menu-text"> Graph </span>
+                </a>
+            </li>
 
-                        <li id="menusales" class="privmenuitem">
-                            <a href="#!sales" class="dropdown-toggle">
-                                <span class="octicon octicon-briefcase"></span>
-                                <span class="menu-text"> POS Sales </span>
-                            </a>
-                        </li>
+            <li id="menusales" class="privmenuitem">
+                <a href="#!sales" class="dropdown-toggle">
+                    <span class="octicon octicon-briefcase"></span>
+                    <span class="menu-text"> POS Sales </span>
+                </a>
+            </li>
 
-                        <li id="menuinvoices" class="privmenuitem">
-                            <a href="#!invoices" class="dropdown-toggle">
-                                <span class="octicon octicon-file-pdf"></span>
-                                <span class="menu-text"> Invoices </span>
-                            </a>
-                        </li>
+            <li id="menuinvoices" class="privmenuitem">
+                <a href="#!invoices" class="dropdown-toggle">
+                    <span class="octicon octicon-file-pdf"></span>
+                    <span class="menu-text"> Invoices </span>
+                </a>
+            </li>
 
-                        <li id="menucustomers" class="privmenuitem">
-                            <a href="#!customers" class="dropdown-toggle">
-                                <span class="octicon octicon-person"></span>
-                                <span class="menu-text"> Customers </span>
-                            </a>
-                        </li>
+            <li id="menucustomers" class="privmenuitem">
+                <a href="#!customers" class="dropdown-toggle">
+                    <span class="octicon octicon-person"></span>
+                    <span class="menu-text"> Customers </span>
+                </a>
+            </li>
 
-                        <li id="menuparentitems" class="privmenuitem">
-                            <a class="dropdown-toggle">
-                                <span class="octicon octicon-package"></span>
-                                <span class="menu-text"> Items </span>
+            <li id="menuparentitems" class="privmenuitem">
+                <a class="dropdown-toggle">
+                    <span class="octicon octicon-package"></span>
+                    <span class="menu-text"> Items </span>
 
-                                <b class="arrow icon-angle-down"></b>
-                            </a>
+                    <b class="arrow icon-angle-down"></b>
+                </a>
 
-                            <ul class="submenu">
-                                <li id="menuitems" class="privmenuitem">
-                                    <a href="#!items">
-                                        <i class="icon-double-angle-right"></i>
-                                        Stored Items
-                                    </a>
-                                </li>
+                <ul class="submenu">
+                    <li id="menuitems" class="privmenuitem">
+                        <a href="#!items">
+                            <i class="icon-double-angle-right"></i>
+                            Stored Items
+                        </a>
+                    </li>
 
-                                <li id="menustock" class="privmenuitem">
-                                    <a  href="#!stock">
-                                        <i class="icon-double-angle-right"></i>
-                                        Inventory
-                                    </a>
-                                </li>
+                    <li id="menustock" class="privmenuitem">
+                        <a  href="#!stock">
+                            <i class="icon-double-angle-right"></i>
+                            Inventory
+                        </a>
+                    </li>
 
-                                <li id="menunoninv" class="privmenuitem">
-                                    <a  href="#!noninventory">
-                                        <i class="icon-double-angle-right"></i>
-                                        Non-Inventory
-                                    </a>
-                                </li>
+                    <li id="menunoninv" class="privmenuitem">
+                        <a  href="#!noninventory">
+                            <i class="icon-double-angle-right"></i>
+                            Non-Inventory
+                        </a>
+                    </li>
 
-                                <li id="menucategories" class="privmenuitem">
-                                    <a href="#!categories">
-                                        <i class="icon-double-angle-right"></i>
-                                        Categories
-                                    </a>
-                                </li>
+                    <li id="menucategories" class="privmenuitem">
+                        <a href="#!categories">
+                            <i class="icon-double-angle-right"></i>
+                            Categories
+                        </a>
+                    </li>
 
-                                <li id="menusuppliers" class="privmenuitem">
-                                    <a href="#!suppliers">
-                                        <i class="icon-double-angle-right"></i>
-                                        Suppliers
-                                    </a>
-                                </li>
+                    <li id="menusuppliers" class="privmenuitem">
+                        <a href="#!suppliers">
+                            <i class="icon-double-angle-right"></i>
+                            Suppliers
+                        </a>
+                    </li>
 
-                            </ul>
-                        </li>
+                </ul>
+            </li>
 
-                        <li id="menusettings" class="privmenuitem">
+            <li id="menusettings" class="privmenuitem">
                             <a class="dropdown-toggle">
                                 <i class="icon-edit"></i>
                                 <span class="menu-text"> Settings </span>
@@ -237,32 +233,6 @@
                                 </li>
                             </ul>
                         </li>
-
-						<li>
-							<a class="dropdown-toggle">
-								<i class="icon-file-alt"></i>
-
-								<span class="menu-text">Help and Support</span>
-
-								<b class="arrow icon-angle-down"></b>
-							</a>
-
-							<ul class="submenu">
-                                <li>
-                                    <a href="#!info">
-                                        <i class="icon-double-angle-right"></i>
-                                        Info
-                                    </a>
-                                </li>
-
-								<li>
-									<a href="#!faq">
-										<i class="icon-double-angle-right"></i>
-										FAQ
-									</a>
-								</li>
-							</ul>
-						</li>
 					</ul><!-- /.nav-list -->
 
 					<div class="sidebar-collapse" id="sidebar-collapse">
@@ -286,7 +256,7 @@
 								<a onclick="WPOS.goToHome();">Home</a>
 							</li>
 						</ul><!-- .breadcrumb -->
-                        <button class="btn btn-xs btn-primary pull-right" style="margin-top: 10px;" onclick="WPOS.stopSocket(); WPOS.loadPageContent(sec);"><i class="icon-refresh"></i> Refresh</button>
+            <button class="btn btn-xs btn-primary pull-right" style="margin-top: 10px;" onclick="WPOS.stopSocket(); WPOS.loadPageContent(sec);"><i class="icon-refresh"></i> Refresh</button>
 					</div>
 
 					<div id="maincontent" class="page-content">
@@ -312,7 +282,7 @@
                     <form class="login-form">
                       <input class="form-control"id="loguser" type="text" placeholder="Admin"/>
                       <input class="form-control"id="logpass" onkeypress="if(event.keyCode == 13){WPOS.login();}" type="password"  placeholder="Password"/>
-                      <button id="loginbutton" onClick="WPOS.userLogin();">login</button>
+                      <button id="loginbutton" onClick="WPOS.login();">login</button>
                     </form>
                     <div id="loadingdiv" style="height: 225px;">
                         <h3 id="loadingbartxt">Initializing</h3>
@@ -323,46 +293,6 @@
                     </div>
                  </div>
             </div>
-            <!-- <div id="loginbox" class="login-box widget-box visible no-border">
-                <div class="widget-main">
-                    <h2 class="header blue lighter bigger">
-                        <img style="height: 40px; margin-top: -5px;" src="/assets/images/apple-touch-icon-72x72.png">&nbsp;WallacePOS Admin
-                    </h2>
-                    <div class="space-2"></div>
-                    <div id="login-banner" class="alert alert-block alert-success" style="display:none;">
-                        <i class="icon icon-lock green" style="margin-right: 3px;"></i>
-                        <span id="login-banner-txt"></span>
-                    </div>
-                    <div class="space-10"></div>
-                    <div id="logindiv" style="display: none;">
-                        <label class="block clearfix">
-                    <span class="block input-icon input-icon-right">
-                        <input class="form-control"class="form-control" id="loguser" type="text" placeholder="Username"/>
-                        <i class="icon-user"></i>
-                    </span>
-                        </label>
-                        <label class="block clearfix">
-                    <span class="block input-icon input-icon-right">
-                        <input class="form-control"class="form-control" id="logpass" onkeypress="if(event.keyCode == 13){WPOS.login();}" type="password"  placeholder="Password"/>
-                        <i class="icon-lock" style="margin-right: 1px;"></i>
-                    </span>
-                        </label>
-                        <div class="space-6"></div>
-                        <div class="space-6"></div>
-                        <button id="loginbutton" onClick="WPOS.login();" class="btn btn-primary width-35">
-                            <i class="icon-key"></i>Login
-                        </button>
-                        <div class="space-6"></div>
-                    </div>
-                    <div id="loadingdiv">
-                        <h3 id="loadingbartxt">Initializing</h3>
-                        <div id="loadingprogdiv" class="progress progress-striped active">
-                            <div class="progress-bar" id="loadingprog" style="width: 100%;"></div>
-                        </div>
-                        <span id="loadingstat"></span>
-                    </div>
-                </div>
-            </div> -->
         </div>
         <a style="display: none;" id="dlelem" href=""></a>
 
@@ -745,10 +675,10 @@
                 </select>
                 <h3>View</h3>
                 <button onclick="WPOS.transactions.generateInvoice('html', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">HTML</button>
-                <button onclick="WPOS.transactions.generateInvoice('pdf', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
+                <!--<button onclick="WPOS.transactions.generateInvoice('pdf', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>-->
                 <h3>Download</h3>
                 <button onclick="WPOS.transactions.generateInvoice('html', 1, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">HTML</button>
-                <button onclick="WPOS.transactions.generateInvoice('pdf', 1, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
+                <!--<button onclick="WPOS.transactions.generateInvoice('pdf', 1, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>-->
             </div>
             <div id="sendinvoiceform" style="min-width: 420px;">
                 <label class="smfixedlabel inline">Invoice Template: </label><div class="inline"><select id="emlinvoicetemplate"></select></div>
@@ -862,28 +792,29 @@
             if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
         </script>
         <script src="/assets/js/bootstrap.min.js"></script>
-        <!--<script src="assets/js/typeahead"></script>!-->
+        <!--<script src="./assets/js/typeahead"></script>!-->
 
         <!-- page specific plugin scripts -->
 
         <!--[if lte IE 8]>
-        <script src="assets/js/excanvas.min.js"></script>
+        <script src="./assets/js/excanvas.min.js"></script>
         <![endif]-->
-        <script src="assets/js/typeahead-bs2.min.js"></script>
-        <script src="assets/js/jquery-ui-1.10.3.full.min.js"></script>
-        <script src="assets/js/jquery.ui.touch-punch.min.js"></script>
-        <script src="assets/js/jquery.slimscroll.min.js"></script>
-        <script src="assets/js/jquery.easy-pie-chart.min.js"></script>
-        <script src="assets/js/jquery.sparkline.min.js"></script>
-        <script src="assets/js/flot/jquery.flot.min.js"></script>
-        <script src="assets/js/flot/jquery.flot.pie.min.js"></script>
-        <script src="assets/js/flot/jquery.flot.resize.min.js"></script>
-        <script src="assets/js/flot/jquery.flot.time.min.js"></script>
-        <script src="assets/js/bootstrap-tag.js"></script>
+        <script src="./assets/js/typeahead-bs2.min.js"></script>
+        <script src="./assets/js/jquery-ui-1.10.3.full.min.js"></script>
+        <script src="./assets/js/jquery.ui.touch-punch.min.js"></script>
+        <script src="./assets/js/jquery.slimscroll.min.js"></script>
+        <script src="./assets/js/jquery.easy-pie-chart.min.js"></script>
+        <script src="./assets/js/jquery.sparkline.min.js"></script>
+        <script src="./assets/js/flot/jquery.flot.min.js"></script>
+        <script src="./assets/js/flot/jquery.flot.pie.min.js"></script>
+        <script src="./assets/js/flot/jquery.flot.resize.min.js"></script>
+        <script src="./assets/js/flot/jquery.flot.time.min.js"></script>
+        <script src="./assets/js/bootstrap-tag.js"></script>
 
         <!-- ace scripts -->
-        <script src="assets/js/ace-elements.min.js"></script>
-        <script src="assets/js/ace.min.js"></script>
+        <script src="./assets/js/ace-elements.min.js"></script>
+        <script src="./assets/js/ace.min.js"></script>
+        <script src="/assets/js/sweetalert2.all.min.js"></script>
 
         <!-- Scripts included on many of the pages -->
         <script src="../assets/js/wpos/utilities.js"></script>
@@ -891,17 +822,21 @@
         <script src="/assets/libs/datatables/datatables.min.js"></script>
         <script src="/assets/libs/datatables/datatableSorting.js"></script>
 
-        <script src="assets/js/date-time/bootstrap-datepicker.min.js"></script>
-        <script src="assets/js/select2/select2.min.js"></script>
-        <script src="assets/js/jquery.hotkeys.min.js"></script>
-        <script src="assets/js/bootstrap-wysiwyg.min.js"></script>
-        <script src="assets/js/bootbox.min.js"></script>
+        <script src="./assets/js/date-time/bootstrap-datepicker.min.js"></script>
+        <script src="./assets/js/select2/select2.min.js"></script>
+        <script src="./assets/js/jquery.hotkeys.min.js"></script>
+        <script src="./assets/js/bootstrap-wysiwyg.min.js"></script>
+        <script src="./assets/js/bootbox.min.js"></script>
 
-        <script src="assets/wpos/wpos.js"></script>
-        <script src="assets/wpos/customers.js"></script>
-        <script src="assets/wpos/transactions.js"></script>
+        <script src="./assets/wpos/wpos.js"></script>
+        <script src="./assets/wpos/customers.js"></script>
+        <script src="./assets/wpos/transactions.js"></script>
 
         <!-- Websocket library -->
         <script type="text/javascript" src="/assets/libs/socketio/socket.io-1.4.5.js"></script>
+
+        <!-- Sweet Alert Library -->
+        <script src="/assets/js/sweetalert2.all.min.js"></script>
+        
 	</body>
 </html>

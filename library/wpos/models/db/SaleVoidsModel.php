@@ -55,7 +55,7 @@ class SaleVoidsModel extends DbConfig
      */
     public function create($saleid, $userid, $deviceid, $locationid, $reason, $method=null, $amount=null, $items=null, $void, $processdt)
     {
-        $sql = "INSERT INTO `sale_voids` (`saleid`, `userid`, `deviceid`, `locationid`, `reason`, `method`, `amount`, `items`, `void`, `processdt`, `dt`) VALUES (:saleid, :userid, :deviceid, :locationid, :reason, :method, :amount, :items, :isvoid, :processdt, now())";
+        $sql = "INSERT INTO `sale_voids` (`saleid`, `userid`, `deviceid`, `locationid`, `reason`, `method`, `amount`, `items`, `void`, `processdt`) VALUES (:saleid, :userid, :deviceid, :locationid, :reason, :method, :amount, :items, :isvoid, :processdt)";
         $placeholders = [
             ':saleid'=>$saleid,
             ':userid'=>$userid,
@@ -158,7 +158,7 @@ class SaleVoidsModel extends DbConfig
     public function getTotals($stime, $etime, $isvoid=null, $groupmethod = false, $ttype=null){
 
         $placeholders = [":stime"=>$stime, ":etime"=>$etime];
-        $sql = "SELECT *, COALESCE(SUM(v.amount), 0) as stotal, COUNT(v.id) as snum, COALESCE(GROUP_CONCAT(s.ref SEPARATOR ','),'') as refs FROM sale_voids as v LEFT JOIN sales as s ON v.saleid=s.id WHERE (v.processdt>= :stime AND v.processdt<= :etime)";
+        $sql = "SELECT *, COALESCE(SUM(v.amount), 0) as stotal, COUNT(v.id) as snum, COALESCE(GROUP_CONCAT(s.ref ),'') as refs FROM sale_voids as v LEFT JOIN sales as s ON v.saleid=s.id WHERE (v.processdt>= :stime AND v.processdt<= :etime)";
 
         if ($isvoid !== null) {
             $sql .= ' AND v.void= :isvoid';
@@ -204,7 +204,7 @@ class SaleVoidsModel extends DbConfig
         }
 
         $placeholders = [":stime"=>$stime, ":etime"=>$etime];
-        $sql = "SELECT *, d.id as groupid, ".($grouptype=='device'?"CONCAT(d.name, ' (', l.name, ')')":'d.name')." as name, SUM(v.amount) as stotal, COUNT(v.id) as snum, GROUP_CONCAT(s.ref SEPARATOR ',') as refs FROM sale_voids as v LEFT JOIN sales as s ON v.saleid=s.id LEFT JOIN ".$joinsql." WHERE (v.processdt>= :stime AND v.processdt<= :etime)";
+        $sql = "SELECT *, d.id as groupid, ".($grouptype=='device'?"d.name || ' ' || l.name":'d.name')." as name, SUM(v.amount) as stotal, COUNT(v.id) as snum, GROUP_CONCAT(s.ref ) as refs FROM sale_voids as v LEFT JOIN sales as s ON v.saleid=s.id LEFT JOIN ".$joinsql." WHERE (v.processdt>= :stime AND v.processdt<= :etime)";
 
         if ($isvoid !== null) {
             $sql .= ' AND v.void= :isvoid';

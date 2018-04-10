@@ -47,8 +47,8 @@
     </div>
 </div>
 <script type="text/javascript">
-    $(function(){
-        $("#app_version").text(WPOS.getConfigTable().general.version);
-        WPOS.util.hideLoader();
-    });
+  $(function(){
+    $("#app_version").text(WPOS.getConfigTable().general.version);
+    WPOS.util.hideLoader();
+  });
 </script>

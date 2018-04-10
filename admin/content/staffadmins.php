@@ -37,26 +37,45 @@
     </div><!-- PAGE CONTENT ENDS -->
 </div><!-- /.col -->
 <div id="edituserdialog" class="hide">
-    <div style="display: inline-block; min-width: 325px; vertical-align: top; padding-bottom: 20px; margin: 0;">
-    <h5 style="text-align: center;">User Details</h5>
-    <table>
-        <tr>
-            <td style="text-align: right;"><label>Username:&nbsp;</label></td>
-            <td><input id="usersname" type="text"/>
-                <input id="userid" type="hidden"/></td>
-        </tr>
-        <tr>
-            <td style="text-align: right;"><label>Password:&nbsp;</label></td>
-            <td><input id="userpass" type="password" value="" placeholder="Leave blank to ignore"/></td>
-        </tr>
-        <tr>
-            <td style="text-align: right;"><label>Confirm Password:&nbsp;</label></td>
-            <td><input id="usercpass" type="password" value=""/></td>
-        </tr>
-    </table>
+    <div style="display: inline-block; min-width: 325px; vertical-align: top; padding-bottom: 20px; margin: 0;padding-right: 10px;">
+      <h3>User Details</h3>
+      <hr>
+      <table>
+          <tr>
+              <td style="text-align: right;"><label>Username:&nbsp;</label></td>
+              <td><input id="usersname" class="form-control" type="text"/>
+                  <input id="userid" type="hidden"/></td>
+          </tr>
+          <tr>
+              <td style="text-align: right;"><label>Password:&nbsp;</label></td>
+              <td><input id="userpass" class="form-control" type="password" value="" placeholder="Leave blank to ignore"/></td>
+          </tr>
+          <tr>
+              <td style="text-align: right;"><label>Confirm Password:&nbsp;</label></td>
+              <td><input id="usercpass" class="form-control" type="password" value=""/></td>
+          </tr>
+      </table>
+      <hr>
+      <h3 style="margin-top:15px;">Cashier Section Permissions</h3>
+      <table class="table" style="min-width: 325px;">
+       <tbody>
+         <tr>
+           <td>Stored Items</td>
+           <td>
+             <label>View: <input id="permitem" type="checkbox" class="permcb"/></label>&nbsp;&nbsp;
+           </td>
+         </tr>
+         <tr>
+           <td>Stock</td>
+           <td>
+             <label>View: <input id="permstock" type="checkbox" class="permcb"/></label>&nbsp;&nbsp;
+           </td>
+         </tr>
+       </tbody>
+      </table>
     </div>
     <div id="permisionsedit" style="display: inline-block; min-width: 325px; vertical-align: top; margin: 0;">
-    <h5 style="text-align: center;">Dashboard Permissions</h5>
+    <h3>Dashboard Permissions</h3>
     <table class="table" style="min-width: 325px;">
         <thead class="table-header">
         <tr>
@@ -66,33 +85,37 @@
         </thead>
         <tbody>
         <tr>
-            <td>Access</td>
-            <td>
-                    <select id="permaccess">
-                        <option value="no" onclick="setPermState(0);">No</option>
-                        <option value="yes" onclick="setPermState(1);">Yes</option>
-                        <option value="admin" onclick="setPermState(2);">Administrator</option>
-                    </select>
-            </td>
+          <td>Access</td>
+          <td>
+            <select onchange="setPermState();" id="permaccess">
+                <option value="no" onclick="setPermState(0);">No</option>
+                <option value="yes" onclick="setPermState(1);">Yes</option>
+                <option value="admin" onclick="setPermState(2);">Administrator</option>
+            </select>
+          </td>
         </tr>
         <tr>
-            <td>Dashboard</td>
-            <td>
-                    <select id="permdash" class="permsel">
-                        <option value="both">Both</option>
-                        <option value="standard">Standard</option>
-                        <option value="realtime">Realtime</option>
-                        <option value="none">None</option>
-                    </select>
-            </td>
+          <td><b>Admin Section Permissions</b></td>
+          <td></td>
         </tr>
         <tr>
-            <td>Reports</td>
-            <td><label>View: <input id="permreport" type="checkbox" class="permcb"/></label></td>
+          <td>Dashboard</td>
+          <td>
+            <select id="permdash" class="permsel">
+                <option value="both">Both</option>
+                <option value="standard">Standard</option>
+                <option value="realtime">Realtime</option>
+                <option value="none">None</option>
+            </select>
+          </td>
         </tr>
         <tr>
-            <td>Graph</td>
-            <td><label>View: <input id="permgraph" type="checkbox" class="permcb"/></label></td>
+          <td>Reports</td>
+          <td><label>View: <input id="permreport" type="checkbox" class="permcb"/></label></td>
+        </tr>
+        <tr>
+          <td>Graph</td>
+          <td><label>View: <input id="permgraph" type="checkbox" class="permcb"/></label></td>
         </tr>
         <tr>
             <td>Sales</td>
@@ -111,14 +134,14 @@
         <tr>
             <td>Stored Items</td>
             <td>
-                <label>View: <input id="permitem" type="checkbox" class="permcb"/></label>&nbsp;&nbsp;
+                <label>View: <input id="permitemadmin" type="checkbox" class="permcb" disabled/></label>&nbsp;&nbsp;
                 <label>Edit: <input id="permitemedit" type="checkbox" class="permcb"/></label>
             </td>
         </tr>
         <tr>
             <td>Stock</td>
             <td>
-                <label>View: <input id="permstock" type="checkbox" class="permcb"/></label>&nbsp;&nbsp;
+                <label>View: <input id="permstockadmin" type="checkbox" class="permcb" disabled/></label>&nbsp;&nbsp;
                 <label>Edit: <input id="permstockedit" type="checkbox" class="permcb"/></label>
             </td>
         </tr>
@@ -284,6 +307,12 @@
     function setPermState(state){
         var cb = $('.permcb');
         var sel = $('.permsel');
+        if (state == null || state == undefined){
+            var option = $("#permaccess").val();
+            if (option == 'no') state = 0;
+            if (option == 'yes') state = 1;
+            if (option == 'admin') state = 2;
+        }
         if (state==0){
             cb.prop('checked', false);
             cb.prop('disabled', true);
@@ -345,8 +374,12 @@
         $("#perminvoice").prop("checked", perm.invoices>0);
         $("#perminvoiceedit").prop("checked", perm.invoices>1);
         $("#permitem").prop("checked", perm.items>0);
+        $("#permitemadmin").prop("checked", perm.items>0);
+        $("#permitemadmin").prop("disabled", true);
         $("#permitemedit").prop("checked", perm.items>1);
         $("#permstock").prop("checked", perm.stock>0);
+        $("#permstockadmin").prop("checked", perm.stock>0);
+        $("#permstockadmin").prop("disabled", true);
         $("#permstockedit").prop("checked", perm.stock>1);
         $("#permcat").prop("checked", perm.categories>0);
         $("#permcatedit").prop("checked", perm.categories>1);
@@ -390,20 +423,34 @@
             isadmin = ($("#permaccess :selected").val()=="admin"?1:0);
         }
         if (username==""){
-            alert("Please enter a username");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Please enter a username'
+                });
+
             return false;
         }
         if (isnewitem || pass != ""){
             if (pass == cpass){
                 hpass = WPOS.util.SHA256(pass);
             } else {
-                alert("Passwords do not match");
+                swal({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Passwords do not match'
+                    });
+
                 return false;
             }
         }
         if (isnewitem){
             if (pass == ""){
-                alert("Please enter a new password");
+                swal({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Please enter a new password'
+                    });
                 return false;
             }
             // adding a new item
@@ -446,16 +493,20 @@
         }
     }
     function setUserDisabled(id, disable){
-        var answer = confirm("Are you sure you want to disable this user?");
-        if (answer){
-            // show loader
-            WPOS.util.showLoader();
-            if (WPOS.sendJsonData("users/disable", '{"id":'+id+', "disable":'+disable+'}')!==false){
-                reloadTable();
-            }
-            // hide loader
-            WPOS.util.hideLoader();
-        }
+      if(disable)
+        var answer = confirm("Are you sure you want to deactivate this user?");
+      else
+        var answer = confirm("Are you sure you want to activate this user?");
+
+      if (answer){
+          // show loader
+          WPOS.util.showLoader();
+          if (WPOS.sendJsonData("users/disable", '{"id":'+id+', "disable":'+disable+'}')!==false){
+              reloadTable();
+          }
+          // hide loader
+          WPOS.util.hideLoader();
+      }
     }
     function reloadTable(){
         users = WPOS.getJsonData("users/get");

@@ -24,6 +24,20 @@
 // Set the root of the install
 $_SERVER['APP_ROOT'] = "/";
 
+$qPosition = stripos($_SERVER["REQUEST_URI"], "?");
+// Remove any _ query string
+if ($qPosition > 1)
+    $_SERVER["REQUEST_URI"] = substr($_SERVER["REQUEST_URI"], 0, $qPosition);
+
+$segments = explode('/', $_SERVER["REQUEST_URI"]);
+foreach ($segments as $segment) {
+    if ($segment == 'hello' || $segment == 'auth' || $segment == 'multi') {
+        $_REQUEST["a"] = $segment;
+        break;
+    } else {
+        $_REQUEST["a"] = substr($_SERVER['REQUEST_URI'], 5);
+    }
+}
 require($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . 'library/wpos/config.php');
 // setup api error handling
 set_error_handler("errorHandler", E_ERROR | E_PARSE);
@@ -46,26 +60,17 @@ if ($_REQUEST['a'] == "auth" || $_REQUEST['a'] == "authrenew") {
         $authres = $auth->renewTokenSession($data->username, $data->auth_hash);
     }
     if ($data !== false) {
-        switch ($authres){
-            // will be included when elephantIO is upgraded, no reliable exceptions in current version
-            /*case -2: // user authenticated successfully, but could not be authenticated with the feed server, fall through to normal login
-                $result['warning'] = "Warning: Feedserver authentication attempt failed.";*/
-            case true:
-                $result['data'] = $auth->getUser();
-                if ($result['data']==null){
-                    $result['error'] = "Could not retrieve user data from php session.";
-                }
-                break;
-
-            case -1:
-                $result['errorCode'] = "authdenied";
-                $result['error'] = "Your account has been disabled, please contact your system administrator!";
-                break;
-
-            case false:
-            default:
-                $result['errorCode'] = "authdenied";
-                $result['error'] = "Access Denied!";
+        if($authres === -1) {
+            $result['errorCode'] = "authdenied";
+            $result['error'] = "Your account has been disabled, please contact your system administrator!";
+        } else if($authres === true) {
+            $result['data'] = $auth->getUser();
+            if ($result['data']==null){
+                $result['error'] = "Could not retrieve user data from php session.";
+            }
+        } else {
+            $result['errorCode'] = "authdenied";
+            $result['error'] = "Access Denied!";
         }
     } else {
         $result['errorCode'] = "jsondec";
@@ -154,7 +159,10 @@ function routeApiCall($action, $data, $result) {
             $setupMdl = new WposPosData();
             $result = $setupMdl->getPOSSubscription($result);
             break;
-
+        case "update/subscription":
+            $setupMdl = new WposPosData();
+            $result = $setupMdl->updatePOSSubscription($result);
+            break;
         case "items/get":
             $jsondata = new WposPosData();
             $result = $jsondata->getItems($result);

@@ -25,17 +25,10 @@ function WPOS() {
 
     var initialsetup = false;
     var subscriptionStatus = false;
+    var daysRemaining = 0;
+    var subscription;
+    var isTrial = false;
     this.initApp = function () {
-        // if ('serviceWorker' in navigator) {
-        //     navigator.serviceWorker.register('/service-worker.js').then((registration)=>{
-        //         console.log('Installing service worker under scope of ', registration.scope);
-        //     }).catch(error=>{
-        //         console.log('Error installing service worker,', error.message);
-        //     })
-        // } else {
-        //   console.log('can\'t register service worker.');
-        // }
-        // set cache default to true
         $.ajaxSetup({
             cache: true
         });
@@ -56,12 +49,22 @@ function WPOS() {
     function checkAppCompatibility(){
         // Check local storage: required
         if (!('localStorage' in window && window.localStorage !== null)) {
-            alert("Your browser does not support localStorage required to run the POS terminal.");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Your browser does not support localStorage required to run the POS terminal.'
+              });
+
             return false;
         }
         // Check application cache: not required to run
         if (window.applicationCache == null){
-            alert("Your browser does not support applicationCache and will not be able to function offline.");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Your browser does not support applicationCache and will not be able to function offline.'
+              });
+              
         }
         return true;
     }
@@ -118,7 +121,11 @@ function WPOS() {
         showLogin();
         if (getDeviceUUID() == null) {
             // The device has not been setup yet; User will have to login as an admin to setup the device.
-            alert("The device has not been setup yet, please login as an administrator to setup the device.");
+            swal({
+                type: 'info',
+                title: 'Oops...',
+                text: 'The device has not been setup yet, please login as an administrator to setup the device.'
+              });
             initialsetup = true;
             online = true;
             return false;
@@ -166,7 +173,12 @@ function WPOS() {
                 }
             });
         }).error(function(){
-            alert("Failed to load the scanning plugin.");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Failed to load the scanning plugin.'
+              });
+              
         });
     }
 
@@ -222,7 +234,6 @@ function WPOS() {
         // hash password
         password = WPOS.util.SHA256(password);
         // authenticate
-
         authenticate(username, password, function(result){
           if (result === true) {
             userfield.val('');
@@ -234,7 +245,12 @@ function WPOS() {
               if (isUserAdmin()) {
                 initSetup();
               } else {
-                alert("You must login as an administrator for first time setup");
+                swal({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'You must login as an administrator for first time setup'
+                  });
+                  
                 showLogin();
               }
             } else {
@@ -256,8 +272,18 @@ function WPOS() {
     };
 
     this.logout = function () {
-        var answer = confirm("Are you sure you want to logout?");
-        if (answer) {
+       // var answer = confirm("Are you sure you want to logout?");
+        swal({
+            title: 'Logout',
+            text: "Are you sure you want to logout?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Log Out!'
+          }).then(function (result) {
+           if (result.value) {
+            
             var sales = WPOS.sales.getOfflineSalesNum();
             if (sales>0) {
                 answer = confirm("You have offline sales that have not been uploaded to the server.\nWould you like to back them up?");
@@ -267,13 +293,34 @@ function WPOS() {
             WPOS.util.showLoader();
             logout();
             WPOS.util.hideLoader();
-        }
+                setTimeout(
+                    function() 
+                    {
+                        swal('Logged Out!', 'You have been succesfully logged out.', 'success');
+                    }, 200);
+                          
+            }
+          });
     };
 
     function getSubscription() {
         WPOS.getJsonDataAsync("pos/subscription", function (result) {
-          if (result !== false) {
-              subscriptionStatus =  new Date(result.subscription.expiryDate).getTime() > new Date().getTime();
+          if (result.subscription){
+            if (typeof result.subscription === 'string')
+              result = JSON.parse(result.subscription);
+            else
+              result = result.subscription;
+            if (result !== false && result !== null)
+              if(result.status === 'activated') { // From free trial
+                subscriptionStatus = new Date(result.expiryDate).getTime() > new Date().getTime();
+                daysRemaining = moment(result.expiryDate).diff(moment(), 'days');
+                isTrial = true;
+              }else { // From server
+                daysRemaining = moment(result.expiryDate).diff(moment(), 'days');
+                subscriptionStatus = daysRemaining >= 0;
+              }
+          }else{
+            subscriptionStatus = null;
           }
         });
     }
@@ -297,6 +344,7 @@ function WPOS() {
                     setCurrentUser(response);
                     updateAuthTable(response);
                 }
+                getSubscription();
                 if (callback)
                     callback(response!==false);
             });
@@ -323,7 +371,12 @@ function WPOS() {
         if (localStorage.getItem("wpos_auth") !== null) {
             var jsonauth = $.parseJSON(localStorage.getItem("wpos_auth"));
             if (jsonauth[username] === null || jsonauth[username] === undefined) {
-                alert("Sorry, your credentials are currently not available offline.");
+                swal({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Sorry, your credentials are currently not available offline.'
+                  });
+                  
                 return false;
             } else {
                 var authentry = jsonauth[username];
@@ -331,12 +384,22 @@ function WPOS() {
                     setCurrentUser(authentry);
                     return true;
                 } else {
-                    alert("Access denied!");
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Access denied!'
+                      });
+                      
                     return false;
                 }
             }
         } else {
-            alert("We tried to authenticate you without an internet connection but there are currently no local credentials stored.");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'We tried to authenticate you without an internet connection but there are currently no local credentials stored.'
+              });
+              
             return false;
         }
     }
@@ -364,20 +427,38 @@ function WPOS() {
         var locname = $("#newposlocation").val();
         // check input
         if ((devid == null && devname == null) || (locid == null && locname == null)) {
-            alert("Please select a item from the dropdowns or specify a new name.");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: '"Please select a item from the dropdowns or specify a new name.'
+              });
+              
         } else {
             // call the setup function
             deviceSetup(devid, devname, locid, locname, function(result){
                 if (result) {
                     currentuser = null;
                     initialsetup = false;
-                    $("#setupdiv").dialog("close");
+                    $("#setupdiv").on('hidden.bs.modal', function () {
+                        // do something…
+                    })
                     $("#username").val("admin");
                     $("#password").val("admin");
                     showLogin();
-                    alert('Registration successful, login to start the demo');
+                    swal({
+                        type: 'success',
+                        title: 'Success.',
+                        text: 'Registration successful, login to start the demo'
+                      });
+                      
+                      
                 } else {
-                    alert("There was a problem setting up the device, please try again.");
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'There was a problem setting up the device, please try again.'
+                      });
+                      
                 }
             });
         }
@@ -407,17 +488,135 @@ function WPOS() {
             }
             WPOS.util.hideLoader();
             // show the setup dialog
-            $("#setupdiv").parent().css('z-index', "3200 !important");
-            $("#setupdiv").dialog("open");
+            $("#setupdiv").parent().css('z-index', "1000 !important");
+            //  $("#setupdiv").dialog("open");
+            $("#setupdiv").modal();
         });
+    }
+
+    function licenseServer(state) {
+      var message = '';
+      if(state===0)
+        message = 'Check your subscription status!';
+      else if (state===1)
+        message = 'Check subscription status';
+      else
+        message = 'Your subscription has expired!';
+      swal({
+        type: 'info',
+        title: message,
+        text: 'Enter the email you used to download the software to check for subscription status. If you need more info or help please call support @ 0721733354.',
+        input: 'email',
+        showCancelButton: true,
+        confirmButtonText: 'Check/Renew',
+        showLoaderOnConfirm: true,
+        preConfirm: (email) => {
+          return fetch(`http://pharmacypluspos.com/users/profile/license/subscription?email=${email}`);
+        },
+        allowOutsideClick: () => !swal.isLoading()
+      }).then(json => {
+          return json.value.json();
+      }).then(function (data) {
+          if (data.message !== undefined){
+          	if (data.message === 'No subscriptions found...!!')
+          		return false;
+            else
+            	return data.message;
+          } else {
+            return processSubscriptions(data.subscriptions);
+          }
+      }).then(function (status) {
+        if (typeof status === 'string'){
+          swal({
+            title: "Error..!",
+            text: status,
+            type: 'error'
+          })
+        } else {
+          if(status){
+            swal({
+              type:'success',
+              title:"Activated!",
+              text: `Subscription activated, from ${moment(subscription.activationDate).format('Do MMM YYYY')} - ${moment(subscription.expiryDate).format('Do MMM YYYY')}, login to continue`
+            });
+          } else{
+            swal({
+              type: 'info',
+              showConfirmButton: false,
+              title: 'Sorry, you have no active subscription.',
+              html:'<a class="btn btn-sm btn-success" onClick="openButton();">BUY</a>'
+            });
+          }
+        }
+      }).catch(err => {
+        if (err) {
+          swal("Connection failed", "Error contacting license server, ensure you have internet connection.If error persists call support at 0721733354.", "error");
+        } else {
+          swal.stopLoading();
+          swal.close();
+        }
+      });
+    }
+
+    function processSubscriptions(subscriptions) {
+      var found = false;
+      for(var i in subscriptions) {
+        if (subscriptions[i].status === 1 && !found) {
+          subscription = subscriptions[i];
+          if (moment(subscriptions[i].expiryDate).diff(moment(), "days") >= 30) {
+            found = true;
+            WPOS.sendJsonDataAsync("update/subscription", JSON.stringify(subscriptions[i]), function (results) {
+              return results;
+            });
+          }
+        }
+      }
+      return found;
     }
 
     // get initial data for pos startup.
     function initData(loginloader) {
-        getSubscription();
+        // getSubscription();
         if (loginloader){
             $("#loadingprogdiv").show();
             $("#loadingdiv").show();
+          setTimeout(()=> {
+            if(isTrial){
+              if (daysRemaining<=0) daysRemaining = 0;
+              swal({
+                type: 'info',
+                title: 'This is a free trial !!',
+                showCancelButton: true,
+                confirmButtonText: 'Buy',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                html: '<h5 class="text-danger"><b>'+daysRemaining+' days remaining.</b></h5>Click buy to get a subscription of your choice or cancel to continue with the trial.'
+              }).then((confirm)=> {
+                if (confirm.value)
+                  licenseServer(0)
+              });
+            } else {
+              if (daysRemaining <=5){
+                if (daysRemaining<=0) {
+                  daysRemaining = 0;
+                  licenseServer(2);
+                }else {
+                  swal({
+                    type: 'info',
+                    title: 'Your subscription is about to expire!',
+                    showCancelButton: true,
+                    confirmButtonText: 'Buy',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    html: '<h5 class="text-danger"><b>'+daysRemaining+' days remaining.</b></h5>Click buy to renew your subscription or cancel to continue.'
+                  }).then((confirm)=> {
+                    if (confirm.value)
+                      licenseServer(1)
+                  });
+                }
+              }
+            }
+          }, 1000);
         }
         if (online) {
             loadOnlineData(1, loginloader);
@@ -535,7 +734,13 @@ function WPOS() {
         loadItemsTable();
         loadCustTable();
         loadSalesTable();
-        alert("Your internet connection is not active and WPOS has started in offline mode.\nSome features are not available in offline mode but you can always make sales and alter transactions that are locally available. \nWhen a connection becomes available WPOS will process your transactions on the server.");
+        swal({
+            type: 'error',
+            title: 'Oops...',
+            text: 'Your internet connection is not active and Pharmacy POS has started in offline mode.\nSome features are not available in offline mode but you can always make sales and alter transactions that are locally available. \nWhen a connection becomes available the POS will process your transactions on the server.'
+          });
+          
+          
         initDataSuccess(loginloader);
     }
 
@@ -552,6 +757,9 @@ function WPOS() {
     this.removeDeviceRegistration = function(){
         if (isUserAdmin()){
             var answer = confirm("Are you sure you want to delete this devices registration?\nYou will be logged out and this device will need to be re registered.");
+            
+            
+            
             if (answer){
                 // show loader
                 WPOS.util.showLoader();
@@ -567,25 +775,75 @@ function WPOS() {
             }
             return;
         }
-        alert("Please login as an administrator to use this feature");
+        swal({
+            type: 'error',
+            title: 'Oops...',
+            text: 'Please login as an administrator to use this feature'
+          });
+          
     };
 
     this.resetLocalConfig = function(){
         if (isUserAdmin()){
-            var answer = confirm("Are you sure you want to restore local settings to their defaults?\n");
-            if (answer){
+            //var answer = confirm("Are you sure you want to restore local settings to their defaults?\n");
+            var answer;
+
+            swal({
+                title: 'Are you sure?\n',
+                text: "Your local settings will be reset to their defaults? You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Restore!'
+              }).then(function (answer){
+                if (answer.value) {
+                  swal(
+                    'Restored!',
+                    'Your local settings have been restored.',
+                    'success'
+                  )
+                }
+              });
+
+              if (answer){
                 localStorage.removeItem("wpos_lconfig");
                 WPOS.print.loadPrintSettings();
                 setKeypad(true);
+         
             }
             return;
         }
-        alert("Please login as an administrator to use this feature");
+        swal({
+            type: 'error',
+            title: 'Oops...',
+            text: 'Please login as an administrator to use this feature'
+          });
+          
     };
 
     this.clearLocalData = function(){
         if (isUserAdmin()){
-            var answer = confirm("Are you sure you want to clear all local data?\nThis removes all locally stored data except device registration key.\nOffline Sales will be deleted.");
+           // var answer = confirm("Are you sure you want to clear all local data?\nThis removes all locally stored data except device registration key.\nOffline Sales will be deleted.");
+            var answer;
+            swal({
+                title: 'Are you sure?\n',
+                text: 'This action will remove all locally stored data except device registration key.\nOffline Sales will also be deleted.',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Clear!'
+              }).then(function (answer){
+                if (answer.value) {
+                  swal(
+                    'Cleared!',
+                    'Your stored data has been cleared.',
+                    'success'
+                  )
+                }
+              });
+
             if (answer){
                 localStorage.removeItem("wpos_auth");
                 localStorage.removeItem("wpos_config");
@@ -597,14 +855,38 @@ function WPOS() {
             }
             return;
         }
-        alert("Please login as an administrator to use this feature");
+        swal({
+            type: 'error',
+            title: 'Oops...',
+            text: 'Please login as an administrator to use this feature'
+          });
     };
 
     this.refreshRemoteData = function(){
-        var answer = confirm("Are you sure you want to reload data from the server?");
-        if (answer){
+       // var answer = confirm("Are you sure you want to reload data from the server?");
+        swal({
+            title: 'Reload Data',
+            text: "Are you sure you want to reload data from the server?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Reload it!'
+          }).then(function (result) {
+           if (result.value) {
+            
             loadOnlineData(1, false);
-        }
+                            setTimeout(
+                    function() 
+                    {
+                        swal('Reloaded!', 'Your data has been reloaded from the server.', 'success');
+                    }, 200);
+                          
+            }
+          });
+       /* if (answer){
+            loadOnlineData(1, false);
+        }*/
     };
 
     this.refreshData = function() {
@@ -769,7 +1051,12 @@ function WPOS() {
             return true;
         } else {
             // display error notice
-            alert("There was an error connecting to the webserver & files needed to run offline are not present :( \nPlease check your connection and try again.");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'There was an error connecting to the webserver & files needed to run offline are not present :( \nPlease check your connection and try again.'
+              });
+              
             showLogin();
             setLoadingBar(100, "Error switching to offine mode");
             return false;
@@ -811,7 +1098,12 @@ function WPOS() {
         if (response.status == "200") {
             var json = $.parseJSON(response.responseText);
             if (json == null) {
-                alert("Error: The response that was returned from the server could not be parsed!");
+                swal({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Error: The response that was returned from the server could not be parsed!'
+                  });
+                  
                 return false;
             }
             var errCode = json.errorCode;
@@ -819,7 +1111,12 @@ function WPOS() {
             if (err == "OK") {
                 // echo warning if set
                 if (json.hasOwnProperty('warning')){
-                    alert(json.warning);
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: json.warning
+                      });
+                      
                 }
                 return json.data;
             } else {
@@ -831,18 +1128,33 @@ function WPOS() {
                         return false;
                     }
                 } else {
-                    alert(err);
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: err
+                      });
+                      
                     return false;
                 }
             }
         } else {
             switchToOffline();
-            alert("There was an error connecting to the server: \n"+response.statusText+", \n switching to offline mode");
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'There was an error connecting to the server: \n"+response.statusText+", \n switching to offline mode'
+              });
+              
             return false;
         }
         } catch (ex) {
             switchToOffline();
-            alert("There was an error sending data, switching to offline mode.\nException: "+ex.message);
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'There was an error sending data, switching to offline mode.\nException: '+ex.message
+              });
+              
             return false;
         }
     };
@@ -863,7 +1175,13 @@ function WPOS() {
                     if (err == "OK") {
                         // echo warning if set
                         if (json.hasOwnProperty('warning')){
-                            alert(json.warning);
+                            swal({
+                                type: 'error',
+                                title: 'Oops...',
+                                text: json.warning
+                              });
+                              
+                              
                         }
                         callback(json.data);
                     } else {
@@ -876,18 +1194,32 @@ function WPOS() {
                                 callback(false);
                             }
                         } else {
-                            alert(err);
+                            swal({
+                                type: 'error',
+                                title: 'Oops...',
+                                text: err
+                              });
+                              
                             callback(false);
                         }
                     }
                 },
                 error   : function(jqXHR, status, error){
-                    alert(error);
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: error
+                      });
                     callback(false);
                 }
             });
         } catch (ex) {
-            alert("Exception: "+ex.message);
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Exception: '+ex.message
+              });
+              
             callback(false);
         }
     };
@@ -907,7 +1239,12 @@ function WPOS() {
                     if (err == "OK") {
                         // echo warning if set
                         if (json.hasOwnProperty('warning')){
-                            alert(json.warning);
+                            swal({
+                                type: 'error',
+                                title: 'Oops...',
+                                text: json.warning
+                              });
+                              
                         }
                         if (callback)
                             callback(json.data);
@@ -923,19 +1260,37 @@ function WPOS() {
                                 }
                             }
                         }
-                        alert(err);
+                        swal({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: err
+                          });
+                          
+                          
                         if (callback)
                             callback(false);
                     }
                 },
                 error   : function(jqXHR, status, error){
-                    alert(error);
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: error
+                      });
+                      
+                      
                     if (callback)
                         callback(false);
                 }
             });
         } catch (ex) {
-            alert("Exception: "+ex.message);
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Exception: '+ex.message
+              });
+              
+              
             if (callback)
                 callback(false);
         }
@@ -987,7 +1342,6 @@ function WPOS() {
         data.uuid = getDeviceUUID();
         return WPOS.sendJsonDataAsync("config/get", JSON.stringify(data), function(data){
             if (data) {
-                //console.log(data);
                 if (data=="removed" || data=="disabled"){ // return false if dev is disabled
                     if (data=="removed")
                         removeDeviceUUID();
@@ -1030,7 +1384,13 @@ function WPOS() {
                     if (data.a == "removed")
                         removeDeviceUUID();
                     logout();
-                    alert("This device has been " + data.a + " by the administrator,\ncontact your device administrator for help.");
+                   
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'This device has been " + data.a + " by the administrator,\ncontact your device administrator for help.'
+                      });
+                      
                     return;
                 }
                 // update root level config values
@@ -1150,15 +1510,18 @@ function WPOS() {
     function deviceSetup(devid, newdevname, locid, newlocname, callback) {
         var data = {};
         data.uuid = setDeviceUUID(false);
-        if (devid === "") {
+        if (devid === undefined || devid === null || devid === "") {
             data.devicename = newdevname;
         } else {
             data.deviceid = devid;
         }
-        if (locid === "") {
+        if (locid === undefined || locid === null || locid == "") {
             data.locationname = newlocname;
         } else {
             data.locationid = locid;
+        }
+        if (subscriptionStatus === null) {
+          data.subscriptionStatus = false;
         }
         WPOS.sendJsonDataAsync("devices/setup", JSON.stringify(data), function(configobj){
             if (configobj !== false) {
@@ -1504,7 +1867,12 @@ function WPOS() {
                         break;
 
                     case "msg":
-                        alert(data.data);
+                        swal({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: data.data
+                          });
+                          
                         break;
 
                     case "reset":
@@ -1526,7 +1894,13 @@ function WPOS() {
                             return;
                         }
 
-                        alert(data.data);
+                        swal({
+                            type: 'success',
+                            title: 'Oops...',
+                            text: data.data
+                          });
+                          
+
                         break;
                 }
                 var statustypes = ['item', 'sale', 'customer', 'config', 'kitchenack'];
@@ -1630,7 +2004,7 @@ $(function () {
     $("#wrapper").tabs();
 
     $("#paymentsdiv").dialog({
-        maxWidth : 500,
+        maxWidth : 5000,
         width : 'auto',
         modal   : true,
         autoOpen: false,
@@ -1677,7 +2051,7 @@ $(function () {
         }
     });
 
-    $("#setupdiv").dialog({
+    $("setupdiv").dialog({
         width        : 200,
         maxWidth     : 200,
         modal        : true,
@@ -1685,14 +2059,14 @@ $(function () {
         autoOpen     : false,
         dialogClass: 'setup-dialog',
         open         : function (event, ui) {
-            $(".ui-dialog-titlebar-close").hide();
+            $('#setupdiv').hide();
         },
         close        : function (event, ui) {
-            $(".ui-dialog-titlebar-close").show();
+            $('#setupdiv').show();
         },
         create: function( event, ui ) {
             // Set maxWidth
-            $(this).css("maxWidth", "200px");
+            $(this).css("maxWidth", "500px");
         }
     });
 

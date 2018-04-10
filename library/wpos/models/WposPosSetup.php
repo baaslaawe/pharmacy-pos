@@ -132,7 +132,6 @@ class WposPosSetup
         $WposConfig = new WposAdminSettings();
         // Get general & global pos configuration
         $settings = $WposConfig->getAllSettings();
-
         if ($settings === false){
             $result['error'] = "Global config could not be retrieved!";
         }
@@ -258,7 +257,6 @@ class WposPosSetup
         if ($this->data->deviceid == null) {
             if ($this->data->devicename == null) {
                 $result['error'] = "The no device id or name was provided";
-
                 return $result;
             } else {
                 // create a new device using the provided name; default to general register for now
@@ -303,6 +301,18 @@ class WposPosSetup
                     $result['error'] = "Failed to update the devices location: ".$this->devMdl->errorInfo;
                     return $result;
                 }
+            }
+        }
+        if (isset($this->data->subscriptionStatus)) {
+            $startDate = date_add(date_create(), date_interval_create_from_date_string("14 days"));
+            $subscription = [
+                expiryDate => $startDate->format(DATE_RFC1123),
+                status => 'activated',
+                activationTime => date(DATE_RFC1123)
+            ];
+            $config = new ConfigModel();
+            if($config->create('subscription', json_encode($subscription))== false) {
+                $result['error'] = "Failed to activate subscription";
             }
         }
 
@@ -641,9 +651,9 @@ class WposPosSetup
      *
      * @return bool true if uuid insert successful
      */
-    private function addNewUuid($deviceId, $uuid)
+    private function addNewUuid($uuid, $deviceId)
     {
-        if ($this->devMdl->addUuid($deviceId, $uuid) !== false) {
+        if ($this->devMdl->addUuid($uuid, $deviceId) !== false) {
             return true;
         } else {
             return false;

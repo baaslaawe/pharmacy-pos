@@ -1,18 +1,61 @@
 {
-  "name": "wpos",
-  "version": "1.0.0",
-  "repository": "https://github.com/micwallace/wallacepos.git",
+  "name": "pharmacy_pos",
+  "productName": "Pharmacy Plus POS",
+  "version": "0.0.1",
+  "repository": "https://github.com/nyugoh/pharmacy-pos.git",
   "description": "Web based POS system",
-  "main": "/app/api/server.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "electron-builder install-app-deps",
+    "start": "yarn install && electron .",
+    "pack": "build --dir --win --ia32",
+    "dist": "build --win --ia32"
   },
-  "author": "WallaceIT",
+  "author": "Magnum Digital Limited Kenya <joenyugoh@gmail.com>",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "socket.io": "~1.7.x"
+    "browser-window": "^0.4.0",
+    "moment": "^2.20.1",
+    "socket.io": "~1.7.x",
+    "sweetalert2": "^7.12.3"
   },
   "engines": {
-    "node": "~4.2.x"
+    "node": ">=6.11.4"
+  },
+  "devDependencies": {
+    "electron": "^1.8.3",
+    "electron-builder": "^20.8.1"
+  },
+  "config": {
+    "forge": "electron-forge-config.js"
+  },
+  "build": {
+    "appId": "com.electron.magnum",
+    "productName": "Pharmacy Plus POS",
+    "copyright": "Copyright © 2018 Magnum Digital Limited Kenya",
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/images/win.ico"
+    }
   }
 }
