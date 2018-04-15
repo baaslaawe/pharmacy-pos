@@ -643,7 +643,7 @@
           'amount': {title:'*Stock Level', required: true},
           'reorderpoint': {title:'Reorder Point', required: false, value: "0"},
           'supplier_name': {title:'*Supplier Name', required: true},
-          'inventoryNo': {title:'Inventory No', required: false, value: "0000"},
+          'inventoryNo': {title:'Invoice No', required: false, value: "0000"},
           'expiryDate': {title:'Expiry Date', required: false, value: "12/31/2050"},
           'tax_name': {title:'Tax Name', required: false, value: "No Tax"},
           'category_name': {title:'Category Name', required: false, value: "General"}

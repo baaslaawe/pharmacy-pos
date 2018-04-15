@@ -296,6 +296,8 @@
         html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td>Supplier</td><td>Location</td><td>Stock Qty</td><td>Expiry Date</td></tr></thead><tbody>";
         for (var i in repdata){
             rowdata = repdata[i];
+            console.log(new Date(rowdata.expiryDate));
+            console.log(rowdata.expiryDate)
             if (new Date(rowdata.expiryDate) <= new Date())
               html += "<tr><td>"+rowdata.name+"</td><td>"+rowdata.supplier+"</td><td>"+rowdata.location+"</td><td>"+rowdata.stocklevel+"</td><td>"+rowdata.expiryDate+"</td></tr>"
         }
@@ -307,7 +309,6 @@
     function populateCost(){
       var html = getCurrentReportHeader("Suppliers Cost");
       html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td>Supplier</td><td>Cost</td></tr></thead><tbody>";
-      console.log(repdata);
 //      for (var i in repdata){
 //        rowdata = repdata[i];
 //        html += "<tr><td>"+rowdata.name+"</td><td>"+rowdata.supplier+"</td><td>"+rowdata.cost+"</td></tr>"
