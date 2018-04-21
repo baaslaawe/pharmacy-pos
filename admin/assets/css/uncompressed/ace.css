@@ -5531,10 +5531,10 @@ input[type=checkbox].ace.ace-switch.ace-switch-7:checked + .lbl::after {
   padding-bottom: 0;
 }
 /* tables */th,
-td,
-.table-bordered {
-  border-radius: 0 !important;
-}
+            td,
+            .table-bordered {
+              border-radius: 0 !important;
+            }
 .table thead tr {
   color: #707070;
   font-weight: normal;
@@ -5596,10 +5596,10 @@ td .lbl:only-child {
   filter: alpha(opacity=75);
 }
 /* dataTables */.dataTables_length select {
-  width: 70px;
-  height: 25px;
-  padding: 2px 3px;
-}
+                  width: 70px;
+                  height: 25px;
+                  padding: 2px 3px;
+                }
 .dataTables_length label {
   font-weight: normal;
 }

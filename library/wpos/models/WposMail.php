@@ -48,7 +48,7 @@ class WposMail {
         $mail = new PHPMailer();
         $mail->isSMTP(); // Set mailer to use SMTP
 
-        $mail->Host = ($config->email_host==""?"127.0.0.1":$config->email_host);  // Specify main and backup SMTP servers
+        $mail->Host = 'ssl://'.($config->email_host==""?"127.0.0.1":$config->email_host);  // Specify main and backup SMTP servers
         if (is_numeric($config->email_port))
             $mail->Port = intval($config->email_port);
 

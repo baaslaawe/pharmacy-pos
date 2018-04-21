@@ -102,7 +102,7 @@ function WPOSTransactions() {
         $("#transtotal").text(WPOS.util.currencyFormat(record.total));
 
         populateItemsTable(record.items);
-        populatePaymentsTable(record.payments);
+        populatePaymentsTable(record.payments, record.total);
         populateInvoiceInfo(record);
         populateTaxinfo(record);
         populateVoidInfo(record);
@@ -242,7 +242,8 @@ function WPOSTransactions() {
         }
     }
 
-    function populatePaymentsTable(payments) {
+    function populatePaymentsTable(payments, total) {
+        var balance = total;
         var paytable = $("#transpaymenttable");
         $(paytable).html('');
         var method, amount;
@@ -250,6 +251,7 @@ function WPOSTransactions() {
             // catch extras
             method = payments[i].method;
             amount = payments[i].amount;
+            balance -= parseInt(payments[i].amount);
             var paydetailsbtn = '';
             if (payments[i].hasOwnProperty('paydata')){
                 // check for integrated payment details
@@ -262,8 +264,10 @@ function WPOSTransactions() {
                 }
             }
             $(paytable).append('<tr><td>' + WPOS.util.capFirstLetter(method) + '</td><td>' + WPOS.util.currencyFormat(amount) + '</td><td>' + WPOS.util.getShortDate(payments[i].processdt) + '</td><td>' + paydetailsbtn +
-                '<div class="action-buttons paybuttons" style="text-align: right;"><a onclick="openInvoicePaymentDialog(' + i + ')" class="green"><i class="icon-pencil bigger-130"></i></a><a onclick="WPOS.transactions.deleteInvoicePayment(' + payments[i].id + ')" class="red"><i class="icon-trash bigger-130"></i></a></div></td></tr>');
+                '<div class="action-buttons paybuttons" style="text-align: right;"><a onclick="WPOS.transactions.openInvoicePaymentDialog(' + i + ')" class="green"><i class="icon-pencil bigger-130"></i></a><a onclick="WPOS.transactions.deleteInvoicePayment(' + payments[i].id + ')" class="red"><i class="icon-trash bigger-130"></i></a></div></td></tr>');
         }
+        $('#invoiceBalance').text(WPOS.util.currencyFormat(balance));
+        $('#invoiceTotal').text(WPOS.util.currencyFormat(total));
     }
 
     function populateRefundTable(record) {
@@ -541,42 +545,22 @@ function WPOSTransactions() {
 
     // DATA FUNCTIONS
     this.updateInvoice = function() {
-    //   var answer = confirm("Save invoice details?");
-
-
-        swal({
-            title: 'Invoice Details',
-            text: "Save invoice details?",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Save it!'
-          }).then(function (result) {
-           if (result.value) {
-            
-                 // show loader
-            WPOS.util.showLoader();
-            var result = WPOS.sendJsonData("invoices/edit", JSON.stringify({id: curid, processdt: $("#invprocessdt").datepicker("getDate").getTime(), duedt: $("#invduedt").datepicker("getDate").getTime(), closedt: ($("#invclosedt").val() == "" ? "" : $("#invclosedt").datepicker("getDate").getTime()), discount: $("#invdiscountval").val(), notes: $('#transnotes').val()}));
-            if (result !== false) {
-                transactions[curref] = result;
-                this.openTransactionDialog(curref);
-                reloadTransactionTables();
-            }
-            // hide loader
-            WPOS.util.hideLoader();
-                setTimeout(
-                    function() 
-                    {
-                        swal('Saved!', 'Your Invoice details have been saved.', 'success');
-                    }, 200);
-                          
-            }
-          });
-
-
-
-       
+      var answer = confirm("Save invoice details?");
+      if (answer) {
+        // show loader
+        WPOS.util.showLoader();
+        var result = WPOS.sendJsonData("invoices/edit", JSON.stringify({id: curid, processdt: $("#invprocessdt").datepicker("getDate").getTime(), duedt: $("#invduedt").datepicker("getDate").getTime(), closedt: ($("#invclosedt").val() == "" ? "" : $("#invclosedt").datepicker("getDate").getTime()), discount: $("#invdiscountval").val(), notes: $('#transnotes').val()}));
+        if (result !== false) {
+          transactions[curref] = result;
+          this.openTransactionDialog(curref);
+          reloadTransactionTables();
+        }
+        // hide loader
+        WPOS.util.hideLoader();
+        setTimeout(function() {
+          swal('Saved!', 'Your Invoice details have been saved.', 'success');
+        }, 200);
+      }
     };
 
     this.saveInvoiceItem = function() {

@@ -58,13 +58,26 @@
 </div><!-- /.row -->
 <div id="addinvoicedialog" class="hide" style="padding-left: 20px; padding-right: 20px;">
     <form id="addinvoiceform">
-        <label class="fixedlabel">Customer: </label><select style="width: 180px;" id="ninvcustid"></select>
-        <div class="space-8"></div>
-        <label class="fixedlabel">Invoice Date: </label><input type="text" id="ninvprocessdt" onclick="$(this).blur();"/>
-        <div class="space-8"></div>
-        <label class="fixedlabel">Due Date: </label><input type="text" id="ninvduedt" onclick="$(this).blur();"/>
-        <div class="space-8"></div>
-        <label class="fixedlabel">Notes: </label><textarea id="ninvnotes"></textarea>
+      <table>
+        <tr>
+          <td><label class="fixedlabel">Customer: </label></td>
+          <td><select style="width: 180px;" id="ninvcustid"></select></td>
+        </tr>
+        <tr>
+          <td><label class="fixedlabel">Invoice Date: </label></td>
+          <td> <input class="form-control" type="text" id="ninvprocessdt" onclick="$(this).blur();"/></td>
+        </tr>
+        <tr>
+          <td><label class="fixedlabel">Due Date: </label></td>
+          <td><input class="form-control" type="text" id="ninvduedt" onclick="$(this).blur();"/></td>
+        </tr>
+        <tr>
+          <td colspan="2"><label class="fixedlabel">Notes: </label></td>
+        </tr>
+        <tr>
+          <td colspan="2"><textarea class="form-control" id="ninvnotes"></textarea></td>
+        </tr>
+      </table>
     </form>
 </div>
 <!-- inline scripts related to this page -->
