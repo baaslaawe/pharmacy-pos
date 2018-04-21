@@ -427,71 +427,71 @@
         <div id="addcustdialog" class="hide">
             <table>
                 <tr>
-                    <td style="text-align: right;"><label>Name:&nbsp;</label></td>
-                    <td><input class="form-control"id="newcustname" type="text"/></td>
+                    <td style="text-align: right;"><label>Name: (<span class="text-danger">Required</span>)&nbsp;</label></td>
+                    <td><input class="form-control" id="newcustname" type="text"/></td>
                 </tr>
                 <tr>
                     <td style="text-align: right;"><label>Email:&nbsp;</label></td>
-                    <td><input class="form-control"id="newcustemail" type="text"/><br/></td>
+                    <td><input class="form-control" id="newcustemail" placeholder="Email..." type="text"/><br/></td>
+                </tr>
+                <tr style="display: none;">
+                    <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
+                    <td><input class="form-control" id="newcustphone" placeholder="Phone number..." type="hidden"/></td>
                 </tr>
                 <tr>
                     <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
-                    <td><input class="form-control"id="newcustphone" type="text"/></td>
+                    <td><input class="form-control" id="newcustmobile" placeholder="Phone number..." type="text"/></td>
                 </tr>
-                <tr>
-                    <td style="text-align: right;"><label>Mobile:&nbsp;</label></td>
-                    <td><input class="form-control"id="newcustmobile" type="text"/></td>
-                </tr>
-                <tr>
+                <tr style="display: none;">
                     <td style="text-align: right;"><label>Address:&nbsp;</label></td>
-                    <td><input class="form-control"id="newcustaddress" type="text"/></td>
+                    <td><input class="form-control" id="newcustaddress" type="text"/></td>
                 </tr>
-                <tr>
+                <tr style="display: none;">
                     <td style="text-align: right;"><label>Suburb:&nbsp;</label></td>
-                    <td><input class="form-control"id="newcustsuburb" type="text"/></td>
+                    <td><input class="form-control" id="newcustsuburb" type="text"/></td>
                 </tr>
-                <tr>
+                <tr style="display: none;">
                     <td style="text-align: right;"><label>Postcode:&nbsp;</label></td>
-                    <td><input class="form-control"id="newcustpostcode" type="text"/></td>
+                    <td><input class="form-control" id="newcustpostcode" value="0002030" type="text"/></td>
                 </tr>
-                <tr>
+                <tr style="display: none;">
                     <td style="text-align: right;"><label>State:&nbsp;</label></td>
-                    <td><input class="form-control"id="newcuststate" type="text"/></td>
+                    <td><input class="form-control" id="newcuststate" type="text"/></td>
                 </tr>
-                <tr>
+                <tr style="display: none;">
                     <td style="text-align: right;"><label>Country:&nbsp;</label></td>
-                    <td><input class="form-control"id="newcustcountry" type="text"/></td>
+                    <td><input class="form-control" id="newcustcountry" type="text"/></td>
                 </tr>
             </table>
         </div>
         <div id="custcontactdialog" class="hide">
             <form id="custcontactform">
-                <input class="form-control"id="contid" type="hidden" value="0"/>
-                <input class="form-control"id="contcustid" type="hidden" value="0"/>
+                <input class="form-control" id="contid" type="hidden" value="0"/>
+                <input class="form-control" id="contcustid" type="hidden" value="0"/>
                 <table>
                     <tr>
                         <td style="text-align: right;"><label>Name:&nbsp;</label></td>
-                        <td><input class="form-control"id="contname" type="text"/></td>
+                        <td><input class="form-control" id="contname" type="text"/></td>
                     </tr>
                     <tr>
                         <td style="text-align: right;"><label>Position:&nbsp;</label></td>
-                        <td><input class="form-control"id="contposition" type="text"/></td>
+                        <td><input class="form-control" id="contposition" type="text"/></td>
                     </tr>
                     <tr>
                         <td style="text-align: right;"><label>Email:&nbsp;</label></td>
-                        <td><input class="form-control"id="contemail" type="text"/><br/></td>
+                        <td><input class="form-control" id="contemail" type="text"/><br/></td>
                     </tr>
                     <tr>
                         <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
-                        <td><input class="form-control"id="contphone" type="text"/></td>
+                        <td><input class="form-control" id="contphone" type="text"/></td>
                     </tr>
                     <tr>
                         <td style="text-align: right;"><label>Mobile:&nbsp;</label></td>
-                        <td><input class="form-control"id="contmobile" type="text"/></td>
+                        <td><input class="form-control" id="contmobile" type="text"/></td>
                     </tr>
                     <tr>
                         <td style="text-align: right;"><label>Receives Invoices:&nbsp;</label></td>
-                        <td><input class="form-control"id="contrecinv" type="checkbox"/></td>
+                        <td><input class="form-control" id="contrecinv" type="checkbox"/></td>
                     </tr>
                 </table>
             </form>
