@@ -541,42 +541,22 @@ function WPOSTransactions() {
 
     // DATA FUNCTIONS
     this.updateInvoice = function() {
-    //   var answer = confirm("Save invoice details?");
-
-
-        swal({
-            title: 'Invoice Details',
-            text: "Save invoice details?",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Save it!'
-          }).then(function (result) {
-           if (result.value) {
-            
-                 // show loader
-            WPOS.util.showLoader();
-            var result = WPOS.sendJsonData("invoices/edit", JSON.stringify({id: curid, processdt: $("#invprocessdt").datepicker("getDate").getTime(), duedt: $("#invduedt").datepicker("getDate").getTime(), closedt: ($("#invclosedt").val() == "" ? "" : $("#invclosedt").datepicker("getDate").getTime()), discount: $("#invdiscountval").val(), notes: $('#transnotes').val()}));
-            if (result !== false) {
-                transactions[curref] = result;
-                this.openTransactionDialog(curref);
-                reloadTransactionTables();
-            }
-            // hide loader
-            WPOS.util.hideLoader();
-                setTimeout(
-                    function() 
-                    {
-                        swal('Saved!', 'Your Invoice details have been saved.', 'success');
-                    }, 200);
-                          
-            }
-          });
-
-
-
-       
+      var answer = confirm("Save invoice details?");
+      if (answer) {
+        // show loader
+        WPOS.util.showLoader();
+        var result = WPOS.sendJsonData("invoices/edit", JSON.stringify({id: curid, processdt: $("#invprocessdt").datepicker("getDate").getTime(), duedt: $("#invduedt").datepicker("getDate").getTime(), closedt: ($("#invclosedt").val() == "" ? "" : $("#invclosedt").datepicker("getDate").getTime()), discount: $("#invdiscountval").val(), notes: $('#transnotes').val()}));
+        if (result !== false) {
+          transactions[curref] = result;
+          this.openTransactionDialog(curref);
+          reloadTransactionTables();
+        }
+        // hide loader
+        WPOS.util.hideLoader();
+        setTimeout(function() {
+          swal('Saved!', 'Your Invoice details have been saved.', 'success');
+        }, 200);
+      }
     };
 
     this.saveInvoiceItem = function() {
