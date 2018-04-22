@@ -312,7 +312,7 @@
         <div id="loginmodal" class="login-layout">
             <div class="login-page">
                 <div class="form text-center">
-                    <img style="height: 35px; margin-top: -5px; margin-bottom: 10px;" src="/assets/images/Untitled-2.png">
+                    <img style="height: 35px; margin-top: -5px; margin-bottom: 10px;" src="/assets/images/biashara-pos-logo.png">
                     <div id="login-banner" class="alert alert-block alert-success" style="display:none;">
                         <i class="icon icon-lock green" style="margin-right: 3px;"></i>
                         <span id="login-banner-txt"></span>
@@ -335,8 +335,8 @@
         <a style="display: none;" id="dlelem" href=""></a>
 
         <div id="editcustdialog" class="hide">
-            <div class="tabbable" style="min-width: 360px; min-height: 310px;">
-                <ul class="nav nav-tabs">
+            <div class="tabbable" >
+                <ul class="nav nav-tabs" style="margin-left: 0;">
                     <li class="active">
                         <a href="#details" data-toggle="tab">
                             Details
@@ -347,19 +347,19 @@
                             Notes
                         </a>
                     </li>
-                    <li class="">
-                        <a href="#contacts" data-toggle="tab">
-                            Contacts
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="#options" data-toggle="tab">
-                            Options
-                        </a>
-                    </li>
+                    <!--<li class="">-->
+                        <!--<a href="#contacts" data-toggle="tab">-->
+                            <!--Contacts-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!--<li class="">-->
+                        <!--<a href="#options" data-toggle="tab">-->
+                            <!--Options-->
+                        <!--</a>-->
+                    <!--</li>-->
                 </ul>
 
-                <div class="tab-content" style="min-height: 320px;">
+                <div class="tab-content" style="padding-top:10px;">
                     <div class="tab-pane active in" id="details">
                         <table>
                             <tr>
@@ -370,38 +370,38 @@
                                 <td style="text-align: right;"><label>Email:&nbsp;</label></td>
                                 <td><input class="form-control"id="custemail" type="text"/></td>
                             </tr>
-                            <tr>
+                            <tr style=" display: none;">
                                 <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
                                 <td><input class="form-control"id="custphone" type="text"/></td>
                             </tr>
                             <tr>
-                                <td style="text-align: right;"><label>Mobile:&nbsp;</label></td>
+                                <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
                                 <td><input class="form-control"id="custmobile" type="text"/></td>
                             </tr>
                             <tr>
                                 <td style="text-align: right;"><label>Address:&nbsp;</label></td>
                                 <td><input class="form-control"id="custaddress" type="text"/></td>
                             </tr>
-                            <tr>
+                            <tr style=" display: none;">
                                 <td style="text-align: right;"><label>Suburb:&nbsp;</label></td>
                                 <td><input class="form-control"id="custsuburb" type="text"/></td>
                             </tr>
-                            <tr>
+                            <tr style=" display: none;">
                                 <td style="text-align: right;"><label>Postcode:&nbsp;</label></td>
                                 <td><input class="form-control"id="custpostcode" type="text"/></td>
                             </tr>
-                            <tr>
+                            <tr style=" display: none;">
                                 <td style="text-align: right;"><label>State:&nbsp;</label></td>
                                 <td><input class="form-control"id="custstate" type="text"/></td>
                             </tr>
-                            <tr>
+                            <tr style=" display: none;">
                                 <td style="text-align: right;"><label>Country:&nbsp;</label></td>
                                 <td><input class="form-control"id="custcountry" type="text"/></td>
                             </tr>
                         </table>
                     </div>
-                    <div class="tab-pane" id="notes" style="height: 280px;">
-                        <textarea style="width: 100%; height: 100%;" id="custnotes"></textarea>
+                    <div class="tab-pane" id="notes">
+                        <textarea class="form-control" id="custnotes"></textarea>
                     </div>
                     <div class="tab-pane" id="contacts">
                         <button onclick="WPOS.customers.openEditContactDialog(null);" class="btn btn-sm btn-primary pull-right">Add</button>
@@ -440,7 +440,7 @@
                 </tr>
                 <tr>
                     <td style="text-align: right;"><label>Email:&nbsp;</label></td>
-                    <td><input class="form-control" id="newcustemail" placeholder="Email..." type="text"/><br/></td>
+                    <td><input class="form-control" id="newcustemail" placeholder="Email..." type="text"/></td>
                 </tr>
                 <tr style="display: none;">
                     <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
@@ -450,7 +450,7 @@
                     <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
                     <td><input class="form-control" id="newcustmobile" placeholder="Phone number..." type="text"/></td>
                 </tr>
-                <tr style="display: none;">
+                <tr>
                     <td style="text-align: right;"><label>Address:&nbsp;</label></td>
                     <td><input class="form-control" id="newcustaddress" type="text"/></td>
                 </tr>
@@ -507,13 +507,13 @@
 
         <div id="edittransdialog" class="hide" style="padding-left: 20px; padding-right: 20px;">
             <div style="width: 100%; margin: 0; margin-bottom: 5px;">
-            <div style="display: inline-block; margin: 0; width: 49%; min-width: 250px; max-width: 300px; padding: 0 10px 5px 10px;">
+            <div style="display: inline-block; margin: 0; width: 49%; min-width: 250px; max-width: 300px;">
                 <label class="fixedlabel">Status:</label> <span id="transstat"></span><br/>
                 <label class="fixedlabel">ID:</label> <span id="transid"></span><br/>
                 <label class="fixedlabel">Ref:</label> <span id="transref"></span><br/>
-                <label class="fixedlabel">Trans DT:</label> <span id="transtime"></span><br/>
+                <!--<label class="fixedlabel">Trans DT:</label> <span id="transtime"></span><br/>-->
             </div>
-            <div style="display: inline-block; margin: 0; width: 49%; min-width: 250px; max-width: 300px; padding: 0 10px 5px 10px;">
+            <div style="display: inline-block; margin: 0; width: 49%; min-width: 250px; max-width: 300px;">
                 <label class="fixedlabel">Process DT:</label> <span id="transptime"></span><br/>
                 <label class="fixedlabel">User:</label> <span id="transuser"></span><br/>
                 <label class="fixedlabel">Device:</label> <span id="transdev"></span><br/>
@@ -611,14 +611,10 @@
                         <div class="inline" style="min-width: 250px; vertical-align: top;">
                         <div id="tcustdetails">
                             <h4>Customer Details:</h4>
-                            <span id="tcustname"></span><br/>
-                            <span id="tcustaddress"></span><br/>
-                            <span id="tcustsuburb"></span>, &nbsp;<span id="icustpostcode"></span><br/>
-                            <span id="tcustcountry"></span>
-                            <div class="space-4"></div>
-                            P: <span id="tcustphone"></span><br/>
-                            M: <span id="tcustmobile"></span><br/>
-                            E: <span id="tcustemail"></span><br/>
+                            <span>Name: </span><span id="tcustname"></span><br/>
+                            <span>Address: </span><span id="tcustaddress"></span><br/>
+                            <span>Phone: </span><span id="tcustmobile"></span><br/>
+                            <span>Email: </span><span id="tcustemail"></span><br/>
                             <input class="form-control"type="hidden" id="tcustid"/>
                             <button id="transcustdtlbtn" class="btn btn-xs btn-primary" onclick="WPOS.customers.openCustomerDialog($('#tcustid').val());">Details</button>
                         </div>
@@ -664,7 +660,7 @@
                         <h4>Options:</h4>
                         <div style="text-align: center;">
                             <button onclick="WPOS.transactions.showGenerateDialog();" class="btn btn-sm btn-primary" style="padding: 5px;"><i class="icon-file"></i> Generate Invoice</button>
-                            <button onclick="WPOS.transactions.showEmailDialog();" class="btn btn-sm btn-success" style="padding: 5px;"><i class="icon-envelope"></i> Email Invoice</button>
+                            <!--<button onclick="WPOS.transactions.showEmailDialog();" class="btn btn-sm btn-success" style="padding: 5px;"><i class="icon-envelope"></i> Email Invoice</button>-->
                             <button onclick="WPOS.transactions.showHistoryDialog();" class="btn btn-sm btn-warning" style="padding: 5px;"><i class="icon-list"></i> History</button>
                         </div>
                     </div>
@@ -679,24 +675,24 @@
                 <input class="form-control"type="hidden" id="transitempriceval" value="0"/>
                 <div class="col-sm-12">
                     <label class="fixedlabel">Search for item name or code: </label>
-                    <input class="form-control"class="form-control" placeholder="Search for item name/stock code here..." type="text" id="stitemsearch"/>
+                    <input class="form-control" placeholder="Search for item name/stock code here..." type="text" id="stitemsearch"/>
                     <hr>
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
-                        <label class="fixedlabel">Qty: </label>
+                        <label class="fixedlabel">Qty: (<span class="text-danger">Required*</span>)</label>
                         <input class="form-control"type="text" placeholder="Total items..." id="transitemqty" onchange="WPOS.transactions.calculateItemTotals();"/>
                         <div class="space-4"></div>
                         <label class="fixedlabel">Name: </label><input class="form-control"type="text" id="transitemname"/>
-                        <div class="space-4"></div>
-                        <label class="fixedlabel">Alt Name: </label><input class="form-control"type="text" id="transitemaltname"/><br/><small>Alternate language name</small>
+                        <div class="space-4" style="display: none;"></div>
+                        <label class="fixedlabel" style="display: none;">Alt Name: </label><input class="form-control"type="text" id="transitemaltname" style="display: none;"/><small  style="display: none;">Alternate language name</small>
                         <div class="space-4"></div>
                         <label class="fixedlabel">Description: </label><textarea class="form-control" style="width: 100%; resize: none;" id="transitemdesc"></textarea>
                     </div>
                     <div class="col-sm-6">
-                        <label class="fixedlabel">Cost: </label><input class="form-control"type="text" id="transitemcost"/>
+                        <label class="fixedlabel">Cost: </label><input class="form-control" type="text" id="transitemcost"/>
                         <div class="space-4"></div>
-                        <label class="fixedlabel">Unit: </label><input class="form-control"type="text" id="transitemunit" onchange="WPOS.transactions.calculateItemTotals();"/>
+                        <label class="fixedlabel">Unit: </label><input class="form-control" type="text" id="transitemunit" onchange="WPOS.transactions.calculateItemTotals();"/>
                         <div class="space-4"></div>
                         <label class="fixedlabel">Tax: </label><select type="text" id="transitemtaxid" class="taxselect form-control" onchange="WPOS.transactions.calculateItemTotals();"></select>
                         <div class="space-4"></div>

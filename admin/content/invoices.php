@@ -65,11 +65,11 @@
         </tr>
         <tr>
           <td><label class="fixedlabel">Invoice Date: </label></td>
-          <td> <input class="form-control" type="text" id="ninvprocessdt" onclick="$(this).blur();"/></td>
+          <td> <input style="width: 100%;" class="form-control" type="text" id="ninvprocessdt" onclick="$(this).blur();"/></td>
         </tr>
         <tr>
           <td><label class="fixedlabel">Due Date: </label></td>
-          <td><input class="form-control" type="text" id="ninvduedt" onclick="$(this).blur();"/></td>
+          <td><input style="width: 100%;" class="form-control" type="text" id="ninvduedt" onclick="$(this).blur();"/></td>
         </tr>
         <tr>
           <td colspan="2"><label class="fixedlabel">Notes: </label></td>
