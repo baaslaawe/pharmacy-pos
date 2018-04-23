@@ -633,7 +633,7 @@ function WPOSPrint(kitchenMode) {
         cmd += (ltr ? esc_a_l : esc_a_r);
         record.isorder ? record.sale_type = "Order": record.sale_type = "Sale";
         cmd += getEscTableRow(formatLabel(translateLabel("Transaction Ref"), true, 1), record.ref, false, false, false);
-        cmd += getEscTableRow(formatLabel(translateLabel("Transaction Type"), true, 1), record.sale_type, false, false, false);
+        // cmd += getEscTableRow(formatLabel(translateLabel("Transaction Type"), true, 1), record.sale_type, false, false, false);
         if (record.hasOwnProperty('id') && WPOS.getConfigTable().pos.recprintid)
             cmd += getEscTableRow(formatLabel(translateLabel("Transaction ID"), true, 2), record.id, false, false, false);
         cmd += getEscTableRow(formatLabel(translateLabel("Sale Time"), true, 7), WPOS.util.getDateFromTimestamp(record.processdt), false, false, false) + "\n";
@@ -733,7 +733,7 @@ function WPOSPrint(kitchenMode) {
         // add integrated eftpos receipts
         if (paymentreceipts != '' && WPOS.getLocalConfig().eftpos.receipts) cmd += esc_a_c + paymentreceipts;
         // footer
-        cmd += esc_bold_on + esc_a_c + WPOS.getConfigTable().pos.recfooter + font_reset + "\r";
+        // cmd += esc_bold_on + esc_a_c + WPOS.getConfigTable().pos.recfooter + font_reset + "\r";
 
         return cmd;
     }

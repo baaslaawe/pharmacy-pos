@@ -437,8 +437,8 @@ function WPOS() {
                     $("#setupdiv").on('hidden.bs.modal', function () {
                         // do something…
                     })
-                    $("#username").val("admin");
-                    $("#password").val("admin");
+                    // $("#username").val("admin");
+                    // $("#password").val("admin");
                     showLogin();
                     swal({
                         type: 'success',
