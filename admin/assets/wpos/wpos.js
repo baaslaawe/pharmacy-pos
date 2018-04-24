@@ -954,6 +954,13 @@ function WPOSAdmin(){
     fetchConfigTable2();
   };
 
+  this.isOrderTerminal = function () {
+    if (configtable == null) {
+      loadConfigTable();
+    }
+    return configtable.hasOwnProperty('deviceconfig') && configtable.deviceconfig.type == "order_register";
+  };
+
   /**
    * Fetch device settings from the server using UUID
    * @return boolean
