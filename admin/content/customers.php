@@ -68,7 +68,7 @@
                 { "mData":"email" },
                 { "mData":"mobile" },
                 { "mData":"address" },
-                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="WPOS.customers.openCustomerDialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="red" onclick="WPOS.customers.deleteCustomer($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', bSortable: false }
+                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="WPOS.customers.openCustomerDialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a>'+(WPOS.loggeduser.isadmin==='1'? '<a class="red" onclick="WPOS.customers.deleteCustomer($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a>':'')+'</div>', bSortable: false }
             ],
             "columns": [
                 {},
