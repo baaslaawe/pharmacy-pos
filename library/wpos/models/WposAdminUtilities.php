@@ -57,7 +57,7 @@ class WposAdminUtilities {
         // get date format
         $timestr=date($dateformat, $timestamp);
 
-        if ($includetime === true)
+        if ($includetime)
             $timestr.=' '.date('H:i:s', $timestamp);
 
         return $timestr;

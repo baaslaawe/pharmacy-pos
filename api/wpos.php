@@ -545,6 +545,10 @@ function routeApiCall($action, $data, $result) {
             $invMdl = new WposTransactions(null, $_REQUEST['id'], false);
             $invMdl->generateInvoice();
             break;
+        case "invoices/print":
+            $invMdl = new WposTransactions(null, $_REQUEST['id'], false);
+            $result = $invMdl->printInvoice($result);
+            break;
         case "invoices/email":
             $invMdl = new WposTransactions($data);
             $result = $invMdl->emailInvoice($result);

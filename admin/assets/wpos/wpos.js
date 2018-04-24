@@ -47,6 +47,7 @@ $(function(){
     if (document.location.host=="demo.wallacepos.com" || document.location.host=="alpha.wallacepos.com"){
         $("#logindiv").append('<button class="btn btn-primary btn-sm" onclick="$(\'#loguser\').val(\'admin\');$(\'#logpass\').val(\'admin\'); WPOS.login();">Demo Login</button>');
     }
+    WPOS.print.loadPrintSettings();
 });
 function WPOSAdmin(){
     // AJAX PAGE LOADER FUNCTIONS
@@ -890,8 +891,194 @@ function WPOSAdmin(){
         return '"' + output + '"';
     }
 
-    // Load globally accessable objects
-    this.util = new WPOSUtil();
-    this.transactions = new WPOSTransactions();
-    this.customers = new WPOSCustomers();
+
+
+    // Print init
+    // Local Config
+    this.setLocalConfigValue = function(key, value){
+        setLocalConfigValue(key, value);
+    };
+
+    this.getLocalConfig = function(){
+        return getLocalConfig();
+    };
+
+    function getLocalConfig(){
+        var lconfig = localStorage.getItem("wpos_lconfig");
+        if (lconfig==null || lconfig==undefined){
+          // put default config here.
+          var defcon = {
+            keypad: true,
+            eftpos:{
+              enabled: false,
+              receipts:true,
+              provider: 'tyro',
+              merchrec:'ask',
+              custrec:'ask'
+            }
+          };
+          updateLocalConfig(defcon);
+          return defcon;
+        }
+        return JSON.parse(lconfig);
+    }
+
+    function setLocalConfigValue(key, value){
+        var data = localStorage.getItem("wpos_lconfig");
+        if (data==null){
+          data = {};
+        } else {
+          data = JSON.parse(data);
+        }
+        data[key] = value;
+        updateLocalConfig(data);
+        if (key == "keypad"){
+          setKeypad(false);
+        }
+    }
+
+    function updateLocalConfig(configobj){
+        localStorage.setItem("wpos_lconfig", JSON.stringify(configobj));
+    }
+
+  var configtable;
+
+  this.getConfigTable = function () {
+    if (configtable == null) {
+      loadConfigTable();
+    }
+    return configtable;
+  };
+
+  this.refreshConfigTable = function () {
+    fetchConfigTable2();
+  };
+
+  /**
+   * Fetch device settings from the server using UUID
+   * @return boolean
+   */
+  function fetchConfigTable2(callback) {
+    var data = {};
+    data.uuid = getDeviceUUID();
+    return WPOS.sendJsonDataAsync("config/get", JSON.stringify(data), function(data){
+      if (data) {
+        //console.log(data);
+        if (data=="removed" || data=="disabled"){ // return false if dev is disabled
+          if (data=="removed")
+            removeDeviceUUID();
+          if (callback){
+            callback(false);
+            return;
+          }
+        } else {
+          configtable = data;
+          localStorage.setItem("wpos_config", JSON.stringify(data));
+          setAppCustomization();
+        }
+      }
+      if (callback)
+        callback(data);
+    });
+  }
+
+  function loadConfigTable() {
+    var data = localStorage.getItem("wpos_config");
+    if (data != null) {
+      configtable = JSON.parse(data);
+      return true;
+    }
+    configtable = {};
+    return false;
+  }
+
+  function updateConfig(key, data){
+    console.log("Processing config ("+key+") update");
+    //console.log(data);
+
+    if (key=='item_categories')
+      return updateCategory(data);
+
+    if (key=="deviceconfig"){
+      if (data.id==configtable.deviceid) {
+        if (data.hasOwnProperty('a') && (data.a == "removed" || data.a == "disabled")) {
+          // device removed
+          if (data.a == "removed")
+            removeDeviceUUID();
+          logout();
+
+          swal({
+            type: 'error',
+            title: 'Oops...',
+            text: 'This device has been " + data.a + " by the administrator,\ncontact your device administrator for help.'
+          });
+
+          return;
+        }
+        // update root level config values
+        configtable.devicename = data.name;
+        configtable.locationname = data.locationname;
+        populateDeviceInfo();
+      } else {
+        if (data.data.hasOwnProperty('a')){
+          if (data.data.a=="removed")
+            delete configtable.devices[data.id];
+        } else {
+          configtable.devices[data.id] = data;
+          configtable.locations[data.locationid] = {name: data.locationname};
+        }
+        return;
+      }
+    }
+
+    configtable[key] = data; // write to current data
+    localStorage.setItem("wpos_config", JSON.stringify(configtable));
+    setAppCustomization();
+  }
+
+  function updateCategory(value){
+    if (typeof value === 'object'){
+      configtable.item_categories[value.id] = value;
+    } else {
+      if (typeof value === 'string') {
+        var ids = value.split(",");
+        for (var i=0; i<ids.length; i++){
+          delete configtable.item_categories[ids[i]];
+        }
+      } else {
+        delete configtable.item_categories[value];
+      }
+    }
+    WPOS.items.generateItemGridCategories();
+    localStorage.setItem("wpos_config", JSON.stringify(configtable));
+  }
+
+  /**
+   * Returns the current devices UUID
+   * @returns {String, Null} String if set, null if not
+   */
+  function getDeviceUUID() {
+    // return the devices uuid; if null, the device has not been setup or local storage was cleared
+    return localStorage.getItem("wpos_devuuid");
+  }
+
+  function setAppCustomization(){
+    // initialize terminal mode (kitchen order views)
+    if (configtable.hasOwnProperty('deviceconfig') && configtable.deviceconfig.type == "order_register") {
+      $(".order_terminal_options").show();
+      WPOS.sales.resetSalesForm();
+    } else {
+      $(".order_terminal_options").hide();
+      $("#itemtable .order_row").remove(); // clears order row already in html
+    }
+    // setup checkout watermark
+    var url = WPOS.getConfigTable().general.bizlogo;
+    $("#watermark").css("background-image", "url('"+url+"')");
+  }
+
+  // Load globally accessable objects
+  this.util = new WPOSUtil();
+  this.transactions = new WPOSTransactions();
+  this.customers = new WPOSCustomers();
+  this.print = new WPOSPrint();
 }

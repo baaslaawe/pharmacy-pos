@@ -497,9 +497,9 @@ function WPOSTransactions() {
     function populateTemplateSelect(element){
         var templates = WPOS.getConfigTable()['templates'];
         element.html('');
-        element.append('<option value="" selected="selected">Use Default</option>');
+        element.append('<option value="invoice" selected="selected">Use Default</option>');
         for (var i in templates){
-            if (templates[i].type=="invoice")
+            if (templates[i].type=="invoice" && templates[i].name !=="Print Invoice")
                 element.append('<option value="'+i+'">'+templates[i].name+'</option>');
         }
     }
@@ -722,6 +722,11 @@ function WPOSTransactions() {
         link += "&template="+template;
 
         window.open(link, '_blank');
+    };
+
+    this.printInvoice = function(type, download, template) {
+        var data = WPOS.getJsonData("invoices/print?id=" + curid);
+        WPOS.print.printCurrentInvoice(data);
     };
 
     this.emailInvoice = function(){

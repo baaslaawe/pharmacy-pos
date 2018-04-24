@@ -1,0 +1,126 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+  <style type="text/css">
+    table {
+      width: 100%;
+      margin-bottom: 4px;
+      text-align: left;
+    }
+    table:first-child {
+      margin-top: 8px;
+    }
+  </style>
+  {{#thermalprint}}
+    <style type="text/css">
+      body {
+        font-family: Arial, sans-serif !important;
+        font-size: 14px;
+        padding: 0;
+        margin: 0;
+      }
+      body div {
+        font-size: 1.7em;
+        padding: 0;
+        margin: 0;
+      }
+      tr td:first-child{
+        width:1%;
+        white-space:nowrap;
+        vertical-align: top;
+      }
+      #container {
+        text-align: center;
+        width: 576px;
+      }
+    </style>
+  {{/thermalprint}}
+  {{^thermalprint}}
+    <style type="text/css">
+      @import url(/assets/css/bootstrap.min.css);
+      @import url(/assets/css/font-awesome.min.css);
+      @import url(/assets/css/ace-fonts.css);
+      @import url(/assets/css/ace.min.css);
+
+      body {
+        background-color: #FFFFFF;
+        font-size: default !important;
+      }
+      p, tr, strong, b {
+        font-size: 13px;
+      }
+      body div {
+        font-size: inherit !important;
+      }
+      tr td:first-child{
+        width:1%;
+        white-space:nowrap;
+        vertical-align: top;
+      }
+      #container {
+        width:350px;
+        margin: 5px auto;
+        padding-left: 5px;
+        padding-right: 5px;
+        text-align: left;
+      }
+    </style>
+  {{/thermalprint}}
+</head>
+<body>
+<div id="container">
+  <h2 style="text-align: left;">Invoice</h2>
+  <p class="notop" style="text-align: left;">
+    <b>Invoice #: </b> {{sale_ref}}<br/>
+    <b>Invoice Date:</b>&nbsp;&nbsp;{{sale_dt}}<br />
+    {{#invoice_duedt}}<b>Due Date:&nbsp;&nbsp;</b>{{invoice_duedt}}{{/invoice_duedt}}<br/>
+  </p>
+  <hr>
+  {{#customer}}
+    <h4>Customer</h4>
+    <p>
+      <b>Name: </b>{{customer.name}}<br/>
+      <b>Mobile #: </b>{{customer.mobile}}<br/>
+    </p>
+  {{/customer}}
+  <hr>
+  <h4>Items</h4>
+  <table class="table table-bordered">
+    <tr style="background: rgba(238,238,238,0.36)">
+      <th>Qty</th>
+      <th style="text-align: center;">Item</th>
+      <th>Price(Ksh)</th>
+    </tr>
+    {{#sale_items}}
+      <tr>
+        <td>{{qty}}</td>
+        <td>{{name}} ({{unit}})</td>
+        <td style="text-align: center;">{{price}}</td>
+      </tr>
+      {{#print_desc}}
+        <tr>
+          <td></td>
+          <td>{{desc}}</td>
+          <td></td>
+        </tr>
+      {{/print_desc}}
+    {{/sale_items}}
+
+    <tr>
+      <td colspan="2" style="text-align: right; padding-right: 15px;"><b>Total ({{sale_numitems}} items): </b></td>
+      <td style="text-align: center;"><b>{{sale_total}}</b></td>
+    </tr>
+
+    <tr>
+      <td colspan="2" style="text-align: right; padding-right: 15px;"><b>Amount Paid: </b></td>
+      <td style="text-align: center;">{{invoice_paid}}</td>
+    </tr>
+
+    <tr>
+      <td colspan="2" style="text-align: right; padding-right: 15px;"><b>Amount Due: </b></td>
+      <td style="text-align: center;">{{invoice_balance}}</td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

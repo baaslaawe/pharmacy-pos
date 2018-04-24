@@ -99,7 +99,7 @@ class WposTemplateData
 
         $this->sale_id = $data->id;
         $this->sale_ref = $data->ref;
-        $this->sale_dt = $this->Utils->getDateFromTimestamp($data->processdt, $config['general']->dateformat);
+        $this->sale_dt = $this->Utils->getDateFromTimestamp($data->processdt, $config['general']->dateformat, false);
         $this->sale_items = $data->items;
         $this->sale_numitems = $data->numitems;
         $this->sale_discount = floatval($data->discount);
@@ -162,8 +162,8 @@ class WposTemplateData
             $this->business_postcode  = $config['general']->bizpostcoe;
             $this->business_country  = $config['general']->bizcountry;
             $this->business_number  = $config['general']->biznumber;
-            $this->invoice_duedt = $this->Utils->getDateFromTimestamp($data->duedt, $config['general']->dateformat);
-            $this->invoice_paid = $data->total - $data->balance;
+            $this->invoice_duedt = $this->Utils->getDateFromTimestamp($data->duedt, $config['general']->dateformat, false);
+            $this->invoice_paid = number_format((float)($data->total - $data->balance), 2, '.', ',');
             $this->invoice_balance = $data->balance;
             if (isset($data->custid) && $data->custid>0) {
                 $custMdl = new WposAdminCustomers();

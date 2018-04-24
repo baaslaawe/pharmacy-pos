@@ -329,16 +329,19 @@
     }
 
     function browserPrintHtml(html){
-        var printw = window.open('', 'wpos report', 'height=800,width=650');
-        printw.document.write('<html><head><title>Wpos Report</title>');
-        printw.document.write('<link media="all" href="assets/css/bootstrap.min.css" rel="stylesheet"/><link media="all" rel="stylesheet" href="assets/css/font-awesome.min.css"/><link media="all" rel="stylesheet" href="assets/css/ace-fonts.css"/><link media="all" rel="stylesheet" href="assets/css/ace.min.css"/>');
-        printw.document.write('</head><body style="background-color: #FFFFFF;">');
-        printw.document.write(html);
-        printw.document.write('</body></html>');
-        printw.document.close();
-
-        printw.print();
-        printw.close();
+        // var printw = window.open('', 'wpos report', 'height=800,width=650');
+        // printw.document.write('<html><head><title>Wpos Report</title>');
+        // // printw.document.write('<link media="print" href="assets/css/bootstrap.min.css" rel="stylesheet"/><link media="all" rel="stylesheet" href="assets/css/font-awesome.min.css"/><link media="all" rel="stylesheet" href="assets/css/ace-fonts.css"/><link media="all" rel="stylesheet" href="assets/css/ace.min.css"/>');
+        // printw.document.write('</head><body style="background-color: #FFFFFF;">');
+        // printw.document.write(html);
+        // printw.document.write('</body></html>');
+        // printw.document.close();
+        //
+        // setTimeout(function () {
+        //   // printw.print();
+        //   printw.close();
+        // }, 1000);
+        WPOS.print.printCurrentReport();
     }
 
     $(function(){
