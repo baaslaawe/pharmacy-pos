@@ -502,7 +502,7 @@ class WposAdminItems {
             "graph" => ['graph/general', 'graph/takings', 'graph/devices', 'graph/locations'],
             "realtime" => ['stats/general', 'graph/general'],
             "sales" => [],
-            "invoices"=> ['invoices/get'],
+            "invoices"=> ['invoices/get', 'invoices/print'],
             "items" => ['suppliers/get', 'categories/get'],
             "stock" => ['stock/get', 'stock/history'],
             "categories" => ['categories/get'],

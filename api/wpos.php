@@ -218,6 +218,11 @@ function routeApiCall($action, $data, $result) {
             $result = $trans->getTransaction($result);
             break;
 
+        case "invoices/print":
+            $invMdl = new WposTransactions(null, $_REQUEST['id'], false);
+            $result = $invMdl->printInvoice($result);
+            break;
+
         default:
             $notinprev = true;
     }
@@ -548,10 +553,6 @@ function routeApiCall($action, $data, $result) {
         case "invoices/generate":
             $invMdl = new WposTransactions(null, $_REQUEST['id'], false);
             $invMdl->generateInvoice();
-            break;
-        case "invoices/print":
-            $invMdl = new WposTransactions(null, $_REQUEST['id'], false);
-            $result = $invMdl->printInvoice($result);
             break;
         case "invoices/email":
             $invMdl = new WposTransactions($data);

@@ -54,6 +54,7 @@ function WPOSAdmin(){
     var currentAnchor = '0';
     var currentsec = '';
     var lastAnchor = null;
+    this.loggeduser = null;
     // Are there anchor changes, if there are, calculate request and send
     this.checkAnchor = function(){
         //Check if it has changes
@@ -146,6 +147,7 @@ function WPOSAdmin(){
             if (user!=false){
                 if (user.isadmin==1 || (user.sections!=null && user.sections.access!='no')){
                     curuser = user;
+                    WPOS.loggeduser = user;
                     WPOS.initAdmin();
                 } else {
                     swal({
@@ -161,6 +163,7 @@ function WPOSAdmin(){
             $("#loginbutton").removeAttr('disabled', 'disabled');
             WPOS.util.hideLoader();
         });
+
     };
     function getLoginStatus(callback){
         return WPOS.getJsonDataAsync("hello", callback);
