@@ -373,6 +373,11 @@ function WPOSPrint(kitchenMode) {
         printCurrentReport();
     };
 
+    // Invoice PRINTING
+    this.printCurrentInvoice = function (data) {
+      printCurrentInvoice(data);
+    };
+
     function printCurrentReport() {
         var html;
         var printer = getPrintSetting('reports', 'printer');
@@ -387,6 +392,23 @@ function WPOSPrint(kitchenMode) {
                 html = '<html><head><title>Wpos Report</title><link media="all" href="/assets/css/bootstrap.min.css" rel="stylesheet"/><link media="all" rel="stylesheet" href="/assets/css/font-awesome.min.css"/><link media="all" rel="stylesheet" href="/assets/css/ace-fonts.css"/><link media="all" rel="stylesheet" href="/assets/css/ace.min.css"/></head><body style="background-color: #FFFFFF;">' + $("#reportcontain").html() + '</body></html>';
                 webprint.printHtml(html, printer);
         }
+    }
+
+    function printCurrentInvoice(data) {
+      var html = data;
+      var printer = getPrintSetting('reports', 'printer');
+      switch (getPrintSetting('reports', 'method')) {
+        case "br":
+          browserPrintHtml(html, 'Invoice', 500, 610);
+          break;
+        case "qz":
+          alert("QZ-Print integration is no longer available, switch to the new webprint applet");
+          break;
+        case "wp":
+          webprint.printHtml(html, printer);
+      }
+      // webprint.printHtml(html, printer);
+
     }
 
     // CASH DRAW

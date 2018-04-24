@@ -377,6 +377,21 @@ class WposTransactions {
 
     /**
      * Generate invoice for the specified transaction
+     */
+    public function printInvoice($results){
+        // make sure sale is loaded
+        if (!$this->trans){
+            if ($this->loadTransaction()===false){
+                die("Failed to load the transaction!");
+            }
+        }
+        $html = $this->generateInvoiceHtml('print_invoice');
+        $results['data'] = $html;
+        return $results;
+    }
+
+    /**
+     * Generate invoice for the specified transaction
      * @param $result
      * @return mixed
      */

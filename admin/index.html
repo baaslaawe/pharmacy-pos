@@ -747,6 +747,8 @@
                 <h3>Invoice Template</h3>
                 <select id="invoicetemplate" class="form-control">
                 </select>
+                <h3>Print</h3>
+                <button onclick="WPOS.transactions.printInvoice('html', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
                 <h3>View</h3>
                 <button onclick="WPOS.transactions.generateInvoice('html', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">HTML</button>
                 <button onclick="WPOS.transactions.generateInvoice('pdf', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
@@ -906,6 +908,7 @@
         <script src="assets/wpos/wpos.js"></script>
         <script src="assets/wpos/customers.js"></script>
         <script src="assets/wpos/transactions.js"></script>
+        <script src="../assets/js/wpos/print.js"></script>
 
         <!-- Websocket library -->
         <script type="text/javascript" src="/assets/libs/socketio/socket.io-1.4.5.js"></script>
