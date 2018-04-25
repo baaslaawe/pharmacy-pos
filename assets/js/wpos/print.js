@@ -694,9 +694,9 @@ function WPOSPrint(kitchenMode) {
         lang = getGlobalPrintSetting('rec_language');
         altlabels = WPOS.getConfigTable()['general'].altlabels;
         // header
-        var cmd = getEscReceiptHeader();
-        // transdetails
-        cmd += (ltr ? esc_a_l : esc_a_r);
+          var cmd =  esc_init + esc_a_c + esc_double + 'Sale Receipt' + "\n" + font_reset;
+          cmd += (ltr ? esc_a_l : esc_a_r);
+          cmd += '\n';
         record.isorder ? record.sale_type = "Order": record.sale_type = "Sale";
         cmd += getEscTableRow(formatLabel(translateLabel("Transaction Ref"), true, 1), record.ref, false, false, false);
         // cmd += getEscTableRow(formatLabel(translateLabel("Transaction Type"), true, 1), record.sale_type, false, false, false);
@@ -813,12 +813,13 @@ function WPOSPrint(kitchenMode) {
       // header
       var cmd =  esc_init + esc_a_c + esc_double + 'Invoice Receipt' + "\n" + font_reset;
         cmd += (ltr ? esc_a_l : esc_a_r);
-        cmd += getEscTableRow(formatLabel(translateLabel("Invoice #: "), true, 1), record.sale_ref, false, false, false);
+        cmd += '\n';
+        cmd += getEscTableRow(formatLabel(translateLabel("Invoice # ")+record.sale_id+' :', true, 1), record.sale_ref, false, false, false);
         cmd += getEscTableRow(formatLabel(translateLabel("Invoice Date: "), true, 1), record.sale_dt, false, false, false);
         cmd += getEscTableRow(formatLabel(translateLabel("Due Date: "), true, 1), record.invoice_duedt, false, false, false);
 
         if (record.hasOwnProperty('customer')) {
-            cmd += '\n' + esc_a_c + esc_bold_on + translateLabel('Customer') + font_reset;
+            cmd += '\n' + esc_a_c + esc_bold_on + translateLabel('Customer') + '\n' + font_reset;
             cmd += getEscTableRow(formatLabel(translateLabel("Name :"), true, 2), record.customer.name, false, false, false);
             cmd += getEscTableRow(formatLabel(translateLabel("Mobile :"), true, 2), record.customer.mobile, false, false, false);
         }
