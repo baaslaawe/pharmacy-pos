@@ -389,8 +389,16 @@ function WPOSPrint(kitchenMode) {
                 alert("QZ-Print integration is no longer available, switch to the new webprint applet");
                 break;
             case "wp":
-                html = '<html><head><title>Wpos Report</title><link media="all" href="/assets/css/bootstrap.min.css" rel="stylesheet"/><link media="all" rel="stylesheet" href="/assets/css/font-awesome.min.css"/><link media="all" rel="stylesheet" href="/assets/css/ace-fonts.css"/><link media="all" rel="stylesheet" href="/assets/css/ace.min.css"/></head><body style="background-color: #FFFFFF;">' + $("#reportcontain").html() + '</body></html>';
-                webprint.printHtml(html, printer);
+              if (getGlobalPrintSetting('escpreceiptmode')=='text') {
+                var data = getEscReceipt(record);
+                printESCPReceipt(data);
+              } else {
+                // bitmap mode printing
+                var html = getHtmlReceipt(record, true);
+                getESCPHtmlString(html, printESCPReceipt);
+              }
+                // html = '<html><head><title>Wpos Report</title><link media="all" href="/assets/css/bootstrap.min.css" rel="stylesheet"/><link media="all" rel="stylesheet" href="/assets/css/font-awesome.min.css"/><link media="all" rel="stylesheet" href="/assets/css/ace-fonts.css"/><link media="all" rel="stylesheet" href="/assets/css/ace.min.css"/></head><body style="background-color: #FFFFFF;">' + $("#reportcontain").html() + '</body></html>';
+                // webprint.printHtml(html, printer);
         }
     }
 
