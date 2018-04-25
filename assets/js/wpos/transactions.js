@@ -25,7 +25,7 @@ function WPOSTransactions() {
     var transdialog = $("#transactiondiv");
     var creditdialog = $("#creditpaymentsdiv");
     var creditpaymentdialog = $("#creditpaymentstable");
-    var paymentMethods = ['eftpos', 'cash', 'mpesa'];
+    var paymentMethods = ['bank', 'cash', 'mpesa'];
     var sale = {};
     var curcredit = 0;
 

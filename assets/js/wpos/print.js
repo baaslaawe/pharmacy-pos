@@ -761,8 +761,6 @@ function WPOSPrint(kitchenMode) {
     }
 
     function getEscOrderTicket(record, orderid, flagtext) {
-        console.log(record);
-        console.log(orderid);
         // header
         var bizname = WPOS.getConfigTable().general.bizname;
         // header

@@ -168,7 +168,6 @@ class StockItemsModel extends DbConfig
      * @param $price
      * @param $code
      * @param $data
-     * @param $locationid
      * @param bool $decrement
      * @return bool|int|string Returns false on failure, number of rows affected or a newly inserted id.
      */

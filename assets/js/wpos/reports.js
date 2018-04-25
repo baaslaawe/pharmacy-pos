@@ -40,7 +40,7 @@ function WPOSReports() {
 
     function showAdditionalReports(){
         // show eftpos reports if available
-        if (WPOS.hasOwnProperty('eftpos') && WPOS.eftpos.isEnabledAndReady() && WPOS.eftpos.getType()=="tyro"){
+        if (WPOS.hasOwnProperty('bank') && WPOS.bank.isEnabledAndReady() && WPOS.bank.getType()=="tyro"){
             $("#tyroreports").removeClass('hide');
         } else {
             $("#tyroreports").addClass('hide');
@@ -434,7 +434,7 @@ function WPOSReports() {
 
     this.generateTyroReport = function(){
         var type = $("#tyroreptype").val();
-        WPOS.eftpos.getTyroReport(type, (type=="detail"?WPOS.reports.populateTyroDetailed:WPOS.reports.populateTyroSummary));
+        WPOS.bank.getTyroReport(type, (type=="detail"?WPOS.reports.populateTyroDetailed:WPOS.reports.populateTyroSummary));
     };
 
     this.populateTyroSummary = function(xml){

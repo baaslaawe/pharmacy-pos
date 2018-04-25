@@ -680,6 +680,15 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
+                        <input type="hidden" id="transitemstocklevel">
+                        <input type="hidden" id="transitemexpirydate">
+                        <input type="hidden" id="transitemreorderPoint">
+                        <input type="hidden" id="transitemdt">
+                        <input type="hidden" id="transiteminventoryNo">
+                        <input type="hidden" id="transitemstockType">
+                        <input type="hidden" id="transitemsaleitemid">
+                        <input type="hidden" id="transitemlocationid">
+                        <input type="hidden" id="transitemcode">
                         <label class="fixedlabel">Qty: (<span class="text-danger">Required*</span>)</label>
                         <input class="form-control"type="text" placeholder="Total items..." id="transitemqty" onchange="WPOS.transactions.calculateItemTotals();"/>
                         <div class="space-4"></div>
@@ -728,7 +737,7 @@
                                 <option value="deposit">Deposit</option>
                                 <option value="cash">Cash</option>
                                 <option value="mpesa">Mpesa</option>
-                                <option value="eftpos">Bank</option>
+                                <option value="bank">Bank</option>
                                 <option value="credit">Credit</option>
                             </select>
                         </td>
