@@ -188,6 +188,7 @@ class SaleItemsModel extends DbConfig
      * @param null $desc
      * @param $taxid
      * @param $tax
+     * @param $cost
      * @param $unit
      * @param $price
      * @return array|bool Returns false on an unexpected failure or the rows found by the statement. Returns an empty array when nothing is found

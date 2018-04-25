@@ -912,7 +912,7 @@ function WPOSAdmin(){
           // put default config here.
           var defcon = {
             keypad: true,
-            eftpos:{
+            bank:{
               enabled: false,
               receipts:true,
               provider: 'tyro',

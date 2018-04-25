@@ -995,7 +995,7 @@ function WPOSSales() {
             var inteftbtn = $("#eftpospaybtn");
             if (WPOS.hasOwnProperty('eftpos') && WPOS.eftpos.isEnabledAndReady()){
                 inteftbtn.show();
-                inteftbtn.text(WPOS.util.capFirstLetter(WPOS.eftpos.getType())+' Eftpos');
+                inteftbtn.text(WPOS.util.capFirstLetter(WPOS.eftpos.getType())+' Bank');
             } else {
                 inteftbtn.hide();
             }
@@ -1120,7 +1120,7 @@ function WPOSSales() {
 
         var payrow =  '<tr '+data+'><td>' +
             '<select class="paymethod form-control" style="max-width:150px;" onchange="WPOS.sales.onPaymentMethodChange(this);">' +
-            '<option value="eftpos" '+(method=='eftpos'?'selected':'')+'>Eftpos</option>' +
+            '<option value="eftpos" '+(method=='eftpos'?'selected':'')+'>Bank</option>' +
             '<option value="credit" '+(method=='credit'?'selected':'')+'>Credit</option>' +
             '<option value="cash" '+(method=='cash'?'selected':'')+'>Cash</option>' +
             '<option value="mpesa" '+(method=='mpesa'?'selected':'')+'>Mpesa</option>' +

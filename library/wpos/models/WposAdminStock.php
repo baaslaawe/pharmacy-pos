@@ -287,7 +287,6 @@ class WposAdminStock {
      * @param $price
      * @param $code
      * @param $data
-     * @param $locationid
      * @param bool $decrement
      * @return bool
      */

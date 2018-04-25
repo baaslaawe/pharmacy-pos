@@ -347,7 +347,7 @@ class WposInvoices {
         // insert item record
         $itemMdl = new SaleItemsModel();
         $unit_original = (isset($this->data->unit_original) ? $this->data->unit_original : $this->data->unit);
-        if (($itemid = $itemMdl->create($this->data->id, $this->data->sitemid, 0, $this->data->qty, $this->data->name, $this->data->desc, $this->data->taxid, $this->data->tax, $this->data->cost, $this->data->unit, $this->data->price, $unit_original))===false){
+        if (($itemid = $itemMdl->create($this->data->id, $this->data->sitemid, $this->data->saleitemid, $this->data->qty, $this->data->name, $this->data->desc, $this->data->taxid, $this->data->tax, $this->data->cost, $this->data->unit, $this->data->price, $unit_original))===false){
             $result['error'] = "Could not insert item record: ".$itemMdl->errorInfo;
             return $result;
         }
@@ -363,8 +363,8 @@ class WposInvoices {
         } else {
             // decrement stock
             if ($this->data->sitemid>0){
-                $wposStock = new WposAdminStock();
-                $wposStock->incrementStockLevel($this->data->sitemid, 0, $this->data->qty, true);
+                $wposStock = new StockItemsModel();
+                $wposStock->decrementStockLevel($this->data->sitemid, $this->data->qty, true);
             }
             // Create transaction history record
             WposTransactions::addTransactionHistory($this->id, $_SESSION['userId'], "Modified", "Item Added");
@@ -415,9 +415,9 @@ class WposInvoices {
             if ($this->data->sitemid>0){
                 // skip if no change in qty
                 if ($qtydifval>0){
-                    $wposStock = new WposAdminStock();
+                    $wposStock = new StockItemsModel();
                     // increment/decrement stock depending on difference calced above
-                    $wposStock->incrementStockLevel($this->data->sitemid, 0, $qtydifval, $qtydifdec);
+                    $wposStock->decrementStockLevel($this->data->sitemid, $qtydifval, $qtydifdec);
                 }
             }
             // Create transaction history record
@@ -461,8 +461,8 @@ class WposInvoices {
         } else {
             // increment stock
             if ($this->data->sitemid>0){
-                $wposStock = new WposAdminStock();
-                $wposStock->incrementStockLevel($this->data->sitemid, 0, $this->data->qty, false);
+                $wposStock = new StockItemsModel();
+                $wposStock->decrementStockLevel($this->data->sitemid, $this->data->qty, false);
             }
             // Create transaction history record
             WposTransactions::addTransactionHistory($this->id, $_SESSION['userId'], "Modified", "Item Removed");

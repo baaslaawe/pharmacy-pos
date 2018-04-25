@@ -422,6 +422,11 @@ function WPOSTransactions() {
     }
 
     this.calculateItemTotals = function(){
+      var qty = parseInt($('#transitemqty').val());
+      var stocklevel = parseInt($('#transitemstocklevel').val());
+      if(qty > stocklevel)
+        alert('Stocklevel is at '+ stocklevel+', you cant add '+qty);
+      else
         calculateItemTotals();
     };
 
@@ -566,7 +571,7 @@ function WPOSTransactions() {
     this.saveInvoiceItem = function() {
         WPOS.util.showLoader();
         var action, itemid = $("#transitemid").val();
-        var data = {id: curid, sitemid: $("#transitemsitemid").val(), qty: $("#transitemqty").val(), name: $('#transitemname').val(), alt_name: $('#transitemaltname').val(), desc: $('#transitemdesc').val(), cost: $('#transitemcost').val(), unit: $('#transitemunit').val(), taxid: $('#transitemtaxid').val(), tax: JSON.parse($('#transitemtaxval').val()), price: $('#transitempriceval').val()};
+        var data = {id: curid, sitemid: $("#transitemsitemid").val(), saleitemid:$('#transitemsaleitemid').val(), qty: $("#transitemqty").val(), name: $('#transitemname').val(), alt_name: $('#transitemaltname').val(), desc: $('#transitemdesc').val(), cost: $('#transitemcost').val(), unit: $('#transitemunit').val(), taxid: $('#transitemtaxid').val(), tax: JSON.parse($('#transitemtaxval').val()), price: $('#transitemunit').val(), locationid: $('#transitemlocationid').val(), inventoryNo: $('#transiteminventoryNo').val(), expiryDate: $('#transitemexpirydate').val(), code: $('#transitemcode').val()};
         if (itemid == 0) {
             action = "invoices/items/add";
             data.unit_original = $('#transitemunit').data("unit_original");
@@ -820,13 +825,13 @@ function WPOSTransactions() {
         if (query !== '') {
             var upquery = query.toUpperCase();
             // search items for the text.
-            if (items === null) {
-                items = WPOS.getJsonData("stock/get");
-            }
+            items = WPOS.getJsonData("stock/get");
             for (var key in items) {
                 if (!items.hasOwnProperty(key)) {
                     continue;
                 }
+                if(parseInt(items[key].stocklevel) < 1)
+                  continue;
                 if (items[key].name.toUpperCase().indexOf(upquery) != -1) {
                     results.push(items[key]);
                 } else if (items[key].code.toUpperCase().indexOf(upquery) != -1) {
@@ -1072,6 +1077,15 @@ function WPOSTransactions() {
                     $('#transitemcost').val(ui.item.cost);
                     $('#transitemunit').val(ui.item.price).data("unit_original", ui.item.price);
                     $('#transitemtaxid').val(ui.item.taxid);
+                    $('#transitemsaleitemid').val(ui.item.stockinventoryid);
+                    $('#transitemlocationid').val(ui.item.locationid);
+                    $('#transitemreorderPoint').val(ui.item.reorderPoint);
+                    $('#transiteminventoryNo').val(ui.item.inventoryNo);
+                    $('#transitemexpirydate').val(ui.item.expiryDate);
+                    $('#transitemcode').val(ui.item.code);
+                    $('#transitemdt').val(ui.item.dt);
+                    $('#transitemstocklevel').val(ui.item.stocklevel);
+                    $('#transitemstocktype').val(ui.item.stockType);
                     // lock fields
                     setDisabledItemFields();
                     calculateItemTotals();
