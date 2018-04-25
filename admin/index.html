@@ -724,7 +724,7 @@
                         <td>
                             <select id="transpaymethod" class="form-control">
                                 <option value="deposit">Deposit</option>
-                                <option value="cash">Cash</option>
+                                <option selected="selected" value="cash">Cash</option>
                                 <option value="mpesa">Mpesa</option>
                                 <option value="bank">Bank</option>
                                 <option value="credit">Credit</option>
@@ -745,8 +745,8 @@
                 <h3>Invoice Template</h3>
                 <select id="invoicetemplate" class="form-control">
                 </select>
-                <h3>Print</h3>
-                <button onclick="WPOS.transactions.printInvoice('html', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
+                <h3>Invoice Receipt</h3>
+                <button onclick="WPOS.transactions.printInvoice('html', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;"><span class="glyphicon glyphicon-print"></span> PRINT</button>
                 <h3>View</h3>
                 <button onclick="WPOS.transactions.generateInvoice('html', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">HTML</button>
                 <button onclick="WPOS.transactions.generateInvoice('pdf', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
