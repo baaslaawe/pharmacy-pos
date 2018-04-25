@@ -810,16 +810,20 @@ function WPOSPrint(kitchenMode) {
         altlabels = WPOS.getConfigTable()['general'].altlabels;
 
         // transdetails
+      // header
+      var cmd =  esc_init + esc_a_c + esc_double + 'Invoice Receipt' + "\n" + font_reset;
         cmd += (ltr ? esc_a_l : esc_a_r);
         cmd += getEscTableRow(formatLabel(translateLabel("Invoice #: "), true, 1), record.sale_ref, false, false, false);
         cmd += getEscTableRow(formatLabel(translateLabel("Invoice Date: "), true, 1), record.sale_dt, false, false, false);
         cmd += getEscTableRow(formatLabel(translateLabel("Due Date: "), true, 1), record.invoice_duedt, false, false, false);
-        //TODO add header customers
+
         if (record.hasOwnProperty('customer')) {
+            cmd += '\n' + esc_a_c + esc_bold_on + translateLabel('Customer') + font_reset;
             cmd += getEscTableRow(formatLabel(translateLabel("Name :"), true, 2), record.customer.name, false, false, false);
             cmd += getEscTableRow(formatLabel(translateLabel("Mobile :"), true, 2), record.customer.mobile, false, false, false);
         }
         // items
+      cmd += esc_a_c + esc_bold_on + translateLabel('Items') + font_reset + '\n';
         var item;
         for (var i in record.sale_items) {
             item = record.sale_items[i];
@@ -847,71 +851,10 @@ function WPOSPrint(kitchenMode) {
         }
         cmd += '\n';
         // totals
-        // subtotal
-        if (Object.keys(record.taxdata).length > 0 || record.discount > 0) { // only add if discount or taxes
-            cmd += getEscTableRow(formatLabel(translateLabel('Subtotal'), true, 1), WPOS.util.currencyFormat(record.subtotal, false, true), true, false, true);
-        }
 
-        // discount
-        cmd += (record.discount > 0 ? getEscTableRow(formatLabel(translateLabel('Discount'), true, 1), WPOS.util.currencyFormat(Math.abs(parseFloat(record.total) - (parseFloat(record.subtotal) + parseFloat(record.tax))).toFixed(2), false, true), false, false, true) : '');
-        // grand total
-        cmd += getEscTableRow(formatLabel(translateLabel('Total') + ' (' + record.numitems + ' ' + translateLabel('item' + (record.numitems > 1 ? 's' : '')) + ')', true, 1), WPOS.util.currencyFormat(record.total, false, true), true, true, true);
+        cmd += getEscTableRow(formatLabel(translateLabel('Total') + ' (' + record.sale_numitems + ' ' + translateLabel('item' + (record.sale_numitems > 1 ? 's' : '')) + ')', true, 1), WPOS.util.currencyFormat(record.sale_total, false, true), true, true, true);
         cmd += getEscTableRow(formatLabel(translateLabel('Amount Due') , true, 1), WPOS.util.currencyFormat(record.invoice_balance, false, true), true, true, true);
         cmd += getEscTableRow(formatLabel(translateLabel('Amount Paid') , true, 1), WPOS.util.currencyFormat(record.invoice_paid, false, true), true, true, true);
-        // payments
-        var paymentreceipts = '';
-        var method, amount;
-        for (i in record.payments) {
-            item = record.payments[i];
-            method = item.method;
-            amount = item.amount;
-            // check for extra payment data
-            if (item.hasOwnProperty('paydata')) {
-                // check for integrated eftpos receipts
-                if (item.paydata.hasOwnProperty('customerReceipt')) {
-                    paymentreceipts += item.paydata.customerReceipt + '\n';
-                }
-                // catch cash-outs
-                if (item.paydata.hasOwnProperty('cashOut')) {
-                    method = "cashout";
-                    amount = (-amount).toFixed(2);
-                }
-            }
-            cmd += getEscTableRow(formatLabel(translateLabel(WPOS.util.capFirstLetter(method)), true, 1), WPOS.util.currencyFormat(amount, false, true), false, false, true);
-            if (method == 'cash') { // If cash print tender & change
-                cmd += getEscTableRow(formatLabel(translateLabel('Tendered'), true, 1), WPOS.util.currencyFormat(item.tender, false, true), false, false, true);
-                cmd += getEscTableRow(formatLabel(translateLabel('Change'), true, 1), WPOS.util.currencyFormat(item.change, false, true), false, false, true);
-            }
-        }
-        cmd += '\n';
-        // refunds
-        if (record.hasOwnProperty("refunddata")) {
-            cmd += esc_a_c + esc_bold_on + translateLabel('Refund') + font_reset + '\n';
-            var lastrefindex = 0, lastreftime = 0;
-            for (i in record.refunddata) {
-                // find last refund for integrated eftpos receipt
-                if (record.refunddata[i].processdt > lastreftime) {
-                    lastrefindex = i;
-                }
-                cmd += getEscTableRow(
-                        formatLabel((WPOS.util.getDateFromTimestamp(record.refunddata[i].processdt) + ' (' + record.refunddata[i].items.length + ' ' + translateLabel('items') + ')'), true, 1),
-                        translateLabel(WPOS.util.capFirstLetter(record.refunddata[i].method) + '     ' + WPOS.util.currencyFormat(record.refunddata[i].amount, false, true)), false, false, true);
-            }
-            cmd += '\n';
-            // check for integrated receipt and replace if found
-            if (record.refunddata[lastrefindex].hasOwnProperty('paydata') && record.refunddata[lastrefindex].paydata.hasOwnProperty('customerReceipt')) {
-                paymentreceipts = record.refunddata[lastrefindex].paydata.customerReceipt + '\n';
-            }
-        }
-        // void sale
-        if (record.hasOwnProperty("voiddata")) {
-            cmd += esc_a_c + esc_double + esc_bold_on + translateLabel('VOID TRANSACTION') + font_reset + '\n';
-            cmd += '\n';
-        }
-        // add integrated eftpos receipts
-        if (paymentreceipts != '' && WPOS.getLocalConfig().eftpos.receipts) cmd += esc_a_c + paymentreceipts;
-        // footer
-        // cmd += esc_bold_on + esc_a_c + WPOS.getConfigTable().pos.recfooter + font_reset + "\r";
 
         return cmd;
     }
