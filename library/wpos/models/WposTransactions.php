@@ -380,13 +380,18 @@ class WposTransactions {
      */
     public function printInvoice($results){
         // make sure sale is loaded
+        $config = new WposAdminSettings();
         if (!$this->trans){
             if ($this->loadTransaction()===false){
                 die("Failed to load the transaction!");
             }
         }
-        $html = $this->generateInvoiceHtml('print_invoice');
-        $results['data'] = $html;
+        $invval = $config->getSettingsObject("invoice");
+        $genval = $config->getSettingsObject("general");
+        // create the data class
+        $data = new WposTemplateData($this->trans, ['general'=>$genval, 'invoice'=>$invval], true);
+
+        $results['data'] = $data;
         return $results;
     }
 

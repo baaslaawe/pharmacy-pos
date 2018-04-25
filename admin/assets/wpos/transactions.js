@@ -736,7 +736,7 @@ function WPOSTransactions() {
 
     this.printInvoice = function(type, download, template) {
         var data = WPOS.getJsonData("invoices/print?id=" + curid);
-        WPOS.print.printCurrentInvoice(data);
+        WPOS.print.printInvoice(data);
     };
 
     this.emailInvoice = function(){

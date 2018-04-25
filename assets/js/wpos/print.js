@@ -389,16 +389,8 @@ function WPOSPrint(kitchenMode) {
                 alert("QZ-Print integration is no longer available, switch to the new webprint applet");
                 break;
             case "wp":
-              if (getGlobalPrintSetting('escpreceiptmode')=='text') {
-                var data = getEscReceipt(record);
-                printESCPReceipt(data);
-              } else {
-                // bitmap mode printing
-                var html = getHtmlReceipt(record, true);
-                getESCPHtmlString(html, printESCPReceipt);
-              }
-                // html = '<html><head><title>Wpos Report</title><link media="all" href="/assets/css/bootstrap.min.css" rel="stylesheet"/><link media="all" rel="stylesheet" href="/assets/css/font-awesome.min.css"/><link media="all" rel="stylesheet" href="/assets/css/ace-fonts.css"/><link media="all" rel="stylesheet" href="/assets/css/ace.min.css"/></head><body style="background-color: #FFFFFF;">' + $("#reportcontain").html() + '</body></html>';
-                // webprint.printHtml(html, printer);
+                html = '<html><head><title>Wpos Report</title><link media="all" href="/assets/css/bootstrap.min.css" rel="stylesheet"/><link media="all" rel="stylesheet" href="/assets/css/font-awesome.min.css"/><link media="all" rel="stylesheet" href="/assets/css/ace-fonts.css"/><link media="all" rel="stylesheet" href="/assets/css/ace.min.css"/></head><body style="background-color: #FFFFFF;">' + $("#reportcontain").html() + '</body></html>';
+                webprint.printHtml(html, printer);
         }
     }
 
@@ -413,9 +405,15 @@ function WPOSPrint(kitchenMode) {
           alert("QZ-Print integration is no longer available, switch to the new webprint applet");
           break;
         case "wp":
-          webprint.printHtml(html, printer);
+          if (getGlobalPrintSetting('escpreceiptmode')=='text') {
+            var data = getEscReceipt(html);
+            printESCPReceipt(data);
+          } else {
+            // bitmap mode printing
+            var html = getHtmlReceipt(html, true);
+            getESCPHtmlString(html, printESCPReceipt);
+          }
       }
-      // webprint.printHtml(html, printer);
 
     }
 
@@ -484,6 +482,10 @@ function WPOSPrint(kitchenMode) {
         printReceipt(ref, record);
     };
 
+  this.printInvoice = function (record) {
+    printInvoice(record);
+  };
+
     function printReceipt(ref, record) {
         record == null ? record = WPOS.trans.getTransactionRecord(ref): "";
 
@@ -516,6 +518,36 @@ function WPOSPrint(kitchenMode) {
         }
     }
 
+  function printInvoice(record) {
+    var method = getPrintSetting('receipts', 'method');
+    switch (method) {
+      case "br":
+        if (curset.printinv) {
+          browserPrintHtml(getHtmlReceipt(record, false, true), 'Biashara Pos Invoice', 600, 800);
+        } else {
+          browserPrintHtml(getHtmlReceipt(record, false), 'Biashara POS Receipt', 610, 500);
+        }
+        return true;
+      case "qz":
+        alert("QZ-Print integration is no longer available, switch to the new webprint applet");
+        return false;
+      case "ht":
+      case "wp":
+        if (getGlobalPrintSetting('escpreceiptmode')=='text') {
+          var data = getEscInvoice(record);
+          printESCPInvoice(data);
+        } else {
+          // bitmap mode printing
+          var html = getHtmlReceipt(record, true);
+          getESCPHtmlString(html, printESCPReceipt);
+        }
+        return true;
+
+      default :
+        return false;
+    }
+  }
+
     function printESCPReceipt(data){
         if (WPOS.getConfigTable().pos.recprintlogo == true) {
             getESCPImageString(window.location.protocol + "//" + document.location.hostname + WPOS.getConfigTable().pos.reclogo, function (imgdata) {
@@ -525,6 +557,10 @@ function WPOSPrint(kitchenMode) {
             appendQrcode("receipts", data);
         }
     }
+
+  function printESCPInvoice(data){
+    appendQrcode("receipts", data);
+  }
 
     this.printOrderTicket = function(printer, record, orderid, flagtext){
         var method = getPrintSetting(printer, 'method');
@@ -764,6 +800,118 @@ function WPOSPrint(kitchenMode) {
         if (paymentreceipts != '' && WPOS.getLocalConfig().eftpos.receipts) cmd += esc_a_c + paymentreceipts;
         // footer
         cmd += esc_bold_on + esc_a_c + WPOS.getConfigTable().pos.recfooter + font_reset + "\r";
+
+        return cmd;
+    }
+
+    function getEscInvoice(record) {
+        ltr = getGlobalPrintSetting('rec_orientation')=="ltr";
+        lang = getGlobalPrintSetting('rec_language');
+        altlabels = WPOS.getConfigTable()['general'].altlabels;
+
+        // transdetails
+        cmd += (ltr ? esc_a_l : esc_a_r);
+        cmd += getEscTableRow(formatLabel(translateLabel("Invoice #: "), true, 1), record.sale_ref, false, false, false);
+        cmd += getEscTableRow(formatLabel(translateLabel("Invoice Date: "), true, 1), record.sale_dt, false, false, false);
+        cmd += getEscTableRow(formatLabel(translateLabel("Due Date: "), true, 1), record.invoice_duedt, false, false, false);
+        //TODO add header customers
+        if (record.hasOwnProperty('customer')) {
+            cmd += getEscTableRow(formatLabel(translateLabel("Name :"), true, 2), record.customer.name, false, false, false);
+            cmd += getEscTableRow(formatLabel(translateLabel("Mobile :"), true, 2), record.customer.mobile, false, false, false);
+        }
+        // items
+        var item;
+        for (var i in record.sale_items) {
+            item = record.sale_items[i];
+            var itemlabel;
+            var itemname = (lang == "alternate" ? convertUnicodeCharacters(item.alt_name, getGlobalPrintSetting('alt_charset'), getGlobalPrintSetting('alt_codepage')) : item.name);
+            if (ltr){
+                itemlabel = item.qty + " x " + itemname + " (" + WPOS.util.currencyFormat(item.unit, false, true) + ")";
+            } else {
+                itemlabel = "(" + WPOS.util.currencyFormat(item.unit, false, true) + ")" + itemname + " x " + item.qty;
+            }
+
+            cmd += getEscTableRow(itemlabel, WPOS.util.currencyFormat(item.price, false, true), false, false, true);
+            if (lang=="mixed" && item.alt_name!=""){
+                cmd += (ltr?'    ':'') + convertUnicodeCharacters(item.alt_name, getGlobalPrintSetting('alt_charset'), getGlobalPrintSetting('alt_codepage')) + (!ltr?'    ':'') + "\n";
+            }
+            if (item.desc!="" && WPOS.getConfigTable().pos.hasOwnProperty('recprintdesc') && WPOS.getConfigTable().pos.recprintdesc){
+                cmd += (ltr?'    ':'') + convertUnicodeCharacters(item.desc, getGlobalPrintSetting('alt_charset'), getGlobalPrintSetting('alt_codepage')) + (!ltr?'    ':'') + "\n";
+            }
+            if (item.hasOwnProperty('mod')){
+                for (var x=0; x<item.mod.items.length; x++){
+                    var mod = item.mod.items[x];
+                    cmd+= '    '+(mod.hasOwnProperty('qty')?((mod.qty>0?'+':'')+mod.qty+' '):'')+mod.name+(mod.hasOwnProperty('value')?': '+mod.value:'')+' ('+WPOS.util.currencyFormat(mod.price, false, true)+')\n';
+                }
+            }
+        }
+        cmd += '\n';
+        // totals
+        // subtotal
+        if (Object.keys(record.taxdata).length > 0 || record.discount > 0) { // only add if discount or taxes
+            cmd += getEscTableRow(formatLabel(translateLabel('Subtotal'), true, 1), WPOS.util.currencyFormat(record.subtotal, false, true), true, false, true);
+        }
+
+        // discount
+        cmd += (record.discount > 0 ? getEscTableRow(formatLabel(translateLabel('Discount'), true, 1), WPOS.util.currencyFormat(Math.abs(parseFloat(record.total) - (parseFloat(record.subtotal) + parseFloat(record.tax))).toFixed(2), false, true), false, false, true) : '');
+        // grand total
+        cmd += getEscTableRow(formatLabel(translateLabel('Total') + ' (' + record.numitems + ' ' + translateLabel('item' + (record.numitems > 1 ? 's' : '')) + ')', true, 1), WPOS.util.currencyFormat(record.total, false, true), true, true, true);
+        cmd += getEscTableRow(formatLabel(translateLabel('Amount Due') , true, 1), WPOS.util.currencyFormat(record.invoice_balance, false, true), true, true, true);
+        cmd += getEscTableRow(formatLabel(translateLabel('Amount Paid') , true, 1), WPOS.util.currencyFormat(record.invoice_paid, false, true), true, true, true);
+        // payments
+        var paymentreceipts = '';
+        var method, amount;
+        for (i in record.payments) {
+            item = record.payments[i];
+            method = item.method;
+            amount = item.amount;
+            // check for extra payment data
+            if (item.hasOwnProperty('paydata')) {
+                // check for integrated eftpos receipts
+                if (item.paydata.hasOwnProperty('customerReceipt')) {
+                    paymentreceipts += item.paydata.customerReceipt + '\n';
+                }
+                // catch cash-outs
+                if (item.paydata.hasOwnProperty('cashOut')) {
+                    method = "cashout";
+                    amount = (-amount).toFixed(2);
+                }
+            }
+            cmd += getEscTableRow(formatLabel(translateLabel(WPOS.util.capFirstLetter(method)), true, 1), WPOS.util.currencyFormat(amount, false, true), false, false, true);
+            if (method == 'cash') { // If cash print tender & change
+                cmd += getEscTableRow(formatLabel(translateLabel('Tendered'), true, 1), WPOS.util.currencyFormat(item.tender, false, true), false, false, true);
+                cmd += getEscTableRow(formatLabel(translateLabel('Change'), true, 1), WPOS.util.currencyFormat(item.change, false, true), false, false, true);
+            }
+        }
+        cmd += '\n';
+        // refunds
+        if (record.hasOwnProperty("refunddata")) {
+            cmd += esc_a_c + esc_bold_on + translateLabel('Refund') + font_reset + '\n';
+            var lastrefindex = 0, lastreftime = 0;
+            for (i in record.refunddata) {
+                // find last refund for integrated eftpos receipt
+                if (record.refunddata[i].processdt > lastreftime) {
+                    lastrefindex = i;
+                }
+                cmd += getEscTableRow(
+                        formatLabel((WPOS.util.getDateFromTimestamp(record.refunddata[i].processdt) + ' (' + record.refunddata[i].items.length + ' ' + translateLabel('items') + ')'), true, 1),
+                        translateLabel(WPOS.util.capFirstLetter(record.refunddata[i].method) + '     ' + WPOS.util.currencyFormat(record.refunddata[i].amount, false, true)), false, false, true);
+            }
+            cmd += '\n';
+            // check for integrated receipt and replace if found
+            if (record.refunddata[lastrefindex].hasOwnProperty('paydata') && record.refunddata[lastrefindex].paydata.hasOwnProperty('customerReceipt')) {
+                paymentreceipts = record.refunddata[lastrefindex].paydata.customerReceipt + '\n';
+            }
+        }
+        // void sale
+        if (record.hasOwnProperty("voiddata")) {
+            cmd += esc_a_c + esc_double + esc_bold_on + translateLabel('VOID TRANSACTION') + font_reset + '\n';
+            cmd += '\n';
+        }
+        // add integrated eftpos receipts
+        if (paymentreceipts != '' && WPOS.getLocalConfig().eftpos.receipts) cmd += esc_a_c + paymentreceipts;
+        // footer
+        // cmd += esc_bold_on + esc_a_c + WPOS.getConfigTable().pos.recfooter + font_reset + "\r";
 
         return cmd;
     }
