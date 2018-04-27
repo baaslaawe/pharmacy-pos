@@ -1835,11 +1835,8 @@ function WPOSSales() {
                 title: 'Oops...',
                 text: 'Reason must not be blank.'
               });
-              
             return;
         }
-        //var answer = confirm("Are you sure you want to void this transaction?");
-
         swal({
             title: 'Void Transaction',
             text: "Are you sure you want to void this transaction?",
@@ -1848,32 +1845,19 @@ function WPOSSales() {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Void it!'
-          }).then(function (result) {
+        }).then(function (result) {
            if (result.value) {
-            
-            $("#procvoidbtn").prop('disabled', true);
-            processVoidTransaction(ref, false);
-            $("#formdiv").dialog('close');
-            lasttransref = ref;
-            // update transaction info
-            WPOS.trans.populateTransactionInfo(ref);
-                setTimeout(
-                    function() 
-                    {
-                        swal('Voided!', 'Your Transaction has been voided.', 'success');
-                    }, 200);
-                          
-            }
-          });
-          
-       /* if (answer){
-            $("#procvoidbtn").prop('disabled', true);
-            processVoidTransaction(ref, false);
-            $("#formdiv").dialog('close');
-            lasttransref = ref;
-            // update transaction info
-            WPOS.trans.populateTransactionInfo(ref);
-        }*/
+              $("#procvoidbtn").prop('disabled', true);
+              processVoidTransaction(ref, false);
+              $("#formdiv").dialog('close');
+              lasttransref = ref;
+              // update transaction info
+              WPOS.trans.populateTransactionInfo(ref);
+              setTimeout(function() {
+                  swal('Voided!', 'Your Transaction has been voided.', 'success');
+              }, 200);
+           }
+        });
     };
 
     this.processRefund = function(){
