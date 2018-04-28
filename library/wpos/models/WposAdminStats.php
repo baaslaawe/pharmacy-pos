@@ -68,24 +68,52 @@ class WposAdminStats {
         $stats = new stdClass();
         $stats->saletotal = 0; // set defaults
         $stats->salenum = 0;
+        $stats->invoicetotal = 0;
+        $stats->invoicenum = 0;
         $stats->refundtotal = 0;
         $stats->refundnum = 0;
         $stats->voidtotal = 0;
         $stats->voidnum = 0;
         $salesMdl = new TransactionsModel();
         $voidMdl = new SaleVoidsModel();
+        $paymentsMdl = new SalePaymentsModel();
         // check if params set, if not set defaults
         $stime = isset($this->data->stime)?$this->data->stime:(strtotime('-1 week')*1000);
         $etime = isset($this->data->etime)?$this->data->etime:(time()*1000);
 
         // get non voided sales
-        if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, $this->data->type))!==false){
+        if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, 'sale'))!==false){
             $stats->salerefs = $sales[0]['refs'];
             $stats->saletotal = $sales[0]['stotal'];
             $stats->salenum = $sales[0]['snum'];
         } else {
             $result['error']= $salesMdl->errorInfo;
         }
+
+        // get non voided invoices
+        if (($invoices = $salesMdl->getTotals($stime, $etime, null, false, false, 'invoice'))!==false){
+            $stats->invoicerefs = $invoices[0]['refs'];
+            $stats->invoicetotal = $invoices[0]['stotal'];
+            $stats->invoicenum = $invoices[0]['snum'];
+        } else {
+            $result['error']= $salesMdl->errorInfo;
+        }
+
+        $totals = $paymentsMdl->getDaily($stime, $etime);
+        for($i=0;$i<sizeof($totals);$i++){
+            $stats->totalpayments += $totals[$i]['amount'];
+        }
+
+        //Get invoices revenue i.e amount paid from invoices today
+        $saleMdl = new SalesModel();
+        if (($invoicesBal = $saleMdl->getInvoices($stime, $etime, null, false, false, false))!==false){
+            for($i=0;$i<sizeof($invoicesBal);$i++){
+                $stats->invoicebalance += $invoicesBal[$i]['balance'];
+            }
+        } else {
+            $result['error']= $saleMdl->errorInfo;
+        }
+
         // get voided sales
         $voids = $salesMdl->getTotals($stime, $etime, 3, true, false, $this->data->type);
         $stats->voidrefs = $voids[0]['refs'];
@@ -99,9 +127,9 @@ class WposAdminStats {
         $stats->refundnum = $refund[0]['snum'];
 
         // calc total takings
-        $stats->totaltakings = round($stats->saletotal - $stats->refundtotal, 2);
-        $stats->cost = round($sales[0]['ctotal'], 2);
-        $stats->profit = round($stats->totaltakings - $stats->cost, 2);
+        $stats->totaltakings = round($stats->totalpayments - $stats->refundtotal, 2);
+        $stats->cost = round($sales[0]['ctotal']+ $invoices[0]['ctotal'], 2);
+        $stats->profit = round($stats->saletotal - $stats->refundtotal - $sales[0]['ctotal'], 2);
         $stats->refs = [];
         $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
         $temprefs = explode(',', $temprefs);

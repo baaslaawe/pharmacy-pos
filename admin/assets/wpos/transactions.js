@@ -603,7 +603,12 @@ function WPOSTransactions() {
         // show loader
         WPOS.util.showLoader();
         var action, paymentid = $("#transpayid").val();
-        var data = {id: curid, processdt: $("#transpaydt").datepicker("getDate").getTime(), method: $("#transpaymethod").val(), amount: $("#transpayamount").val()};
+        var processdt = $("#transpaydt").datepicker("getDate");
+        processdt.setHours(new Date().getHours());
+        processdt.setMinutes(new Date().getMinutes());
+        processdt.setSeconds(new Date().getSeconds());
+        processdt.setMilliseconds(new Date().getMilliseconds());
+        var data = {id: curid, processdt: processdt.getTime(), method: $("#transpaymethod").val(), amount: $("#transpayamount").val()};
         if (paymentid == 0) {
             action = "invoices/payments/add";
         } else {

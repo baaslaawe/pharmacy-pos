@@ -44,15 +44,23 @@
 		<script src="assets/js/html5shiv.js"></script>
 		<script src="assets/js/respond.min.js"></script>
 		<![endif]-->
+      <!--<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>-->
 
-        <!-- Styles used on most pages ->
-        <!-- page specific plugin styles -->
+      <!-- Styles used on most pages ->
+      <!-- page specific plugin styles -->
         <link rel="stylesheet" href="/assets/css/jquery-ui-1.10.3.full.min.css" />
         <link rel="stylesheet" href="assets/css/bootstrap-datepicker.min.css" />
-        <link rel="stylesheet" href="assets/js/select2/select2.css" />
+      <!--<link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" rel="stylesheet"/>-->
+      <link rel="stylesheet" href="assets/js/select2/select2.css" />
         <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css" />
 
         <link rel="stylesheet" href="assets/css/wposadmin.css" />
+      <style>
+          .bootstrap-datetimepicker-widget {
+              position: absolute;
+              z-index: 5000;
+          }
+      </style>
 	</head>
 
 	<body>
@@ -889,6 +897,8 @@
         <script src="/assets/libs/datatables/datatableSorting.js"></script>
 
         <script src="assets/js/date-time/bootstrap-datepicker.min.js"></script>
+        <!--<script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>-->
+
         <script src="assets/js/select2/select2.min.js"></script>
         <script src="assets/js/jquery.hotkeys.min.js"></script>
         <script src="assets/js/bootstrap-wysiwyg.min.js"></script>
