@@ -36,6 +36,40 @@
         <div id="saletotal" class="stat stat-success">-</div>
     </div>
 
+    <div class="infobox infobox-green infobox-invoices">
+      <div class="infobox-icon">
+        <i class="icon-shopping-cart"></i>
+      </div>
+
+      <div class="infobox-data">
+        <span id="invoicenum" class="infobox-data-number">-</span>
+        <div class="infobox-content">Invoices</div>
+      </div>
+      <div id="invoicetotal" class="stat stat-success">-</div>
+    </div>
+
+    <div class="infobox infobox-red">
+      <div class="infobox-icon">
+        <i class="icon-shopping-cart"></i>
+      </div>
+
+      <div class="infobox-data">
+        <div id="invoicesbalance" class="stat stat-success">-</div>
+        <div class="infobox-content">Invoices Balance</div>
+      </div>
+    </div>
+
+    <div class="infobox infobox-orange">
+      <div class="infobox-icon">
+        <i class="icon-shopping-cart"></i>
+      </div>
+
+      <div class="infobox-data">
+        <div id="invoicespaid" class="stat stat-success">-</div>
+        <div class="infobox-content">Invoices Paid</div>
+      </div>
+    </div>
+
     <div class="infobox infobox-orange infobox-refunds">
         <div class="infobox-icon">
             <i class="icon-backward"></i>
@@ -79,7 +113,7 @@
 
         <div class="infobox-data">
             <span id="cost" class="infobox-data-number">-</span>
-            <div class="infobox-content">Cost</div>
+            <div class="infobox-content">Total Cost</div>
         </div>
     </div>
 
@@ -90,7 +124,7 @@
 
         <div class="infobox-data">
             <span id="profit" class="infobox-data-number">-</span>
-            <div class="infobox-content">Profit</div>
+            <div class="infobox-content">Sales Profit</div>
         </div>
     </div>
 
@@ -336,6 +370,10 @@
         // populate the fields
         $("#salenum").text(totals.salenum);
         $("#saletotal").text(WPOS.util.currencyFormat(totals.saletotal));
+        $("#invoicenum").text(totals.invoicenum);
+        $("#invoicetotal").text(WPOS.util.currencyFormat(totals.invoicetotal));
+        $("#invoicesbalance").text(WPOS.util.currencyFormat(totals.invoicebalance));
+        $("#invoicespaid").text(WPOS.util.currencyFormat(totals.invoicetotal-totals.invoicebalance));
         $("#refundnum").text(totals.refundnum);
         $("#refundtotal").text(WPOS.util.currencyFormat(totals.refundtotal));
         $("#voidnum").text(totals.voidnum);
@@ -345,6 +383,7 @@
         $("#profit").text(WPOS.util.currencyFormat(totals.profit, true));
         // Set onclicks
         $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(totals.salerefs); });
+        $(".infobox-invoices").on('click', function(){ WPOS.transactions.openTransactionList(totals.invoicerefs); });
         $(".infobox-refunds").on('click', function(){ WPOS.transactions.openTransactionList(totals.refundrefs); });
         $(".infobox-voids").on('click', function(){ WPOS.transactions.openTransactionList(totals.voidrefs); });
         $(".infobox-takings").on('click', function(){ WPOS.transactions.openTransactionList(totals.refs); });

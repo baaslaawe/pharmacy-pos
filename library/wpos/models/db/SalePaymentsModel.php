@@ -214,6 +214,14 @@ class SalePaymentsModel extends DbConfig
         return $this->select($sql, $placeholders);
     }
 
+    public function getDaily($stime, $etime){
+
+        $sql = 'SELECT * FROM sale_payments WHERE processdt>= :stime AND processdt<= :etime';
+        $placeholders = [":stime"=>$stime, ":etime"=>$etime];
+
+        return $this->select($sql, $placeholders);
+    }
+
     /**
      * Returns a range of sales, optionally providing the total and grouping payment methods.
      * @param $stime

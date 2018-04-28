@@ -199,6 +199,27 @@ class SalesModel extends TransactionsModel
     }
 
     /**
+     * Returns an array of invoices or totals from the specified range
+     * @param $stime
+     * @param $etime
+     * @param null $deviceids
+     * @param null $status
+     * @param bool $statparity
+     * @param bool $includeorders
+     * @return array|bool Returns false on failure or an array with sales or totals on success
+     */
+    public function getInvoices($stime, $etime, $deviceids=null, $status=null, $statparity= true, $includeorders=true){
+
+        $sql = 'SELECT * FROM sales WHERE (processdt>= :stime AND processdt<= :etime)';
+        $placeholders = [":stime"=>$stime, ":etime"=>$etime];
+
+        // just get invoice transactions
+        $sql .= " AND type='invoice'";
+
+        return $this->select($sql, $placeholders);
+    }
+
+    /**
      * like the getrange function above but it takes into account the date of voids/refunds
      * @param $stime
      * @param $etime

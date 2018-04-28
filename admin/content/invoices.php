@@ -96,7 +96,17 @@
     function addInvoice(){
         WPOS.util.showLoader();
         var ref = (new Date()).getTime()+"-0-"+Math.floor((Math.random() * 10000) + 1);
-        var result = WPOS.sendJsonData("invoices/add", JSON.stringify({ref:ref, channel:"manual", discount:0, custid:$("#ninvcustid").val(), processdt:$("#ninvprocessdt").datepicker("getDate").getTime(), duedt:$("#ninvduedt").datepicker("getDate").getTime(), notes:$('#ninvnotes').val()}));
+        var processdt = $("#ninvprocessdt").datepicker("getDate");
+        var duedt = $("#ninvduedt").datepicker("getDate");
+        processdt.setHours(new Date().getHours());
+        processdt.setMinutes(new Date().getMinutes());
+        processdt.setSeconds(new Date().getSeconds());
+        processdt.setMilliseconds(new Date().getMilliseconds());
+        duedt.setHours(new Date().getHours());
+        duedt.setMinutes(new Date().getMinutes());
+        duedt.setSeconds(new Date().getSeconds());
+        duedt.setMilliseconds(new Date().getMilliseconds());
+        var result = WPOS.sendJsonData("invoices/add", JSON.stringify({ref:ref, channel:"manual", discount:0, custid:$("#ninvcustid").val(), processdt:processdt.getTime(), duedt:duedt.getTime(), notes:$('#ninvnotes').val()}));
         if (result!==false){
             // add result to invoice data, reload table
             WPOS.transactions.setTransaction(result);
