@@ -39,7 +39,7 @@ class WposSocketControl {
      */
     public function startSocketServer($result=['error'=>'OK']){
 		if ($this->isWindows) {
-			pclose(popen('START "WPOS" node '.$_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT'].'api/server.js','r'));
+			pclose(popen('START "Biashara Retail POS (Keep this window open)" node '.$_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT'].'api/server.js','r'));
 		} else {
             $args = $_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."api/server.js > /dev/null &";
 			exec("nodejs ".$args, $output, $res);

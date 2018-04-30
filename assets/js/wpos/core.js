@@ -1744,8 +1744,8 @@ function WPOS() {
 
                     case "msg":
                         swal({
-                            type: 'error',
-                            title: 'Oops...',
+                            type: 'info',
+                            title: 'You have a new message.',
                             text: data.data
                           });
                           
