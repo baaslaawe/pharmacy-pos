@@ -330,6 +330,15 @@ function WPOS() {
         });
     }
 
+
+    function startFeed(){
+        WPOS.getJsonDataAsync("node/start", function(result){
+            if (result !== false){
+                startSocket();
+            }
+        });
+    }
+
     function authenticate(user, hashpass, callback) {
         // auth against server if online, offline table if not.
         if (online == true) {
@@ -492,6 +501,7 @@ function WPOS() {
     // get initial data for pos startup.
     function initData(loginloader) {
         getSubscription();
+        startFeed();
         if (loginloader){
             $("#loadingprogdiv").show();
             $("#loadingdiv").show();

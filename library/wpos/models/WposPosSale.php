@@ -511,9 +511,11 @@ class WposPosSale {
         $voidMdl = new SaleVoidsModel();
         $stockItemsMdl = new StockItemsModel();
         $saleMdl = new SalesModel();
+        $paymentsMdl = new SalePaymentsModel();
+        $saleItemsMdl = new SaleItemsModel();
+        $sale = $saleMdl->get(0, 0, $this->ref);
         // update new refund records
         if ($hasrefund){
-            $saleItemsMdl = new SaleItemsModel();
             foreach ($this->refunddata as $refund){
                 // Check if record has already been processed
                 if (!$voidMdl->recordExists($this->id, $refund->processdt)){
@@ -521,7 +523,6 @@ class WposPosSale {
                     $voidMdl->create($this->id, $refund->userid, $refund->deviceid, $refund->locationid, $refund->reason, $refund->method, $refund->amount, json_encode($refund->items), 0, $refund->processdt);
                     // Increment refunded quantities in the sale_items and stock_items table
                     $cost = 0;
-                    $sale = $saleMdl->get(0, 0, $this->ref);
                     foreach ($refund->items as $item){
                         $saleItemsMdl->incrementQtyRefunded($this->id, $item->ref, $item->numreturned);
                         if (sizeof($this->jsonobj->items)>0){
@@ -549,10 +550,19 @@ class WposPosSale {
         }
 
         if ($hasvoid){
+            $payments = $paymentsMdl->getById($this->id);
+            $amount_paid = 0;
+            $method = '';
+            for ($i=0;$i<sizeof($payments);$i++){
+                $amount_paid += $payments[$i]['amount'];
+                $method = $payments[$i]['method'];
+            }
+            // if ($amount_paid == $sale->total)
+
             // Check if record has already been processed
             if (!$voidMdl->recordExists($this->id, $this->voiddata->processdt)){
                 $this->deviceid = $this->voiddata->deviceid; // set device id for the broadcast function
-                $id = $voidMdl->create($this->id, $this->voiddata->userid, $this->voiddata->deviceid, $this->voiddata->locationid, $this->voiddata->reason, "", 0, 0,  1, $this->voiddata->processdt);
+                $id = $voidMdl->create($this->id, $this->voiddata->userid, $this->voiddata->deviceid, $this->voiddata->locationid, $this->voiddata->reason, $method, $amount_paid, json_encode($sale),  1, $this->voiddata->processdt);
                 if (!$id>0){
                     $result["error"].= $voidMdl->errorInfo;
                 } else {

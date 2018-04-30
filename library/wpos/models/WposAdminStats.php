@@ -101,7 +101,31 @@ class WposAdminStats {
 
         $totals = $paymentsMdl->getDaily($stime, $etime);
         for($i=0;$i<sizeof($totals);$i++){
+            if($totals[$i]['method'] == 'cash')
+                $stats->totalcash += $totals[$i]['amount'];
+            if($totals[$i]['method'] == 'credit')
+                $stats->totalcredit += $totals[$i]['amount'];
+            if($totals[$i]['method'] == 'bank' || $totals[$i]['method'] == 'eftpos')
+                $stats->totalbank += $totals[$i]['amount'];
+            if($totals[$i]['method'] == 'mpesa')
+                $stats->totalmpesa += $totals[$i]['amount'];
+
             $stats->totalpayments += $totals[$i]['amount'];
+        }
+
+        //Get void and refund payments
+        $voidPay = $voidMdl->getDayVoids($stime, $etime);
+        for($i=0;$i<sizeof($voidPay);$i++){
+            if($voidPay[$i]['method'] == 'cash')
+                $stats->totalcash -= $voidPay[$i]['amount'];
+            if($voidPay[$i]['method'] == 'credit')
+                $stats->totalcredit -= $voidPay[$i]['amount'];
+            if($voidPay[$i]['method'] == 'bank' || $voidPay[$i]['method'] == 'eftpos')
+                $stats->totalbank -= $voidPay[$i]['amount'];
+            if($voidPay[$i]['method'] == 'mpesa')
+                $stats->totalmpesa -= $voidPay[$i]['amount'];
+
+            $stats->totalpayments -= $voidPay[$i]['amount'];
         }
 
         //Get invoices revenue i.e amount paid from invoices today
@@ -127,7 +151,7 @@ class WposAdminStats {
         $stats->refundnum = $refund[0]['snum'];
 
         // calc total takings
-        $stats->totaltakings = round($stats->totalpayments - $stats->refundtotal, 2);
+        $stats->totaltakings = round($stats->totalpayments, 2);
         $stats->cost = round($sales[0]['ctotal']+ $invoices[0]['ctotal'], 2);
         $stats->profit = round($stats->saletotal - $stats->refundtotal - $sales[0]['ctotal'], 2);
         $stats->refs = [];
