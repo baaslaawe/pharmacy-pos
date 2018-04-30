@@ -38,7 +38,7 @@
 
             <div class="infobox infobox-green infobox-invoices">
               <div class="infobox-icon">
-                <i class="icon-shopping-cart"></i>
+                <span class="octicon octicon-clippy"></span>
               </div>
 
               <div class="infobox-data">
@@ -50,7 +50,7 @@
 
             <div class="infobox infobox-red">
               <div class="infobox-icon">
-                <i class="icon-shopping-cart"></i>
+                <span class="octicon octicon-diff"></span>
               </div>
 
               <div class="infobox-data">
@@ -59,9 +59,9 @@
               </div>
             </div>
 
-            <div class="infobox infobox-orange">
+            <div class="infobox infobox-green">
               <div class="infobox-icon">
-                <i class="icon-shopping-cart"></i>
+                <span class="octicon octicon-checklist"></span>
               </div>
 
               <div class="infobox-data">
@@ -95,9 +95,9 @@
                 <div id="voidtotal" class="stat stat-important">-</div>
             </div>
 
-            <div class="infobox infobox-orange infobox-cash">
+            <div class="infobox infobox-green infobox-cash">
                 <div class="infobox-icon">
-                    <i class="icon-dollar"></i>
+                   <span class="octicon octicon-inbox"></span>
                 </div>
 
                 <div class="infobox-data">
@@ -106,9 +106,9 @@
                 </div>
             </div>
 
-            <div class="infobox infobox-orange infobox-mpesa">
+            <div class="infobox infobox-green infobox-mpesa">
                 <div class="infobox-icon">
-                    <i class="icon-dollar"></i>
+                    <span class="octicon octicon-device-mobile"></span>
                 </div>
 
                 <div class="infobox-data">
@@ -117,9 +117,9 @@
                 </div>
             </div>
 
-            <div class="infobox infobox-orange infobox-bank">
+            <div class="infobox infobox-blue infobox-bank">
                 <div class="infobox-icon">
-                    <i class="icon-dollar"></i>
+                    <span class="octicon octicon-credit-card"></span>
                 </div>
 
                 <div class="infobox-data">
@@ -128,9 +128,9 @@
                 </div>
             </div>
 
-            <div class="infobox infobox-orange infobox-credit">
+            <div class="infobox infobox-red infobox-credit">
                 <div class="infobox-icon">
-                    <i class="icon-dollar"></i>
+                   <span class="octicon octicon-issue-opened"></span>
                 </div>
 
                 <div class="infobox-data">
@@ -142,7 +142,7 @@
             <div>
                 <div class="infobox infobox-blue2 infobox-takings">
                 <div class="infobox-icon">
-                    <i class="icon-dollar"></i>
+                    <span class="octicon octicon-briefcase"></span>
                 </div>
 
                 <div class="infobox-data">
