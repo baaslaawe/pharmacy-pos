@@ -17,7 +17,6 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 26/12/13 16:15 PM
@@ -110,6 +109,14 @@ class SaleVoidsModel extends DbConfig
             $sql .= ' OFFSET :offset';
             $placeholders[':offset'] = $offset;
         }
+
+        return $this->select($sql, $placeholders);
+    }
+
+    public function getDayVoids($stime, $etime)
+    {
+        $sql = 'SELECT * FROM sale_voids WHERE (processdt>= :stime AND processdt<= :etime)';
+        $placeholders = [":stime"=>$stime, ":etime"=>$etime];
 
         return $this->select($sql, $placeholders);
     }

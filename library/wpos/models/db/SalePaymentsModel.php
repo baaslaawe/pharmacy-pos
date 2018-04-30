@@ -17,7 +17,6 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 26/12/13 16:15 PM
@@ -218,6 +217,14 @@ class SalePaymentsModel extends DbConfig
 
         $sql = 'SELECT * FROM sale_payments WHERE processdt>= :stime AND processdt<= :etime';
         $placeholders = [":stime"=>$stime, ":etime"=>$etime];
+
+        return $this->select($sql, $placeholders);
+    }
+
+    public function getById($saleid){
+
+        $sql = 'SELECT * FROM sale_payments WHERE saleid = :saleid';
+        $placeholders = [":saleid"=>$saleid];
 
         return $this->select($sql, $placeholders);
     }

@@ -17,119 +17,142 @@
 
 <div class="col-sm-5">
     <div class="widget-box transparent">
-    <div class="widget-header widget-header-flat">
-        <h4 class="lighter">
-            <i class="icon-dollar"></i>
-            Today's Takings
-        </h4>
+        <div class="widget-header widget-header-flat">
+            <h4 class="lighter">
+                <i class="icon-dollar"></i>
+                Today's Takings
+            </h4>
+        </div>
+        <div class="widget-body" style="padding-top: 10px; text-align: center;">
+            <div class="infobox infobox-green infobox-sales">
+                <div class="infobox-icon">
+                    <i class="icon-shopping-cart"></i>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="salenum" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Sales</div>
+                </div>
+                <div id="saletotal" class="stat stat-success">-</div>
+            </div>
+
+            <div class="infobox infobox-green infobox-invoices">
+              <div class="infobox-icon">
+                <i class="icon-shopping-cart"></i>
+              </div>
+
+              <div class="infobox-data">
+                <span id="invoicenum" class="infobox-data-number">-</span>
+                <div class="infobox-content">Invoices</div>
+              </div>
+              <div id="invoicetotal" class="stat stat-success">-</div>
+            </div>
+
+            <div class="infobox infobox-red">
+              <div class="infobox-icon">
+                <i class="icon-shopping-cart"></i>
+              </div>
+
+              <div class="infobox-data">
+                <div id="invoicesbalance" class="stat stat-success">-</div>
+                <div class="infobox-content">Invoices Balance</div>
+              </div>
+            </div>
+
+            <div class="infobox infobox-orange">
+              <div class="infobox-icon">
+                <i class="icon-shopping-cart"></i>
+              </div>
+
+              <div class="infobox-data">
+                <div id="invoicespaid" class="stat stat-success">-</div>
+                <div class="infobox-content">Invoices Paid</div>
+              </div>
+            </div>
+
+            <div class="infobox infobox-orange infobox-refunds">
+                <div class="infobox-icon">
+                    <i class="icon-backward"></i>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="refundnum" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Refunds</div>
+                </div>
+
+                <div id="refundtotal" class="stat stat-important">-</div>
+            </div>
+
+            <div class="infobox infobox-red infobox-voids">
+                <div class="infobox-icon">
+                    <i class="icon-ban-circle"></i>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="voidnum" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Voids</div>
+                </div>
+                <div id="voidtotal" class="stat stat-important">-</div>
+            </div>
+
+            <div class="infobox infobox-orange infobox-cash">
+                <div class="infobox-icon">
+                    <i class="icon-dollar"></i>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="cash" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Total Cash</div>
+                </div>
+            </div>
+
+            <div class="infobox infobox-orange infobox-mpesa">
+                <div class="infobox-icon">
+                    <i class="icon-dollar"></i>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="mpesa" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Total Mpesa</div>
+                </div>
+            </div>
+
+            <div class="infobox infobox-orange infobox-bank">
+                <div class="infobox-icon">
+                    <i class="icon-dollar"></i>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="bank" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Total Bank</div>
+                </div>
+            </div>
+
+            <div class="infobox infobox-orange infobox-credit">
+                <div class="infobox-icon">
+                    <i class="icon-dollar"></i>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="credit" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Total Credit</div>
+                </div>
+            </div>
+
+            <div>
+                <div class="infobox infobox-blue2 infobox-takings">
+                <div class="infobox-icon">
+                    <i class="icon-dollar"></i>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="takings" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Revenue</div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="widget-body" style="padding-top: 10px; text-align: center;">
-    <div class="infobox infobox-green infobox-sales">
-        <div class="infobox-icon">
-            <i class="icon-shopping-cart"></i>
-        </div>
-
-        <div class="infobox-data">
-            <span id="salenum" class="infobox-data-number">-</span>
-            <div class="infobox-content">Sales</div>
-        </div>
-        <div id="saletotal" class="stat stat-success">-</div>
-    </div>
-
-    <div class="infobox infobox-green infobox-invoices">
-      <div class="infobox-icon">
-        <i class="icon-shopping-cart"></i>
-      </div>
-
-      <div class="infobox-data">
-        <span id="invoicenum" class="infobox-data-number">-</span>
-        <div class="infobox-content">Invoices</div>
-      </div>
-      <div id="invoicetotal" class="stat stat-success">-</div>
-    </div>
-
-    <div class="infobox infobox-red">
-      <div class="infobox-icon">
-        <i class="icon-shopping-cart"></i>
-      </div>
-
-      <div class="infobox-data">
-        <div id="invoicesbalance" class="stat stat-success">-</div>
-        <div class="infobox-content">Invoices Balance</div>
-      </div>
-    </div>
-
-    <div class="infobox infobox-orange">
-      <div class="infobox-icon">
-        <i class="icon-shopping-cart"></i>
-      </div>
-
-      <div class="infobox-data">
-        <div id="invoicespaid" class="stat stat-success">-</div>
-        <div class="infobox-content">Invoices Paid</div>
-      </div>
-    </div>
-
-    <div class="infobox infobox-orange infobox-refunds">
-        <div class="infobox-icon">
-            <i class="icon-backward"></i>
-        </div>
-
-        <div class="infobox-data">
-            <span id="refundnum" class="infobox-data-number">-</span>
-            <div class="infobox-content">Refunds</div>
-        </div>
-
-        <div id="refundtotal" class="stat stat-important">-</div>
-    </div><br/>
-
-    <div class="infobox infobox-red infobox-voids">
-        <div class="infobox-icon">
-            <i class="icon-ban-circle"></i>
-        </div>
-
-        <div class="infobox-data">
-            <span id="voidnum" class="infobox-data-number">-</span>
-            <div class="infobox-content">Voids</div>
-        </div>
-        <div id="voidtotal" class="stat stat-important">-</div>
-    </div>
-
-    <div class="infobox infobox-blue2 infobox-takings">
-        <div class="infobox-icon">
-            <i class="icon-dollar"></i>
-        </div>
-
-        <div class="infobox-data">
-            <span id="takings" class="infobox-data-number">-</span>
-            <div class="infobox-content">Revenue</div>
-        </div>
-    </div><br/>
-
-    <div class="infobox infobox-orange infobox-cost">
-        <div class="infobox-icon">
-            <i class="icon-dollar"></i>
-        </div>
-
-        <div class="infobox-data">
-            <span id="cost" class="infobox-data-number">-</span>
-            <div class="infobox-content">Total Cost</div>
-        </div>
-    </div>
-
-    <div class="infobox infobox-green infobox-profit">
-        <div class="infobox-icon">
-            <i class="icon-dollar"></i>
-        </div>
-
-        <div class="infobox-data">
-            <span id="profit" class="infobox-data-number">-</span>
-            <div class="infobox-content">Sales Profit</div>
-        </div>
-    </div>
-
-    </div>
-    </div>
+</div>
 </div>
 
 <div class="vspace-sm"></div>
@@ -378,7 +401,11 @@
         $("#refundtotal").text(WPOS.util.currencyFormat(totals.refundtotal));
         $("#voidnum").text(totals.voidnum);
         $("#voidtotal").text(WPOS.util.currencyFormat(totals.voidtotal));
-        $("#takings").text(WPOS.util.currencyFormat(totals.totaltakings, true));
+        $("#cash").text(WPOS.util.currencyFormat(totals.totalcash));
+        $("#mpesa").text(WPOS.util.currencyFormat(totals.totalmpesa));
+        $("#credit").text(WPOS.util.currencyFormat(totals.totalcredit));
+        $("#bank").text(WPOS.util.currencyFormat(totals.totalbank));
+        $("#takings").text(WPOS.util.currencyFormat((parseFloat(totals.saletotal) + parseFloat(totals.invoicetotal) - parseFloat(totals.refundtotal)), true));
         $("#cost").text(WPOS.util.currencyFormat(totals.cost, true));
         $("#profit").text(WPOS.util.currencyFormat(totals.profit, true));
         // Set onclicks

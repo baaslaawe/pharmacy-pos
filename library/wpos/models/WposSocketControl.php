@@ -39,7 +39,7 @@ class WposSocketControl {
      */
     public function startSocketServer($result=['error'=>'OK']){
 		if ($this->isWindows) {
-			pclose(popen('START "Biashara Retail POS (Keep this window open)" node '.$_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT'].'api/server.js','r'));
+			pclose(popen('START /B "Biashara Retail POS (Keep this window open)" node '.$_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT'].'api/server.js','r'));
 		} else {
             $args = $_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."api/server.js > /dev/null &";
 			exec("nodejs ".$args, $output, $res);
@@ -61,7 +61,7 @@ class WposSocketControl {
      */
     public function stopSocketServer($result=['error'=>'OK']){
 		if ($this->isWindows) {
-			exec('TASKKILL /F /FI "WindowTitle eq WPOS"', $output);
+			exec('TASKKILL /F /FI "IMAGENAME eq node.exe"', $output);
 		} else {
 			exec('kill `ps aux | grep "[n]odejs '.$_SERVER['DOCUMENT_ROOT'].'" | awk \'{print $2}\'`', $output);
 		}
@@ -104,7 +104,7 @@ class WposSocketControl {
      */
     private function getServerStat(){
 		if ($this->isWindows) {
-			exec('TASKLIST /NH /V /FI "WindowTitle eq WPOS"', $output );
+			exec('TASKLIST /NH /V /FI "IMAGENAME eq node.exe"', $output );
 			if (strpos($output[0], 'INFO')!==false){
 				$output[0] = 'Offline';
 				return false;
