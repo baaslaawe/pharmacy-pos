@@ -68,15 +68,15 @@ class WposAdminStats {
         $stats = new stdClass();
         $stats->saletotal = 0; // set defaults
         $stats->salenum = 0;
-        $stats->invoicetotal = 0;
-        $stats->invoicenum = 0;
+//        $stats->invoicetotal = 0;
+//        $stats->invoicenum = 0;
         $stats->refundtotal = 0;
         $stats->refundnum = 0;
         $stats->voidtotal = 0;
         $stats->voidnum = 0;
         $salesMdl = new TransactionsModel();
         $voidMdl = new SaleVoidsModel();
-        $paymentsMdl = new SalePaymentsModel();
+//        $paymentsMdl = new SalePaymentsModel();
         // check if params set, if not set defaults
         $stime = isset($this->data->stime)?$this->data->stime:(strtotime('-1 week')*1000);
         $etime = isset($this->data->etime)?$this->data->etime:(time()*1000);
@@ -90,7 +90,7 @@ class WposAdminStats {
             $result['error']= $salesMdl->errorInfo;
         }
 
-        // get non voided invoices
+/*        // get non voided invoices
         if (($invoices = $salesMdl->getTotals($stime, $etime, null, false, false, 'invoice'))!==false){
             $stats->invoicerefs = $invoices[0]['refs'];
             $stats->invoicetotal = $invoices[0]['stotal'];
@@ -136,7 +136,7 @@ class WposAdminStats {
             }
         } else {
             $result['error']= $saleMdl->errorInfo;
-        }
+        }*/
 
         // get voided sales
         $voids = $salesMdl->getTotals($stime, $etime, 3, true, false, $this->data->type);
@@ -151,9 +151,9 @@ class WposAdminStats {
         $stats->refundnum = $refund[0]['snum'];
 
         // calc total takings
-        $stats->totaltakings = round($stats->totalpayments, 2);
-        $stats->cost = round($sales[0]['ctotal']+ $invoices[0]['ctotal'], 2);
-        $stats->profit = round($stats->saletotal - $stats->refundtotal - $sales[0]['ctotal'], 2);
+        $stats->totaltakings = round($stats->saletotal - $stats->refundtotal, 2);
+        $stats->cost = round($$sales[0]['ctotal'], 2);
+        $stats->profit = round($stats->totaltakings - $stats->cost, 2);
         $stats->refs = [];
         $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
         $temprefs = explode(',', $temprefs);

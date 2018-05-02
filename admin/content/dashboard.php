@@ -36,7 +36,7 @@
                 <div id="saletotal" class="stat stat-success">-</div>
             </div>
 
-            <div class="infobox infobox-green infobox-invoices">
+<!--            <div class="infobox infobox-green infobox-invoices">
               <div class="infobox-icon">
                 <span class="octicon octicon-clippy"></span>
               </div>
@@ -68,7 +68,7 @@
                 <div id="invoicespaid" class="stat stat-success">-</div>
                 <div class="infobox-content">Invoices Paid</div>
               </div>
-            </div>
+            </div> -->
 
             <div class="infobox infobox-orange infobox-refunds">
                 <div class="infobox-icon">
@@ -95,7 +95,7 @@
                 <div id="voidtotal" class="stat stat-important">-</div>
             </div>
 
-            <div class="infobox infobox-green infobox-cash">
+<!--            <div class="infobox infobox-green infobox-cash">
                 <div class="infobox-icon">
                    <span class="octicon octicon-inbox"></span>
                 </div>
@@ -137,17 +137,29 @@
                     <span id="credit" class="infobox-data-number">-</span>
                     <div class="infobox-content">Total Credit</div>
                 </div>
-            </div>
+            </div> -->
 
             <div>
-                <div class="infobox infobox-blue2 infobox-takings">
+                <div class="infobox infobox-green infobox-cost">
                 <div class="infobox-icon">
                     <span class="octicon octicon-briefcase"></span>
                 </div>
 
                 <div class="infobox-data">
-                    <span id="takings" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Revenue</div>
+                    <span id="cost" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Cost</div>
+                </div>
+            </div>
+
+            <div>
+                <div class="infobox infobox-green infobox-profit">
+                <div class="infobox-icon">
+                    <span class="octicon octicon-briefcase"></span>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="profit" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Profits</div>
                 </div>
             </div>
         </div>
@@ -393,19 +405,19 @@
         // populate the fields
         $("#salenum").text(totals.salenum);
         $("#saletotal").text(WPOS.util.currencyFormat(totals.saletotal));
-        $("#invoicenum").text(totals.invoicenum);
-        $("#invoicetotal").text(WPOS.util.currencyFormat(totals.invoicetotal));
-        $("#invoicesbalance").text(WPOS.util.currencyFormat(totals.invoicebalance));
-        $("#invoicespaid").text(WPOS.util.currencyFormat(totals.invoicetotal-totals.invoicebalance));
+        // $("#invoicenum").text(totals.invoicenum);
+        // $("#invoicetotal").text(WPOS.util.currencyFormat(totals.invoicetotal));
+        // $("#invoicesbalance").text(WPOS.util.currencyFormat(totals.invoicebalance));
+        // $("#invoicespaid").text(WPOS.util.currencyFormat(totals.invoicetotal-totals.invoicebalance));
         $("#refundnum").text(totals.refundnum);
         $("#refundtotal").text(WPOS.util.currencyFormat(totals.refundtotal));
         $("#voidnum").text(totals.voidnum);
         $("#voidtotal").text(WPOS.util.currencyFormat(totals.voidtotal));
-        $("#cash").text(WPOS.util.currencyFormat(totals.totalcash));
-        $("#mpesa").text(WPOS.util.currencyFormat(totals.totalmpesa));
-        $("#credit").text(WPOS.util.currencyFormat(totals.totalcredit));
-        $("#bank").text(WPOS.util.currencyFormat(totals.totalbank));
-        $("#takings").text(WPOS.util.currencyFormat((parseFloat(totals.saletotal) + parseFloat(totals.invoicetotal) - parseFloat(totals.refundtotal)), true));
+        // $("#cash").text(WPOS.util.currencyFormat(totals.totalcash));
+        // $("#mpesa").text(WPOS.util.currencyFormat(totals.totalmpesa));
+        // $("#credit").text(WPOS.util.currencyFormat(totals.totalcredit));
+        // $("#bank").text(WPOS.util.currencyFormat(totals.totalbank));
+        $("#takings").text(WPOS.util.currencyFormat((parseFloat(totals.saletotal) - parseFloat(totals.refundtotal)), true));
         $("#cost").text(WPOS.util.currencyFormat(totals.cost, true));
         $("#profit").text(WPOS.util.currencyFormat(totals.profit, true));
         // Set onclicks
