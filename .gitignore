@@ -7,3 +7,4 @@ node_modules
 release-builds/
 mariadb/data
 poss.sqlite
+yarn-error.log
