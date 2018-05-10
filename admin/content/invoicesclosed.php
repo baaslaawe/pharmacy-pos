@@ -124,8 +124,10 @@
     function reloadInvoicesTable(){
         var invoices = WPOS.transactions.getTransactions();
         var itemarray = [];
-        for (var key in invoices){
-            itemarray.push(invoices[key]);
+        for (var key in invoices) {
+            var status = getTransactionStatus(invoices[key]);
+            if (status === 1 || status === 2)
+                itemarray.push(invoices[key]);
         }
         datatable.fnClearTable(false);
         if (itemarray.length>0)
@@ -169,6 +171,9 @@
     function getStatusHtml(status){
         var stathtml;
         switch(status){
+            case -3:
+                stathtml='<span class="label label-warning arrowed">Empty</span>';
+                break;
             case -2:
                 stathtml='<span class="label label-danger arrowed">Overdue</span>';
                 break;
@@ -190,6 +195,7 @@
         }
         return stathtml;
     }
+
     function getTransactionStatus(record){
         if (record.hasOwnProperty('voiddata')){
             return 2;
@@ -199,9 +205,12 @@
         } else if (record.balance == 0 && record.total!=0){
             // closed
             return 1;
-        } else if ((record.duedt < (new Date).getTime()) && record.balace!=0) {
+        } else if ((record.duedt < (new Date).getTime()) && record.balance!=0) {
             // overdue
             return -2
+        } else if (record.items.length === 0 && record.balance== 0) {
+            // empty
+            return -3
         }
         return -1;
     }
