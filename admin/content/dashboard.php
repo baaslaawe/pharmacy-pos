@@ -36,40 +36,6 @@
                 <div id="saletotal" class="stat stat-success">-</div>
             </div>
 
-<!--            <div class="infobox infobox-green infobox-invoices">
-              <div class="infobox-icon">
-                <span class="octicon octicon-clippy"></span>
-              </div>
-
-              <div class="infobox-data">
-                <span id="invoicenum" class="infobox-data-number">-</span>
-                <div class="infobox-content">Invoices</div>
-              </div>
-              <div id="invoicetotal" class="stat stat-success">-</div>
-            </div>
-
-            <div class="infobox infobox-red">
-              <div class="infobox-icon">
-                <span class="octicon octicon-diff"></span>
-              </div>
-
-              <div class="infobox-data">
-                <div id="invoicesbalance" class="stat stat-success">-</div>
-                <div class="infobox-content">Invoices Balance</div>
-              </div>
-            </div>
-
-            <div class="infobox infobox-green">
-              <div class="infobox-icon">
-                <span class="octicon octicon-checklist"></span>
-              </div>
-
-              <div class="infobox-data">
-                <div id="invoicespaid" class="stat stat-success">-</div>
-                <div class="infobox-content">Invoices Paid</div>
-              </div>
-            </div> -->
-
             <div class="infobox infobox-orange infobox-refunds">
                 <div class="infobox-icon">
                     <i class="icon-backward"></i>
@@ -95,54 +61,20 @@
                 <div id="voidtotal" class="stat stat-important">-</div>
             </div>
 
-<!--            <div class="infobox infobox-green infobox-cash">
+            <div class="infobox infobox-blue2 infobox-takings">
                 <div class="infobox-icon">
-                   <span class="octicon octicon-inbox"></span>
+                    <i class="icon-dollar"></i>
                 </div>
 
                 <div class="infobox-data">
-                    <span id="cash" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Total Cash</div>
+                    <span id="takings" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Revenue</div>
                 </div>
             </div>
 
-            <div class="infobox infobox-green infobox-mpesa">
+            <div class="infobox infobox-orange infobox-cost">
                 <div class="infobox-icon">
-                    <span class="octicon octicon-device-mobile"></span>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="mpesa" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Total Mpesa</div>
-                </div>
-            </div>
-
-            <div class="infobox infobox-blue infobox-bank">
-                <div class="infobox-icon">
-                    <span class="octicon octicon-credit-card"></span>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="bank" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Total Bank</div>
-                </div>
-            </div>
-
-            <div class="infobox infobox-red infobox-credit">
-                <div class="infobox-icon">
-                   <span class="octicon octicon-issue-opened"></span>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="credit" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Total Credit</div>
-                </div>
-            </div> -->
-
-            <div>
-                <div class="infobox infobox-green infobox-cost">
-                <div class="infobox-icon">
-                    <span class="octicon octicon-briefcase"></span>
+                    <i class="icon-dollar"></i>
                 </div>
 
                 <div class="infobox-data">
@@ -151,20 +83,18 @@
                 </div>
             </div>
 
-            <div>
-                <div class="infobox infobox-green infobox-profit">
+            <div class="infobox infobox-green infobox-profit">
                 <div class="infobox-icon">
-                    <span class="octicon octicon-briefcase"></span>
+                    <i class="icon-dollar"></i>
                 </div>
 
                 <div class="infobox-data">
                     <span id="profit" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Profits</div>
+                    <div class="infobox-content">Profit</div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <div class="vspace-sm"></div>

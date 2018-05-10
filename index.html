@@ -30,7 +30,9 @@
     <link rel="stylesheet" href="/assets/css/ace-ie.min.css"/>
     <![endif]-->
     <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css"/>
-
+         <!-- Fixes jQuery not found in electron app  -->
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <script>if (window.module) module = window.module;</script>
 
     <!-- UI FRAMEWORK SCRIPTS -->
     <!--[if !IE]> -->
