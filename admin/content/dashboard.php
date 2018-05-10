@@ -11,139 +11,88 @@
     </h1>
 </div><!-- /.page-header -->
 <div class="row">
-    <div class="col-xs-12">
-        <div class="row">
-            <div class="space-6"></div>
+    <div class="space-6"></div>
 
-            <div class="col-sm-5">
-                <div class="widget-box transparent">
-                    <div class="widget-header widget-header-flat">
-                        <h4 class="lighter">
-                            <i class="icon-dollar"></i>
-                            Today's Takings
-                        </h4>
-                    </div>
-                    <div class="widget-body" style="padding-top: 10px; text-align: center;">
-                        <div class="infobox infobox-green infobox-sales">
-                            <div class="infobox-icon">
-                                <i class="icon-shopping-cart"></i>
-                            </div>
+<div class="col-sm-5">
+    <div class="widget-box transparent">
+        <div class="widget-header widget-header-flat">
+            <h4 class="lighter">
+                <i class="icon-dollar"></i>
+                Today's Takings
+            </h4>
+        </div>
+        <div class="widget-body" style="padding-top: 10px; text-align: center;">
+            <div class="infobox infobox-green infobox-sales">
+                <div class="infobox-icon">
+                    <i class="icon-shopping-cart"></i>
+                </div>
 
-                            <div class="infobox-data">
-                                <span id="salenum" class="infobox-data-number">-</span>
-                                <div class="infobox-content">Sales</div>
-                            </div>
-                            <div id="saletotal" class="stat stat-success">-</div>
-                        </div>
+                <div class="infobox-data">
+                    <span id="salenum" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Sales</div>
+                </div>
+                <div id="saletotal" class="stat stat-success">-</div>
+            </div>
 
-                        <div class="infobox infobox-orange infobox-refunds">
-                            <div class="infobox-icon">
-                                <i class="icon-backward"></i>
-                            </div>
+            <div class="infobox infobox-orange infobox-refunds">
+                <div class="infobox-icon">
+                    <i class="icon-backward"></i>
+                </div>
 
-                            <div class="infobox-data">
-                                <span id="refundnum" class="infobox-data-number">-</span>
-                                <div class="infobox-content">Refunds</div>
-                            </div>
+                <div class="infobox-data">
+                    <span id="refundnum" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Refunds</div>
+                </div>
 
-                            <div id="refundtotal" class="stat stat-important">-</div>
-                        </div><br/>
+                <div id="refundtotal" class="stat stat-important">-</div>
+            </div>
 
-                        <div class="infobox infobox-red infobox-voids">
-                            <div class="infobox-icon">
-                                <i class="icon-ban-circle"></i>
-                            </div>
+            <div class="infobox infobox-red infobox-voids">
+                <div class="infobox-icon">
+                    <i class="icon-ban-circle"></i>
+                </div>
 
-                            <div class="infobox-data">
-                                <span id="voidnum" class="infobox-data-number">-</span>
-                                <div class="infobox-content">Voids</div>
-                            </div>
-                            <div id="voidtotal" class="stat stat-important">-</div>
-                        </div>
+                <div class="infobox-data">
+                    <span id="voidnum" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Voids</div>
+                </div>
+                <div id="voidtotal" class="stat stat-important">-</div>
+            </div>
 
-                        <div class="infobox infobox-blue2 infobox-takings">
-                            <div class="infobox-icon">
-                                <i class="icon-dollar"></i>
-                            </div>
+            <div class="infobox infobox-blue2 infobox-takings">
+                <div class="infobox-icon">
+                    <i class="icon-dollar"></i>
+                </div>
 
-                            <div class="infobox-data">
-                                <span id="takings" class="infobox-data-number">-</span>
-                                <div class="infobox-content">Revenue</div>
-                            </div>
-                        </div><br/>
+                <div class="infobox-data">
+                    <span id="takings" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Revenue</div>
+                </div>
+            </div>
 
-                        <div class="infobox infobox-orange infobox-cost">
-                            <div class="infobox-icon">
-                                <i class="icon-dollar"></i>
-                            </div>
-
-                            <div class="infobox-data">
-                                <span id="cost" class="infobox-data-number">-</span>
-                                <div class="infobox-content">Cost</div>
-                            </div>
-                        </div>
-
-                        <div class="infobox infobox-green infobox-profit">
-                            <div class="infobox-icon">
-                                <i class="icon-dollar"></i>
-                            </div>
-
-                            <div class="infobox-data">
-                                <span id="profit" class="infobox-data-number">-</span>
-                                <div class="infobox-content">Profit</div>
-                            </div>
-                        </div>
+            <div class="infobox infobox-orange infobox-cost">
+                <div class="infobox-icon">
+                    <i class="icon-dollar"></i>
+                </div>
 
                     </div>
                 </div>
             </div>
 
-            <div class="vspace-sm"></div>
+            <div class="infobox infobox-green infobox-profit">
+                <div class="infobox-icon">
+                    <i class="icon-dollar"></i>
+                </div>
 
-            <div class="col-sm-7">
-                <div class="widget-box transparent">
-                    <div class="widget-header widget-header-flat">
-                        <h4 class="lighter">
-                            <i class="icon-signal"></i>
-                            Sale Graph
-                        </h4>
-                        <div class="widget-toolbar no-border">
-                            <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
-                                <span id="grange">This Week</span>
-                                <i class="icon-angle-down icon-on-right bigger-110"></i>
-                            </button>
-
-                            <ul id="grangevalues" class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
-                                <li onclick="setGraph($(this));" class="active" >
-                                    <a class="blue">
-                                        <i class="icon-caret-right bigger-110">&nbsp;</i>
-                                        <span class="grangeval">This Week</span>
-                                    </a>
-                                </li>
-
-                                <li onclick="setGraph($(this));">
-                                    <a>
-                                        <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
-                                        <span class="grangeval">Last Week</span>
-                                    </a>
-                                </li>
-
-                                <li onclick="setGraph($(this));">
-                                    <a>
-                                        <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
-                                        <span class="grangeval">This Month</span>
-                                    </a>
-                                </li>
-
-                                <li onclick="setGraph($(this));">
-                                    <a>
-                                        <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
-                                        <span class="grangeval">Last Month</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="infobox-data">
+                    <span id="profit" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Profit</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+>>>>>>> d2461f0... Fixed dashboard boxes
 
                     <div class="widget-body">
                         <div class="widget-main padding-4">
