@@ -2,6 +2,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
     <style type="text/css">
+        * {
+            -webkit-print-color-adjust: exact !important;   /* Chrome, Safari */
+            line-height: 1 !important; /*Chrome- removes extra blank page at the bottom*/
+        }
+    </style>
+    <style type="text/css">
         table {
             width: 100%;
             margin-bottom: 4px;
@@ -10,65 +16,75 @@
         table:first-child {
             margin-top: 8px;
         }
-    </style>
-{{#thermalprint}}
-    <style type="text/css">
-        body {
-            font-family: Arial, sans-serif !important;
-            font-size: 14px;
-            padding: 0;
-            margin: 0;
-        }
-        body div {
-            font-size: 1.7em;
-            padding: 0;
-            margin: 0;
-        }
-        tr td:first-child{
-            width:1%;
-            white-space:nowrap;
-            vertical-align: top;
-        }
-        #container {
-            text-align: center;
-            width: 576px;
+        @media print {
+            html, body {
+                height: 100vh;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden;
+                page-break-after: avoid;
+                page-break-before: avoid;
+            }
         }
     </style>
-{{/thermalprint}}
-{{^thermalprint}}
-    <style type="text/css">
-        @import url(/assets/css/bootstrap.min.css);
-        @import url(/assets/css/font-awesome.min.css);
-        @import url(/assets/css/ace-fonts.css);
-        @import url(/assets/css/ace.min.css);
+    {{#thermalprint}}
+        <style type="text/css">
+            body {
+                font-family: Arial, sans-serif !important;
+                font-size: 14px;
+                padding: 0;
+                margin: 0;
+            }
+            body div {
+                font-size: 1.7em;
+                padding: 0;
+                margin: 0;
+            }
+            tr td:first-child{
+                width:1%;
+                white-space:nowrap;
+                vertical-align: top;
+            }
+            #container {
+                text-align: center;
+                width: 576px;
+            }
+        </style>
+    {{/thermalprint}}
+    {{^thermalprint}}
+        <style type="text/css">
+            @import url(/assets/css/bootstrap.min.css);
+            @import url(/assets/css/font-awesome.min.css);
+            @import url(/assets/css/ace-fonts.css);
+            @import url(/assets/css/ace.min.css);
 
-        body {
-            background-color: #FFFFFF;
-            font-size: default !important;
-        }
-        p, tr, strong, b {
-            font-size: 13px;
-        }
-        body div {
-            font-size: inherit !important;
-        }
-        tr td:first-child{
-            width:1%;
-            white-space:nowrap;
-            vertical-align: top;
-        }
-        #container {
-            width:300px;
-            margin: 5px auto;
-            padding-left: 5px;
-            padding-right: 5px;
-            text-align: center;
-        }
-    </style>
-{{/thermalprint}}
+            body {
+                background-color: #FFFFFF;
+                font-size: default !important;
+            }
+            p, tr, strong, b {
+                font-size: 13px;
+            }
+            body div {
+                font-size: inherit !important;
+            }
+            tr td:first-child{
+                width:1%;
+                white-space:nowrap;
+                vertical-align: top;
+            }
+            #container {
+                width:300px;
+                margin: 5px auto;
+                padding-left: 5px;
+                padding-right: 5px;
+                text-align: center;
+            }
+        </style>
+    {{/thermalprint}}
 </head>
 <body>
-    <div id="container">
+<div id="container">
 
     {{^thermalprint}}
         <img style="width: 260px;" src="{{logo_url}}"/><br/>
@@ -139,9 +155,9 @@
             <strong>Refund</strong>
         </p>
         <table style="width: 100%; margin-bottom: 5px;">
-        {{#sale_refunds}}
-            <tr><td>{{datetime}}<br/>({{numitems}} items)</td><td style="vertical-align: top;">{{method}}</td><td style="text-align: right; vertical-align: top;">{{#currency}}{{amount}}{{/currency}}</td></tr>
-        {{/sale_refunds}}
+            {{#sale_refunds}}
+                <tr><td>{{datetime}}<br/>({{numitems}} items)</td><td style="vertical-align: top;">{{method}}</td><td style="text-align: right; vertical-align: top;">{{#currency}}{{amount}}{{/currency}}</td></tr>
+            {{/sale_refunds}}
         </table>
     {{/sale_hasrefunds}}
 
@@ -159,10 +175,10 @@
 
     {{^thermalprint}}
         {{#qrcode_url}}
-        <img style="text-align: center; height: 75px; margin-top: 4px;" src="{{qrcode_url}}"/>
+            <img style="text-align: center; height: 75px; margin-top: 4px;" src="{{qrcode_url}}"/>
         {{/qrcode_url}}
     {{/thermalprint}}
 
-    </div>
+</div>
 </body>
 </html>
