@@ -10,6 +10,8 @@
         <p class="pull-right">Subscription Status : <span id="status"></span></p>
     </h1>
 </div><!-- /.page-header -->
+    <div class="row">
+    <div class="col-xs-12">
 <div class="row">
     <div class="space-6"></div>
 
@@ -75,7 +77,9 @@
                     <i class="icon-dollar"></i>
                 </div>
 
-                    </div>
+                <div class="infobox-data">
+                    <span id="cost" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Cost</div>
                 </div>
             </div>
 
@@ -92,182 +96,228 @@
         </div>
     </div>
 </div>
->>>>>>> d2461f0... Fixed dashboard boxes
 
-                    <div class="widget-body">
-                        <div class="widget-main padding-4">
-                            <div id="sales-charts"></div>
-                        </div><!-- /widget-main -->
-                    </div><!-- /widget-body -->
-                </div><!-- /widget-box -->
-            </div><!-- /span -->
+<div class="vspace-sm"></div>
 
-        </div><!-- /row -->
+<div class="col-sm-7">
+    <div class="widget-box transparent">
+        <div class="widget-header widget-header-flat">
+            <h4 class="lighter">
+                <i class="icon-signal"></i>
+                Sale Graph
+            </h4>
+            <div class="widget-toolbar no-border">
+                <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                    <span id="grange">This Week</span>
+                    <i class="icon-angle-down icon-on-right bigger-110"></i>
+                </button>
 
-        <div class="vspace-sm"></div>
-        <div class="hr hr32 hr-dotted hidden-480 hidden-320 hidden-xs"></div>
+                <ul id="grangevalues" class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
+                    <li onclick="setGraph($(this));" class="active" >
+                        <a class="blue">
+                            <i class="icon-caret-right bigger-110">&nbsp;</i>
+                            <span class="grangeval">This Week</span>
+                        </a>
+                    </li>
+
+                    <li onclick="setGraph($(this));">
+                        <a>
+                            <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                            <span class="grangeval">Last Week</span>
+                        </a>
+                    </li>
+
+                    <li onclick="setGraph($(this));">
+                        <a>
+                            <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                            <span class="grangeval">This Month</span>
+                        </a>
+                    </li>
+
+                    <li onclick="setGraph($(this));">
+                        <a>
+                            <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                            <span class="grangeval">Last Month</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main padding-4">
+                <div id="sales-charts"></div>
+            </div><!-- /widget-main -->
+        </div><!-- /widget-body -->
+    </div><!-- /widget-box -->
+</div><!-- /span -->
+
+</div><!-- /row -->
+
+<div class="vspace-sm"></div>
+<div class="hr hr32 hr-dotted hidden-480 hidden-320 hidden-xs"></div>
 
 
-        <div class="row">
-            <div class="col-sm-5">
-                <div class="widget-box transparent">
-                    <div class="widget-header widget-header-flat">
-                        <h4 class="lighter">
-                            <i class="icon-star orange"></i>
-                            Popular Items This Month
-                        </h4>
-                    </div>
-
-                    <div class="widget-body">
-                        <div class="widget-main no-padding">
-                            <table class="table table-bordered table-striped">
-                                <thead class="thin-border-bottom">
-                                <tr>
-                                    <th>
-                                        <i class="icon-caret-right blue"></i>
-                                        Name
-                                    </th>
-
-                                    <th>
-                                        <i class="icon-caret-right blue"></i>
-                                        Qty Sold
-                                    </th>
-
-                                    <th>
-                                        <i class="icon-caret-right blue"></i>
-                                        Total
-                                    </th>
-                                </tr>
-                                </thead>
-
-                                <tbody id="popularitems">
-
-                                </tbody>
-                            </table>
-                        </div><!-- /widget-main -->
-                    </div><!-- /widget-body -->
-                </div><!-- /widget-box -->
+<div class="row">
+    <div class="col-sm-5">
+        <div class="widget-box transparent">
+            <div class="widget-header widget-header-flat">
+                <h4 class="lighter">
+                    <i class="icon-star orange"></i>
+                    Popular Items This Month
+                </h4>
             </div>
 
-            <div class="vspace-sm"></div>
+            <div class="widget-body">
+                <div class="widget-main no-padding">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thin-border-bottom">
+                        <tr>
+                            <th>
+                                <i class="icon-caret-right blue"></i>
+                                Name
+                            </th>
 
-            <div class="col-sm-7">
-                <div class="widget-box transparent">
-                    <div class="widget-header widget-header-flat">
-                        <h4 class="lighter">
-                            <i class="icon-plus-sign"></i>
-                            Sale Stats
-                        </h4>
-                    </div>
+                            <th>
+                                <i class="icon-caret-right blue"></i>
+                                Qty Sold
+                            </th>
+
+                            <th>
+                                <i class="icon-caret-right blue"></i>
+                                Total
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="popularitems">
+
+                        </tbody>
+                    </table>
+                </div><!-- /widget-main -->
+            </div><!-- /widget-body -->
+        </div><!-- /widget-box -->
+    </div>
+
+    <div class="vspace-sm"></div>
+
+    <div class="col-sm-7">
+        <div class="widget-box transparent">
+            <div class="widget-header widget-header-flat">
+                <h4 class="lighter">
+                    <i class="icon-plus-sign"></i>
+                    Sale Stats
+                </h4>
+            </div>
+        </div>
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat widget-header-small">
+                <i class="icon-signal"></i>
+                <div class="widget-toolbar no-border" style="float: none; display: inline-block; vertical-align: top;">
+                    <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <span id="pietype">Payments</span>
+                        <i class="icon-angle-down icon-on-right bigger-110"></i>
+                    </button>
+
+                    <ul id="pietypevalues" class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
+                        <li onclick="setPieType($(this));" class="active">
+                            <a class="blue">
+                                <i class="icon-caret-right bigger-110">&nbsp;</i>
+                                <span class="pietypeval">Payments</span>
+                            </a>
+                        </li>
+
+                        <li onclick="setPieType($(this));">
+                            <a>
+                                <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                                <span class="pietypeval">Devices</span>
+                            </a>
+                        </li>
+
+                        <li onclick="setPieType($(this));">
+                            <a>
+                                <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                                <span class="pietypeval">Locations</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                <div class="widget-box">
-                    <div class="widget-header widget-header-flat widget-header-small">
-                        <i class="icon-signal"></i>
-                        <div class="widget-toolbar no-border" style="float: none; display: inline-block; vertical-align: top;">
-                            <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
-                                <span id="pietype">Payments</span>
-                                <i class="icon-angle-down icon-on-right bigger-110"></i>
-                            </button>
+                <h5 style="display: inline-block; margin-top: 0;"></h5>
+                <div class="widget-toolbar no-border">
+                    <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <span id="pierange">This Week</span>
+                        <i class="icon-angle-down icon-on-right bigger-110"></i>
+                    </button>
 
-                            <ul id="pietypevalues" class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
-                                <li onclick="setPieType($(this));" class="active">
-                                    <a class="blue">
-                                        <i class="icon-caret-right bigger-110">&nbsp;</i>
-                                        <span class="pietypeval">Payments</span>
-                                    </a>
-                                </li>
+                    <ul id="pierangevalues" class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
+                        <li onclick="setPie($(this));" class="active" >
+                            <a class="blue">
+                                <i class="icon-caret-right bigger-110">&nbsp;</i>
+                                <span class="pierangeval">This Week</span>
+                            </a>
+                        </li>
 
-                                <li onclick="setPieType($(this));">
-                                    <a>
-                                        <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
-                                        <span class="pietypeval">Devices</span>
-                                    </a>
-                                </li>
+                        <li onclick="setPie($(this));">
+                            <a>
+                                <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                                <span class="pierangeval">Last Week</span>
+                            </a>
+                        </li>
 
-                                <li onclick="setPieType($(this));">
-                                    <a>
-                                        <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
-                                        <span class="pietypeval">Locations</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <h5 style="display: inline-block; margin-top: 0;"></h5>
-                        <div class="widget-toolbar no-border">
-                            <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
-                                <span id="pierange">This Week</span>
-                                <i class="icon-angle-down icon-on-right bigger-110"></i>
-                            </button>
+                        <li onclick="setPie($(this));">
+                            <a>
+                                <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                                <span class="pierangeval">This Month</span>
+                            </a>
+                        </li>
 
-                            <ul id="pierangevalues" class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
-                                <li onclick="setPie($(this));" class="active" >
-                                    <a class="blue">
-                                        <i class="icon-caret-right bigger-110">&nbsp;</i>
-                                        <span class="pierangeval">This Week</span>
-                                    </a>
-                                </li>
+                        <li onclick="setPie($(this));">
+                            <a>
+                                <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                                <span class="pierangeval">Last Month</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-                                <li onclick="setPie($(this));">
-                                    <a>
-                                        <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
-                                        <span class="pierangeval">Last Week</span>
-                                    </a>
-                                </li>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div id="piechart-placeholder"></div>
 
-                                <li onclick="setPie($(this));">
-                                    <a>
-                                        <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
-                                        <span class="pierangeval">This Month</span>
-                                    </a>
-                                </li>
+                    <div class="hr hr8 hr-double"></div>
 
-                                <li onclick="setPie($(this));">
-                                    <a>
-                                        <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
-                                        <span class="pierangeval">Last Month</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="widget-body">
-                        <div class="widget-main">
-                            <div id="piechart-placeholder"></div>
-
-                            <div class="hr hr8 hr-double"></div>
-
-                            <div class="clearfix">
-                                <div class="grid3">
+                    <div class="clearfix">
+                        <div class="grid3">
 															<span class="grey">
 																<i class="icon-shopping-cart icon-2x green"></i>
 																&nbsp;<span id="piesalenum">-</span> sales
 															</span>
-                                    <h4 id="piesaletotal" class="bigger pull-right">-</h4>
-                                </div>
+                            <h4 id="piesaletotal" class="bigger pull-right">-</h4>
+                        </div>
 
-                                <div class="grid3">
+                        <div class="grid3">
 															<span class="grey">
 																<i class="icon-ban-circle icon-2x orange"></i>
 																&nbsp;<span id="pierefundnum">-</span> refunds
 															</span>
-                                    <h4 id="pierefundtotal" class="bigger pull-right">-</h4>
-                                </div>
+                            <h4 id="pierefundtotal" class="bigger pull-right">-</h4>
+                        </div>
 
-                                <div class="grid3">
+                        <div class="grid3">
 															<span class="grey">
 																<i class="icon-dollar icon-2x blue"></i>
 																&nbsp; total
 															</span>
-                                    <h4 id="piebalance" class="bigger pull-right">-</h4>
-                                </div>
-                            </div>
-                        </div><!-- /widget-main -->
-                    </div><!-- /widget-body -->
-                </div><!-- /widget-box -->
-            </div>
-        </div>
+                            <h4 id="piebalance" class="bigger pull-right">-</h4>
+                        </div>
+                    </div>
+                </div><!-- /widget-main -->
+            </div><!-- /widget-body -->
+        </div><!-- /widget-box -->
     </div>
+    </div>
+</div>
 </div>
 
 <div class="hr hr32 hr-dotted"></div>
@@ -285,15 +335,24 @@
         // populate the fields
         $("#salenum").text(totals.salenum);
         $("#saletotal").text(WPOS.util.currencyFormat(totals.saletotal));
+        // $("#invoicenum").text(totals.invoicenum);
+        // $("#invoicetotal").text(WPOS.util.currencyFormat(totals.invoicetotal));
+        // $("#invoicesbalance").text(WPOS.util.currencyFormat(totals.invoicebalance));
+        // $("#invoicespaid").text(WPOS.util.currencyFormat(totals.invoicetotal-totals.invoicebalance));
         $("#refundnum").text(totals.refundnum);
         $("#refundtotal").text(WPOS.util.currencyFormat(totals.refundtotal));
         $("#voidnum").text(totals.voidnum);
         $("#voidtotal").text(WPOS.util.currencyFormat(totals.voidtotal));
-        $("#takings").text(WPOS.util.currencyFormat(totals.totaltakings, true));
+        // $("#cash").text(WPOS.util.currencyFormat(totals.totalcash));
+        // $("#mpesa").text(WPOS.util.currencyFormat(totals.totalmpesa));
+        // $("#credit").text(WPOS.util.currencyFormat(totals.totalcredit));
+        // $("#bank").text(WPOS.util.currencyFormat(totals.totalbank));
+        $("#takings").text(WPOS.util.currencyFormat((parseFloat(totals.saletotal) - parseFloat(totals.refundtotal)), true));
         $("#cost").text(WPOS.util.currencyFormat(totals.cost, true));
         $("#profit").text(WPOS.util.currencyFormat(totals.profit, true));
         // Set onclicks
         $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(totals.salerefs); });
+        $(".infobox-invoices").on('click', function(){ WPOS.transactions.openTransactionList(totals.invoicerefs); });
         $(".infobox-refunds").on('click', function(){ WPOS.transactions.openTransactionList(totals.refundrefs); });
         $(".infobox-voids").on('click', function(){ WPOS.transactions.openTransactionList(totals.voidrefs); });
         $(".infobox-takings").on('click', function(){ WPOS.transactions.openTransactionList(totals.refs); });
@@ -303,28 +362,28 @@
         if (!items){
             return false;
         }
-        var names = [];
-        for (var i in items) {
-            names[items[i].name] = [];
-            names[items[i].name].name = items[i].name;
-            names[items[i].name].netqty = 0;
-            names[items[i].name].soldtotal = 0;
+      var names = [];
+      for (var i in items) {
+        names[items[i].name] = [];
+        names[items[i].name].name = items[i].name;
+        names[items[i].name].netqty = 0;
+        names[items[i].name].soldtotal = 0;
+      }
+      for (var i in items) {
+        names[items[i].name].netqty += parseInt(items[i].netqty);// Sum all the qty from same item name
+        names[items[i].name].soldtotal += parseFloat(items[i].soldtotal);// Sum all the qty from same item name
+      }
+      var filteredItems = [];
+      for (var i in items) {
+        filteredItems.push(items[i].name);// get all names
+      }
+      var uniqueItems = [...new Set(filteredItems)]; //get only unque names
+      var list = [];
+      for(var i in names) {
+        if (uniqueItems.indexOf(names[i].name) !== -1) {
+          list[uniqueItems.indexOf(names[i].name)] = names[i];
         }
-        for (var i in items) {
-            names[items[i].name].netqty += parseInt(items[i].netqty);// Sum all the qty from same item name
-            names[items[i].name].soldtotal += parseFloat(items[i].soldtotal);// Sum all the qty from same item name
-        }
-        var filteredItems = [];
-        for (var i in items) {
-            filteredItems.push(items[i].name);// get all names
-        }
-        var uniqueItems = [...new Set(filteredItems)]; //get only unque names
-        var list = [];
-        for(var i in names) {
-            if (uniqueItems.indexOf(names[i].name) !== -1) {
-                list[uniqueItems.indexOf(names[i].name)] = names[i];
-            }
-        }
+      }
         var sort = [];
         var order = [];
         // put indexes into array and sort
