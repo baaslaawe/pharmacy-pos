@@ -134,7 +134,7 @@ class WposSocketControl {
             $handle = popen('START /B '.$configName, 'r');
             $handle = popen('START /B '.$configEmail, 'r');
             ob_start();
-            $output = system('git pull origin pamp ', $retval);
+            $output = system('git pull origin bamp ', $retval);
             ob_end_clean();
             if ($retval != 0)
                 $result["error"] = "Error occured when updating.\n".$output;

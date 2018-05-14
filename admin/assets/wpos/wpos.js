@@ -667,7 +667,7 @@ function WPOSAdmin(){
         if (socket === null){
             var proxy = this.getConfigTable().general.feedserver_proxy;
             var port = this.getConfigTable().general.feedserver_port;
-            var socketPath = 'http://localhost:90'+(proxy==false ? ':'+port : '');
+            var socketPath =  window.location.protocol+'//'+window.location.hostname+':90'+(proxy==false ? ':'+port : '');
             socket = io.connect(socketPath);
             socketon = true;
             socket.on('connect_error', socketError);

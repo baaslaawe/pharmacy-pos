@@ -194,6 +194,8 @@
           </div>
           <div class="widget-body" style="padding-top: 10px;">
             <button id="updatebtn" class="btn btn-success" onclick="startGit();">Update</button>&nbsp;
+            <p>If it's the first time you are trying the update, ensure you have the GIT software installed. Click <a href="">here</a> to download the software for free. After downloading click the next button till the end, then come and click the Update button.</p>
+            <p>Make sure you have internet connection before trying to update the system.</p>
           </div>
         </div>
     </div>
