@@ -236,17 +236,19 @@ function WPOSItems() {
         };
         item.name = items[i].name;
         for (var s in sorted) {
-          if (items[i].name === sorted[s][1].name && sorted[s][1].locationid === locationid && (items[i].stockType ==='1'?(sorted[s][1].stocklevel > 0): true)) {
-            item.qty = parseInt(item.qty) + parseInt(sorted[s][1].stocklevel); // Sum all the stock
-            item.price = sorted[s][1].price;
-            item.id.push(sorted[s][1].id);
-            item.code = sorted[s][1].code;
-            item.stockType = sorted[s][1].stockType;
-            item.locationid = sorted[s][1].locationid;
-            item.categoryid = sorted[s][1].categoryid;
-            item.supplier = sorted[s][1].supplier;
-            item.expiryDate = sorted[s][1].expiryDate;
-            item.description = sorted[s][1].description;
+          if (items[i].name === sorted[s][1].name && sorted[s][1].locationid === locationid ) {
+            if(parseInt(sorted[s][1].stocklevel) > 0){
+                item.qty = parseInt(item.qty) + parseInt(sorted[s][1].stocklevel); // Sum all the stock
+                item.price = sorted[s][1].price;
+                item.id.push(sorted[s][1].id);
+                item.code = sorted[s][1].code;
+                item.stockType = sorted[s][1].stockType;
+                item.locationid = sorted[s][1].locationid;
+                item.categoryid = sorted[s][1].categoryid;
+                item.supplier = sorted[s][1].supplier;
+                item.expiryDate = sorted[s][1].expiryDate;
+                item.description = sorted[s][1].description;
+            }
           }
         }
         // Filter by location and stock amount
