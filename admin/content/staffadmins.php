@@ -23,7 +23,7 @@
             <th data-priority="1">ID</th>
             <th data-priority="3">Username</th>
             <th data-priority="4">Status</th>
-            <th data-priority="2"></th>
+            <th data-priority="2">Actions</th>
           </tr>
           </thead>
 

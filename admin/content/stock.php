@@ -170,9 +170,7 @@
                 <th>DT</th>
             </tr>
         </thead>
-        <tbody id="stockhisttable">
-
-        </tbody>
+        <tbody id="stockhisttable"></tbody>
     </table>
     </div>
 </div>

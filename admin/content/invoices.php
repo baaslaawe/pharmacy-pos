@@ -42,7 +42,7 @@
                             <th data-priority="7">Total</th>
                             <th data-priority="6">Balance</th>
                             <th data-priority="5">Status</th>
-                            <th data-priority="2"></th>
+                            <th data-priority="2">Actions</th>
                         </tr>
                         </thead>
 
