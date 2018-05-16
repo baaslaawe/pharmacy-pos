@@ -1064,7 +1064,7 @@ function WPOSTransactions() {
 
             // item autocomplete
             $.ui.autocomplete.prototype._renderItem = function (ul, item) {
-                return $("<li>").data("ui-autocomplete-item", item).append("<a>" + (item.email != undefined ? item.email : item.name) + "</a>").appendTo(ul);
+                return $("<li>").data("ui-autocomplete-item", item).append("<a>" + item.name + " (" + item.stocklevel + ")" + "</a>").appendTo(ul);
             };
             $("#stitemsearch").autocomplete({
                 source: function (request, response) {
