@@ -424,10 +424,16 @@ function WPOSTransactions() {
     this.calculateItemTotals = function(){
       var qty = parseInt($('#transitemqty').val());
       var stocklevel = parseInt($('#transitemstocklevel').val());
-      if(qty > stocklevel)
-        alert('Stocklevel is at '+ stocklevel+', you cant add '+qty);
-      else
-        calculateItemTotals();
+      if(qty > stocklevel) {
+          swal({
+              type: 'info',
+              title: 'Stock level ',
+              text: 'Stocklevel is at '+ stocklevel+', you cant add '+qty
+          });
+          $('#transitemqty').val('');
+      } else {
+          calculateItemTotals();
+      }
     };
 
     function calculateItemTotals() {
