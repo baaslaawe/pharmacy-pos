@@ -416,6 +416,8 @@ function WPOSTransactions() {
         $(itemtable).html('');
         var taxitems = WPOS.getTaxTable().items;
         for (var i = 0; i<items.length; i++){
+            if (items[i].qty==0)
+                continue;
             // tax details
             var taxStr = "";
             for (var x in items[i].tax.values){
