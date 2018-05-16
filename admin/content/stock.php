@@ -528,12 +528,24 @@
     }
     function populateItems(){
         WPOS.util.showLoader();
-        items = WPOS.sendJsonData("items/get");
+        var sortable=[];
+        var items = WPOS.getJsonData("items/get");
+        var list = {};
+        for(var item in items) {
+            if (items[item].stockType === '1')
+                list[items[item].name] = items[item];
+        }
+        for(var key in list)
+            if(list.hasOwnProperty(key))
+                sortable.push([key, list[key]]);
+        var sorted = sortable.sort(function(a, b) {
+            return a[1].name.localeCompare(b[1].name);
+        });
         var itemselect = $(".itemselect");
         itemselect.html('');
-        for (var i in items){
-          if (items[i].stockType === '1')
-            itemselect.append('<option class="itemid-'+items[i].id+'" value="'+items[i].id+'">'+items[i].name+'</option>');
+        for (var i in sorted){
+          if (sorted[i][1].stockType === '1')
+            itemselect.append('<option class="itemid-'+sorted[i][1].id+'" value="'+sorted[i][1].id+'">'+sorted[i][1].name+'</option>');
         }
         WPOS.util.hideLoader();
     }
