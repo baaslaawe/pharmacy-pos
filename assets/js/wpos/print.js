@@ -1601,7 +1601,7 @@ function WPOSPrint(kitchenMode) {
                 var taxitems = WPOS.getTaxTable().items;
                 for (var b in saleitem.tax.values) {
                     taxstr = taxitems[b].name + ' (' + taxitems[b].value + '%)';
-                    saleitem.tax.items.push({label: taxstr, value: WPOS.util.currencyFormat(record.taxdata[b])});
+                    saleitem.tax.items.push({label: taxstr, value: WPOS.util.currencyFormat(record.sale_tax[b])});
                 }
                 temp_data.sale_items[a] = saleitem;
             }
