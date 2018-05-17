@@ -15,6 +15,7 @@ class WposStockItem extends stdClass
     public $expiryDate = 0;
     public $cost = 0;
     public $price = 0;
+    public $wprice = 0;
     public $code = 0;
     public $data = "";
     public $locationid = 0;
