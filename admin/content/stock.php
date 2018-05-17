@@ -107,8 +107,9 @@
 </div>
 <div id="addstockdialog" class="hide">
     <table>
+        <p><span class="text-danger">*</span> means Required field</p>
         <tr>
-            <td style="text-align: right;"><label>Item(<span class="text-danger">Required</span>):</label></td>
+            <td style="text-align: right;"><label>Item(<span class="text-danger">*</span>):</label></td>
             <td><select id="addstockitemid" class="itemselect form-control">
                 </select></td>
         </tr>
@@ -123,16 +124,20 @@
           </select></td>
       </tr>
         <tr>
-            <td style="text-align: right;"><label>Qty(<span class="text-danger">Required</span>):&nbsp;</label></td>
+            <td style="text-align: right;"><label>Qty(<span class="text-danger">*</span>):&nbsp;</label></td>
             <td><input id="addstockqty" type="text" class="form-control" value="1"/></td>
         </tr>
         <tr>
-            <td style="text-align: right;"><label>Cost(<span class="text-danger">Required</span>):&nbsp;</label></td>
+            <td style="text-align: right;"><label>Cost(<span class="text-danger">*</span>):&nbsp;</label></td>
             <td><input id="addstockcost" class="form-control" value="0.00" type="text"/></td>
         </tr>
         <tr>
-            <td style="text-align: right;"><label>Price(<span class="text-danger">Required</span>):&nbsp;</label></td>
+            <td style="text-align: right;"><label>Retail Price(<span class="text-danger">*</span>):&nbsp;</label></td>
             <td><input id="addstockprice" class="form-control" value="0.00" type="text"/></td>
+        </tr>
+        <tr>
+            <td style="text-align: right;"><label>Wholesale Price:&nbsp;</label></td>
+            <td><input id="addstockwprice" class="form-control" value="0.00" type="text"/></td>
         </tr>
         <tr>
             <td style="text-align: right;"><label>Expiry Date:&nbsp;</label></td>
@@ -560,6 +565,7 @@
             item.amount = $("#addstockqty").val();
             item.cost = $("#addstockcost").val();
             item.price = $("#addstockprice").val();
+            item.wprice = $("#addstockwprice").val();
             item.expiryDate = $("#addstockexpiryDate").val();
             item.inventoryNo = $("#addstockinventoryNo").val();
             item.code = $("#addstockcode").val();
