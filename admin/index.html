@@ -544,20 +544,20 @@
                 <div class="space-8"></div>
             </div>
             <div style="display: inline-block; margin: 0; width: 49%; min-width: 250px; max-width: 300px; padding: 0 10px 5px 10px;">
-                <input class="form-control"type="hidden" autofocus="true" />
+                <input class="form-control" type="hidden" autofocus="true" />
                 <div class="transinvoptions">
                     <table>
                         <tr>
                             <td><label class="fixedlabel">Invoice Date:</label></td>
-                            <td><input class="form-control"type="text" id="invprocessdt" onclick="$(this).blur();" style="width: 110px"/></td>
+                            <td><input class="form-control" type="text" id="invprocessdt" onclick="$(this).blur();" style="width: 110px"/></td>
                         </tr>
                         <tr>
                             <td><label class="fixedlabel">Due Date:</label></td>
-                            <td><input class="form-control"type="text" id="invduedt" onclick="$(this).blur();" style="width: 110px"/></td>
+                            <td><input class="form-control" type="text" id="invduedt" onclick="$(this).blur();" style="width: 110px"/></td>
                         </tr>
                         <tr>
                             <td><label class="fixedlabel">Close Date:</label></td>
-                            <td><input class="form-control"type="text" id="invclosedt" onclick="$(this).blur();" style="width: 110px"/></td></tr>
+                            <td><input class="form-control" type="text" id="invclosedt" onclick="$(this).blur();" style="width: 110px"/></td></tr>
                         <tr>
                             <td><label class="fixedlabel">Discount:</label></td>
                             <td><input class="form-control"style="width: 60px; display: inline;" type="text" id="invdiscountval" /> %</td>
@@ -635,7 +635,7 @@
                             <span>Address: </span><span id="tcustaddress"></span><br/>
                             <span>Phone: </span><span id="tcustmobile"></span><br/>
                             <span>Email: </span><span id="tcustemail"></span><br/>
-                            <input class="form-control"type="hidden" id="tcustid"/>
+                            <input class="form-control" type="hidden" id="tcustid"/>
                             <button id="transcustdtlbtn" class="btn btn-xs btn-primary" onclick="WPOS.customers.openCustomerDialog($('#tcustid').val());">Details</button>
                         </div>
                         </div>
@@ -689,10 +689,10 @@
         </div>
         <div id="transitemdialog" class="hide" style="padding-left: 20px; padding-right: 20px;">
             <form id="transitemform">
-                <input class="form-control"type="hidden" id="transitemid" value="0"/>
-                <input class="form-control"type="hidden" id="transitemsitemid" value="0"/>
-                <input class="form-control"type="hidden" id="transitemtaxval" value="0"/>
-                <input class="form-control"type="hidden" id="transitempriceval" value="0"/>
+                <input class="form-control" type="hidden" id="transitemid" value="0"/>
+                <input class="form-control" type="hidden" id="transitemsitemid" value="0"/>
+                <input class="form-control" type="hidden" id="transitemtaxval" value="0"/>
+                <input class="form-control" type="hidden" id="transitempriceval" value="0"/>
                 <div class="col-sm-12">
                     <label class="fixedlabel">Search for item name or code: </label>
                     <input class="form-control" placeholder="Search for item name/stock code here..." type="text" id="stitemsearch"/>
@@ -710,11 +710,14 @@
                         <input type="hidden" id="transitemlocationid">
                         <input type="hidden" id="transitemcode">
                         <label class="fixedlabel">Qty: (<span class="text-danger">Required*</span>)</label>
-                        <input class="form-control"type="text" placeholder="Total items..." id="transitemqty" onchange="WPOS.transactions.calculateItemTotals();"/>
+                        <input class="form-control" type="text" placeholder="Total items..." id="transitemqty" onchange="WPOS.transactions.calculateItemTotals();"/>
                         <div class="space-4"></div>
-                        <label class="fixedlabel">Name: </label><input class="form-control"type="text" id="transitemname"/>
+                        <label class="fixedlabel">Type:</label>
+                        <select onchange="WPOS.transactions.updateUnitPrice($(this).val());" name="prices" id="itemtype" class="form-control"></select>
+                        <div class="space-4"></div>
+                        <label class="fixedlabel">Name: </label><input class="form-control" type="text" id="transitemname"/>
                         <div class="space-4" style="display: none;"></div>
-                        <label class="fixedlabel" style="display: none;">Alt Name: </label><input class="form-control"type="text" id="transitemaltname" style="display: none;"/><small  style="display: none;">Alternate language name</small>
+                        <label class="fixedlabel" style="display: none;">Alt Name: </label><input class="form-control" type="text" id="transitemaltname" style="display: none;"/><small  style="display: none;">Alternate language name</small>
                         <div class="space-4"></div>
                         <label class="fixedlabel">Description: </label><textarea class="form-control" style="width: 100%; resize: none;" id="transitemdesc"></textarea>
                     </div>
@@ -764,8 +767,8 @@
                         <td><input class="form-control" type="text" id="transpayamount"/></td>
                     </tr>
                 </table>
-                <input class="form-control"type="hidden" autofocus="true" />
-                <input class="form-control"type="hidden" id="transpayid" value="0"/>
+                <input class="form-control" type="hidden" autofocus="true" />
+                <input class="form-control" type="hidden" id="transpayid" value="0"/>
             </form>
         </div>
         <div id="miscdialog" class="hide">
@@ -785,11 +788,11 @@
             <div id="sendinvoiceform" style="min-width: 420px;">
                 <label class="smfixedlabel inline">Invoice Template: </label><div class="inline"><select id="emlinvoicetemplate"></select></div>
                 <div class="space-4"></div>
-                <label class="smfixedlabel inline">TO: </label><div class="inline"><input class="form-control"type="text" placeholder="Enter recipients..." id="emailto" class="email-input" name="tags"/></div>
+                <label class="smfixedlabel inline">TO: </label><div class="inline"><input class="form-control" type="text" placeholder="Enter recipients..." id="emailto" class="email-input" name="tags"/></div>
                 <div class="space-4"></div>
-                <label class="smfixedlabel inline">CC: </label><div class="inline"><input class="form-control"type="text" placeholder="Enter recipients..." id="emailcc" class="email-input" name="tags"/></div>
+                <label class="smfixedlabel inline">CC: </label><div class="inline"><input class="form-control" type="text" placeholder="Enter recipients..." id="emailcc" class="email-input" name="tags"/></div>
                 <div class="space-4"></div>
-                <label class="smfixedlabel inline">BCC: </label><div class="inline"><input class="form-control"type="text" placeholder="Enter recipients..." id="emailbcc" class="email-input" name="tags"/></div>
+                <label class="smfixedlabel inline">BCC: </label><div class="inline"><input class="form-control" type="text" placeholder="Enter recipients..." id="emailbcc" class="email-input" name="tags"/></div>
                 <div class="space-4"></div>
                 <label class="smfixedlabel inline">Subject: </label><input class="form-control"style="width: 410px;" type="text" placeholder="Enter Subject" id="emailsubject" />
                 <div class="space-4"></div>

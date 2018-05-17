@@ -1099,6 +1099,11 @@ function WPOSTransactions() {
                     $('#transitemdt').val(ui.item.dt);
                     $('#transitemstocklevel').val(ui.item.stocklevel);
                     $('#transitemstocktype').val(ui.item.stockType);
+
+                    var typeselecthtml = "";
+                    typeselecthtml += "<option selected value='" + ui.item.price + "'>Retail</option>";
+                    typeselecthtml += "<option value='" + ui.item.wprice + "'>Wholesale</option>";
+                    $('#itemtype').html(typeselecthtml);
                     // lock fields
                     setDisabledItemFields();
                     calculateItemTotals();
@@ -1115,6 +1120,12 @@ function WPOSTransactions() {
     this.refreshTaxSelects = function(){
         refreshTaxSelects();
     };
+
+    this.updateUnitPrice = function (unit) {
+      $('#transitemunit').val(unit).data("unit_original", unit);
+        WPOS.transactions.calculateItemTotals();
+    };
+
     function refreshTaxSelects(){
         var taxsel = $(".taxselect");
         taxsel.html('');
