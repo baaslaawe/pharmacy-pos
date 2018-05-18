@@ -159,7 +159,7 @@ class WposAdminStats {
         $temprefs = explode(',', $temprefs);
         foreach ($temprefs as $value){
             if (!in_array($value, $stats->refs));
-                $stats->refs[] = $value;
+            $stats->refs[] = $value;
         }
         $stats->refs = implode(',', $stats->refs);
 

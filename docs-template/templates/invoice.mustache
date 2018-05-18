@@ -29,6 +29,7 @@
 </head>
 <body>
 <table width="100%">
+<<<<<<< HEAD
   <tr>
     <td width="60%" valign="top">
       <h2>{{business_name}}</h2>
@@ -131,6 +132,74 @@
       <td align="right">
         {{#currency}}{{sale_discountamt}}{{/currency}}
       </td>
+=======
+    <tr>
+        <td width="60%" valign="top">
+            <h2>{{business_name}}</h2>
+            <p class="notop">
+                {{business_address}}<br />
+                {{business_suburb}}
+                {{business_state}} {{business_postcode}} {{business_country}}<br />
+                {{business_number}}
+            </p>
+        </td>
+        <td width="40%" align="right" valign="top">
+            <h2>Invoice</h2>
+            <p class="notop">
+                Invoice # {{sale_ref}}<br/>
+                Invoice Date:&nbsp;&nbsp;{{sale_dt}}<br />
+                {{#invoice_duedt}}Due Date:&nbsp;&nbsp;{{invoice_duedt}}{{/invoice_duedt}}
+            </p>
+        </td>
+    </tr>
+</table>
+<p>
+    {{#customer}}
+        {{customer.name}}<br />
+        {{customer.address}}<br />
+        {{customer.mobile}}<br />
+        {{customer.email}}<br />
+    {{/customer}}
+    {{^customer}}
+        POS Customer
+    {{/customer}}
+</p>
+<br />
+<table style="width: 100%;">
+    <tr style="background: rgba(238,238,238,0.36)">
+        <th>Qty</th>
+        <th style="text-align: center;">Item</th>
+        <th>Price(Ksh)</th>
+    </tr>
+    {{#sale_items}}
+        <tr>
+            <td>{{qty}}</td>
+            <td>{{name}} ({{unit}})</td>
+            <td style="text-align: center;">{{price}}</td>
+        </tr>
+        {{#print_desc}}
+            <tr>
+                <td></td>
+                <td>{{desc}}</td>
+                <td></td>
+            </tr>
+        {{/print_desc}}
+    {{/sale_items}}
+
+    <tr>
+        <td colspan="2" style="text-align: right; padding-right: 15px;"><b>Total ({{sale_numitems}} items): </b></td>
+        <td style="text-align: center;"><b>{{sale_total}}</b></td>
+    </tr>
+
+    <tr>
+        <td colspan="2" style="text-align: right; padding-right: 15px;"><b>Amount Paid: </b></td>
+        <td style="text-align: center;">{{invoice_paid}}</td>
+    </tr>
+
+    <tr>
+        <td colspan="2" style="text-align: right; padding-right: 15px;"><b>Amount Due: </b></td>
+        <td style="text-align: center;">{{invoice_balance}}</td>
+>>>>>>> 1cd1636f2abc494a89192904dcc76c35448bb0c8
     </tr>
   {{/sale_discount}}
   <tr>

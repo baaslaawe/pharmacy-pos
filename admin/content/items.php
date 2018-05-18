@@ -35,7 +35,7 @@
     <th data-priority="4">Category</th>
     <th data-priority="5">Tax</th>
     <th data-priority="6">Reorder Point</th>
-    <th class="noexport" data-priority="2"></th>
+    <th class="noexport" data-priority="2">Actions</th>
 </tr>
 </thead>
 <tbody>

@@ -32,7 +32,7 @@
                             <th data-priority="4" >Email</th>
                             <th data-priority="5" >Phone</th>
                             <th data-priority="7" >Address</th>
-                            <th data-priority="1" ></th>
+                            <th data-priority="1" >Actions</th>
                         </tr>
                         </thead>
 

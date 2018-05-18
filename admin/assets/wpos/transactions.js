@@ -93,7 +93,7 @@ function WPOSTransactions() {
         $("#transsubtotal").text(WPOS.util.currencyFormat(record.subtotal));
 
         if (record.discount > 0) {
-            $("#transdiscount").text(record.discount + " (" + WPOS.util.currencyFormat(record.discountval) + ')');
+            $("#transdiscount").text(WPOS.util.currencyFormat(record.discount));
             $("#transdisdiv").show();
         } else {
             $("#transdisdiv").hide();
@@ -222,6 +222,8 @@ function WPOSTransactions() {
         $(itemtable).html('');
         var taxitems = WPOS.getTaxTable().items;
         for (var i = 0; i < items.length; i++) {
+            if (items[i].qty==0)
+                continue;
             // tax data
             var taxStr = "";
             for (var x in items[i].tax.values){
@@ -424,10 +426,16 @@ function WPOSTransactions() {
     this.calculateItemTotals = function(){
       var qty = parseInt($('#transitemqty').val());
       var stocklevel = parseInt($('#transitemstocklevel').val());
-      if(qty > stocklevel)
-        alert('Stocklevel is at '+ stocklevel+', you cant add '+qty);
-      else
-        calculateItemTotals();
+      if(qty > stocklevel) {
+          swal({
+              type: 'info',
+              title: 'Stock level ',
+              text: 'Stocklevel is at '+ stocklevel+', you cant add '+qty
+          });
+          $('#transitemqty').val('');
+      } else {
+          calculateItemTotals();
+      }
     };
 
     function calculateItemTotals() {
@@ -1058,7 +1066,7 @@ function WPOSTransactions() {
 
             // item autocomplete
             $.ui.autocomplete.prototype._renderItem = function (ul, item) {
-                return $("<li>").data("ui-autocomplete-item", item).append("<a>" + (item.email != undefined ? item.email : item.name) + "</a>").appendTo(ul);
+                return $("<li>").data("ui-autocomplete-item", item).append("<a>" + item.name + " (" + item.stocklevel + ")" + "</a>").appendTo(ul);
             };
             $("#stitemsearch").autocomplete({
                 source: function (request, response) {
@@ -1091,6 +1099,11 @@ function WPOSTransactions() {
                     $('#transitemdt').val(ui.item.dt);
                     $('#transitemstocklevel').val(ui.item.stocklevel);
                     $('#transitemstocktype').val(ui.item.stockType);
+
+                    var typeselecthtml = "";
+                    typeselecthtml += "<option selected value='" + ui.item.price + "'>Retail</option>";
+                    typeselecthtml += "<option value='" + ui.item.wprice + "'>Wholesale</option>";
+                    $('#itemtype').html(typeselecthtml);
                     // lock fields
                     setDisabledItemFields();
                     calculateItemTotals();
@@ -1107,6 +1120,12 @@ function WPOSTransactions() {
     this.refreshTaxSelects = function(){
         refreshTaxSelects();
     };
+
+    this.updateUnitPrice = function (unit) {
+      $('#transitemunit').val(unit).data("unit_original", unit);
+        WPOS.transactions.calculateItemTotals();
+    };
+
     function refreshTaxSelects(){
         var taxsel = $(".taxselect");
         taxsel.html('');

@@ -295,6 +295,7 @@ CREATE TABLE IF NOT EXISTS `stock_items` (
   `expiryDate` VARCHAR(30) NOT NULL,
   `cost` VARCHAR(30) NOT NULL,
   `price` VARCHAR(30) NOT NULL,
+  `wprice` VARCHAR(30) NOT NULL DEFAULT 0.00,
   `code` VARCHAR(30) NOT NULL,
   `inventoryNo` VARCHAR(30) NOT NULL,
   `data` VARCHAR(2048) NOT NULL,

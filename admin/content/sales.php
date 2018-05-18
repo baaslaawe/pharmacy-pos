@@ -40,7 +40,7 @@
                                 <th data-priority="4">Sale Time</th>
                                 <th data-priority="6">Total</th>
                                 <th data-priority="5">Status</th>
-                                <th data-priority="2"></th>
+                                <th data-priority="2">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

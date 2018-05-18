@@ -127,6 +127,7 @@
                                                     <tr style="text-align: left">
                                                         <th>Qty</th>
                                                         <th>Name</th>
+                                                        <th>Type</th>
                                                         <th>Unit</th>
                                                         <th>Tax</th>
                                                         <th>Price</th>
@@ -982,7 +983,7 @@
     <div class="modal-footer" style="background-color:#f9f9f9;">
         <button id="endsalebtn" class="btn btn-success" onclick="WPOS.sales.processSale();">Complete</button>
         <button id="savesalebtn" class="btn btn-primary" onclick="WPOS.sales.saveOrder();">Add Order</button>
-        <button class="btn btn-danger" onclick="$('#paydiv').dialog('close');">Cancel</button>
+        <button class="btn btn-danger" onclick="$('#paymentsdiv').dialog('close');">Cancel</button>
     </div>
 </div>
 <div id="creditpaymentsdiv" style="display:none; padding:5px;max-width: 370px !important;" title="Collect Credit">
