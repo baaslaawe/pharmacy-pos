@@ -1,9 +1,9 @@
-<!-- WallacePOS: Copyright (c) 2014 WallaceIT <micwallace@gmx.com> <https://www.gnu.org/licenses/lgpl.html> -->
+<!-- Pharmacy POS: Copyright (c) 2018 Magnum Digital <joenyugoh@gmail.com> <https://www.gnu.org/licenses/lgpl.html> -->
 <div class="page-header">
     <h1 style="margin-right: 20px; display: inline-block;">
         Expenses
     </h1>
-    <button onclick="$('#addcatdialog').dialog('open');" id="addbtn" class="btn btn-primary btn-sm pull-right"><i class="icon-pencil align-top bigger-125"></i>Add</button>
+    <button onclick="$('#addexpensesdialog').dialog('open');" id="addbtn" class="btn btn-primary btn-sm pull-right"><i class="icon-pencil align-top bigger-125"></i>Add</button>
 </div><!-- /.page-header -->
 
 <div class="row">
@@ -14,10 +14,10 @@
             <div class="col-xs-12">
 
                 <div class="table-header">
-                    Manage your item categories
+                    Manage your business expenses
                 </div>
 
-                <table id="categoriestable" class="table table-striped table-bordered table-hover dt-responsive" style="width: 100%;">
+                <table id="expensestable" class="table table-striped table-bordered table-hover dt-responsive" style="width: 100%;">
                     <thead>
                     <tr>
                         <th data-priority="0" class="center noexport">
@@ -28,35 +28,36 @@
                         </th>
                         <th data-priority="4">ID</th>
                         <th data-priority="2">Name</th>
-                        <th data-priority="3"># Items</th>
+                        <th data-priority="3">Total</th>
                         <th data-priority="1" class="noexport">Actions</th>
                     </tr>
                     </thead>
-
-                    <tbody>
-
-                    </tbody>
+                    <tbody></tbody>
                 </table>
-
             </div>
         </div>
-
     </div><!-- PAGE CONTENT ENDS -->
 </div><!-- /.col -->
-<div id="editcatdialog" class="hide">
+<div id="editexpensedialog" class="hide">
     <table>
         <tr>
             <td style="text-align: right;"><label>Name:&nbsp;</label></td>
-            <td><input id="categoryname" type="text"/>
-                <input id="categoryid" type="hidden"/></td>
+            <td>
+                <input class="form-control" id="expensename" type="text"/>
+                <input id="expenseid" type="hidden"/>
+            </td>
         </tr>
     </table>
 </div>
-<div id="addcatdialog" class="hide">
+<div id="addexpensesdialog" class="hide">
     <table>
         <tr>
-            <td style="text-align: right;"><label>Name:&nbsp;</label></td>
-            <td><input id="newcategoryname" type="text"/><br/></td>
+            <td style="text-align: right;">
+                <label>Name:&nbsp;</label>
+            </td>
+            <td>
+                <input id="newexpensename" class="form-control" type="text"/><br/>
+            </td>
         </tr>
     </table>
 </div>
@@ -75,7 +76,7 @@
             supitem = categories[key];
             suparray.push(supitem);
         }
-        datatable = $('#categoriestable').dataTable({
+        datatable = $('#expensestable').dataTable({
             "bProcessing": true,
             "aaData": suparray,
             "aaSorting": [[ 2, "asc" ]],
@@ -84,7 +85,7 @@
                 { "mData":"id" },
                 { "mData":"name" },
                 { "mData": "numitems"},
-                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditcatdialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="red" onclick="removeCategory($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
+                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="red" onclick="removeExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
             ],
             "columns": [
                 {},
@@ -128,19 +129,19 @@
         });
 
         // dialogs
-        $( "#addcatdialog" ).removeClass('hide').dialog({
+        $( "#addexpensesdialog" ).removeClass('hide').dialog({
             resizable: false,
             width: 'auto',
             modal: true,
             autoOpen: false,
-            title: "Add Category",
+            title: "Add Expense",
             title_html: true,
             buttons: [
                 {
                     html: "<i class='icon-save bigger-110'></i>&nbsp; Save",
                     "class" : "btn btn-success btn-xs",
                     click: function() {
-                        saveCategory(true);
+                        saveExpense(true);
                     }
                 }
                 ,
@@ -157,19 +158,19 @@
                 $(this).css("maxWidth", "375px");
             }
         });
-        $( "#editcatdialog" ).removeClass('hide').dialog({
+        $( "#editexpensedialog" ).removeClass('hide').dialog({
             resizable: false,
             width: 'auto',
             modal: true,
             autoOpen: false,
-            title: "Edit Category",
+            title: "Edit Expense",
             title_html: true,
             buttons: [
                 {
                     html: "<i class='icon-save bigger-110'></i>&nbsp; Update",
                     "class" : "btn btn-success btn-xs",
                     click: function() {
-                        saveCategory(false);
+                        saveExpense(false);
                     }
                 }
                 ,
@@ -190,44 +191,44 @@
         WPOS.util.hideLoader();
     });
     // updating records
-    function openeditcatdialog(id){
+    function openeditexpensedialog(id){
         var item = categories[id];
-        $("#categoryid").val(item.id);
-        $("#categoryname").val(item.name);
-        $("#editcatdialog").dialog("open");
+        $("#expenseid").val(item.id);
+        $("#expensename").val(item.name);
+        $("#editexpensedialog").dialog("open");
     }
-    function saveCategory(isnewitem){
+    function saveExpense(isnewitem){
         // show loader
         WPOS.util.showLoader();
         var item = {}, result;
         if (isnewitem){
             // adding a new category
-            var name_field = $("#newcategoryname");
+            var name_field = $("#newexpensename");
             item.name = name_field.val();
             result = WPOS.sendJsonData("categories/add", JSON.stringify(item));
             if (result!==false){
                 categories[result.id] = result;
                 reloadTable();
                 name_field.val('');
-                $("#addcatdialog").dialog("close");
+                $("#addexpensesdialog").dialog("close");
             }
         } else {
             // updating an item
-            item.id = $("#categoryid").val();
-            item.name = $("#categoryname").val();
+            item.id = $("#expenseid").val();
+            item.name = $("#expensename").val();
             result = WPOS.sendJsonData("categories/edit", JSON.stringify(item));
             if (result!==false){
                 categories[result.id] = result;
                 reloadTable();
-                $("#editcatdialog").dialog("close");
+                $("#editexpensedialog").dialog("close");
             }
         }
         // hide loader
         WPOS.util.hideLoader();
     }
-    function removeCategory(id){
+    function removeExpense(id){
 
-        var answer = confirm("Are you sure you want to delete this category?");
+        var answer = confirm("Are you sure you want to delete this expense?");
 
 
         if (answer){
@@ -277,7 +278,7 @@
     }
 </script>
 <style type="text/css">
-    #categoriestable_processing {
+    #expensestable_processing {
         display: none;
     }
 </style>
