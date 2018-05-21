@@ -66,14 +66,14 @@
 
 <!-- inline scripts related to this page -->
 <script type="text/javascript">
-    var categories = null;
+    var expenses = null;
     var datatable;
     $(function() {
-        categories = WPOS.getJsonData("categories/get");
+        expenses = WPOS.getJsonData("expenses/get");
         var suparray = [];
         var supitem;
-        for (var key in categories){
-            supitem = categories[key];
+        for (var key in expenses){
+            supitem = expenses[key];
             suparray.push(supitem);
         }
         datatable = $('#expensestable').dataTable({
@@ -84,7 +84,7 @@
                 { mData:null, sDefaultContent:'<div style="text-align: center"><label><input class="ace dt-select-cb" type="checkbox"><span class="lbl"></span></label><div>', bSortable: false, sClass:"noexport" },
                 { "mData":"id" },
                 { "mData":"name" },
-                { "mData": "numitems"},
+                { "mData": "total"},
                 { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="red" onclick="removeExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
             ],
             "columns": [
@@ -192,7 +192,7 @@
     });
     // updating records
     function openeditexpensedialog(id){
-        var item = categories[id];
+        var item = expenses[id];
         $("#expenseid").val(item.id);
         $("#expensename").val(item.name);
         $("#editexpensedialog").dialog("open");
@@ -205,9 +205,9 @@
             // adding a new category
             var name_field = $("#newexpensename");
             item.name = name_field.val();
-            result = WPOS.sendJsonData("categories/add", JSON.stringify(item));
+            result = WPOS.sendJsonData("expenses/add", JSON.stringify(item));
             if (result!==false){
-                categories[result.id] = result;
+                expenses[result.id] = result;
                 reloadTable();
                 name_field.val('');
                 $("#addexpensesdialog").dialog("close");
@@ -216,9 +216,9 @@
             // updating an item
             item.id = $("#expenseid").val();
             item.name = $("#expensename").val();
-            result = WPOS.sendJsonData("categories/edit", JSON.stringify(item));
+            result = WPOS.sendJsonData("expenses/edit", JSON.stringify(item));
             if (result!==false){
-                categories[result.id] = result;
+                expenses[result.id] = result;
                 reloadTable();
                 $("#editexpensedialog").dialog("close");
             }
@@ -234,8 +234,8 @@
         if (answer){
             // show loader
             WPOS.util.hideLoader();
-            if (WPOS.sendJsonData("categories/delete", '{"id":'+id+'}')){
-                delete categories[id];
+            if (WPOS.sendJsonData("expenses/delete", '{"id":'+id+'}')){
+                delete expenses[id];
                 reloadTable();
             }
             // hide loader
@@ -250,9 +250,9 @@
         if (answer){
             // show loader
             WPOS.util.hideLoader();
-            if (WPOS.sendJsonData("categories/delete", '{"id":"'+ids.join(",")+'"}')){
+            if (WPOS.sendJsonData("expenses/delete", '{"id":"'+ids.join(",")+'"}')){
                 for (var i=0; i<ids.length; i++){
-                    delete categories[ids[i]];
+                    delete expenses[ids[i]];
                 }
                 reloadTable();
             }
@@ -262,14 +262,14 @@
     }
 
     function reloadData(){
-        categories = WPOS.getJsonData("categories/get");
+        expenses = WPOS.getJsonData("expenses/get");
         reloadTable();
     }
     function reloadTable(){
         var suparray = [];
         var tempsup;
-        for (var key in categories){
-            tempsup = categories[key];
+        for (var key in expenses){
+            tempsup = expenses[key];
             suparray.push(tempsup);
         }
         datatable.fnClearTable(false);
