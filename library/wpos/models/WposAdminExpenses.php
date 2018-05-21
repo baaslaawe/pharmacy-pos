@@ -91,7 +91,7 @@ class WposAdminExpenses
         if (is_array($expenses)) {
             $expdata = [];
             foreach ($expenses as $expense) {
-                $catdata[$expense['id']] = $expense;
+                $expdata[$expense['id']] = $expense;
             }
             $result['data'] = $expdata;
         } else {

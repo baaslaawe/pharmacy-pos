@@ -61,7 +61,36 @@
         </tr>
     </table>
 </div>
-
+<div id="addexpensedialog" class="hide">
+    <table>
+        <input type="hidden" id="expenseidadd">
+        <h3>Expense :: <span id="expensenameadd"></span></h3>
+        <tr>
+            <td style="text-align: right;">
+                <label for="expenseamountadd">Amount: </label>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="expenseamountadd">
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: right;">
+                <label for="expensedateadd">Date: </label>
+            </td>
+            <td>
+                <input type="text" style="width: 100%;" class="form-control" id="expensedateadd" onclick="$(this).blur();"/>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: right;">
+                <label for="expensenoteadd">Note: </label>
+            </td>
+            <td>
+                <textarea name="note" id="expensenoteadd" cols="30" rows="3" class="form-control"></textarea>
+            </td>
+        </tr>
+    </table>
+</div>
 <!-- page specific plugin scripts; migrated to index.php due to heavy use -->
 
 <!-- inline scripts related to this page -->
@@ -85,7 +114,7 @@
                 { "mData":"id" },
                 { "mData":"name" },
                 { "mData": "total"},
-                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="red" onclick="removeExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
+                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="blue" onclick="openaddexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-plus bigger-130"></i></a><a class="red" onclick="removeExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
             ],
             "columns": [
                 {},
@@ -187,6 +216,36 @@
                 $(this).css("maxWidth", "375px");
             }
         });
+        $( "#addexpensedialog" ).removeClass('hide').dialog({
+            resizable: false,
+            width: 'auto',
+            modal: true,
+            autoOpen: false,
+            title: "Add an expense",
+            title_html: true,
+            buttons: [
+                {
+                    html: "<i class='icon-save bigger-110'></i>&nbsp; Add",
+                    "class" : "btn btn-success btn-xs",
+                    click: function() {
+                        addExpense(false);
+                    }
+                }
+                ,
+                {
+                    html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
+                    "class" : "btn btn-xs",
+                    click: function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            ],
+            create: function( event, ui ) {
+                // Set maxWidth
+                $(this).css("maxWidth", "375px");
+            }
+        });
+
         // hide loader
         WPOS.util.hideLoader();
     });
@@ -197,6 +256,45 @@
         $("#expensename").val(item.name);
         $("#editexpensedialog").dialog("open");
     }
+    // add specific expenses
+    function openaddexpensedialog(id){
+        var item = expenses[id];
+        $("#expenseidadd").val(item.id);
+        $("#expensenameadd").text(item.name);
+        // Add expense datepickers
+        $("#expensedateadd").datepicker({dateFormat:"dd/mm/yy"});
+        $("#expensedateadd").datepicker('setDate', new Date());
+        $("#addexpensedialog").dialog("open");
+    }
+
+    function addExpense() {
+        // show loader
+        WPOS.util.showLoader();
+        var item = {}, result;
+        var processdt = $("#expensedateadd").datepicker("getDate");
+        processdt.setHours(new Date().getHours());
+        processdt.setMinutes(new Date().getMinutes());
+        processdt.setSeconds(new Date().getSeconds());
+        processdt.setMilliseconds(new Date().getMilliseconds());
+        item.duedt = processdt.getTime();
+        item.ref = (new Date()).getTime()+"-1-"+Math.floor((Math.random() * 10000) + 1);
+        item.expenseid = $('#expenseidadd').val();
+        item.amount = $('#expenseamountadd').val();
+        item.locationid = JSON.parse(localStorage.getItem('wpos_config')).locationid;
+        item.userid = WPOS.loggeduser.id;
+        item.notes = $('#expensenoteadd').val();
+        item.status = 1;
+        result = WPOS.sendJsonData("expenses/item/add", JSON.stringify(item));
+        if (result!==false){
+            expenses[result.expenseid].total = result.amount;
+            reloadTable();
+            $("#addexpensedialog").dialog("close");
+        }
+        console.log(result);
+        //Hide loader
+        WPOS.util.hideLoader();
+    }
+
     function saveExpense(isnewitem){
         // show loader
         WPOS.util.showLoader();
