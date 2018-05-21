@@ -102,6 +102,7 @@
                 <th>Amount</th>
                 <th>Note</th>
                 <th>DT</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody id="expenseshisttable"></tbody>
@@ -314,7 +315,7 @@
         var expense;
         for (var i in expenseitems){
             expense = expenseitems[i];
-            $("#expenseshisttable").append('<tr><td>'+expense.expense+'</td><td>'+WPOS.locations[expense.locationid].name+'</td><td>'+WPOS.users[expense.userid].username+'</td><td>'+expense.amount+'</td><td>'+expense.notes+'</td><td>'+(moment(parseInt(expense.dt)).format('DD/MM/YYYY H:mm:ss'))+'</td></tr>');
+            $("#expenseshisttable").append('<tr><td>'+expense.expense+'</td><td>'+WPOS.locations[expense.locationid].name+'</td><td>'+WPOS.users[expense.userid].username+'</td><td>'+expense.amount+'</td><td>'+expense.notes+'</td><td>'+(moment(parseInt(expense.dt)).format('DD/MM/YYYY H:mm:ss'))+'</td><td><a class="green" onclick="openeditexpenseitemdialog('+ expense.id +')"><i class="icon-edit bigger-130"></i></a> &nbsp; &nbsp;<a class="red" onclick="deleteExpense('+ expense.id +')"><i class="icon-trash bigger-130"></i></a></td></tr>');
         }
         WPOS.util.hideLoader();
         $("#expenseshistdialog").dialog('open');
