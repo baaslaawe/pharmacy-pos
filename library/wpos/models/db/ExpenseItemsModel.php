@@ -22,13 +22,13 @@
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 18/04/16 4:24 PM
  */
-class ExpensesModel extends DbConfig
+class ExpenseItemsModel extends DbConfig
 {
 
     /**
      * @var array
      */
-    protected $_columns = ['id', 'name', 'dt'];
+    protected $_columns = ['id', 'expenseid', 'notes', 'status', 'locationid', 'userid', 'ref', 'dt'];
 
     /**
      * Init the DB
@@ -39,23 +39,31 @@ class ExpensesModel extends DbConfig
     }
 
     /**
-     * @param $name
+     * @param $expenseid
+     * @param $ref
+     * @param $amount
+     * @param $notes
+     * @param $status
+     * @param $locationid
+     * @param $userid
+     * @param $dt
      * @return bool|string Returns false on an unexpected failure, returns -1 if a unique constraint in the database fails, or the new rows id if the insert is successful
      */
-    public function create($name)
+    public function create($expenseid, $ref, $amount, $notes, $status, $locationid, $userid, $dt)
     {
-        $sql          = "INSERT INTO expenses (`name`, `dt`) VALUES (:name, now());";
-        $placeholders = [":name"=>$name];
+        $sql          = "INSERT INTO expenses_items (`expenseid`, `ref`, `amount`, `notes`, `status`, `locationid`, `userid`, `dt`) VALUES (:expenseid, :ref, :amount, :notes, :status, :locationid, :userid, :dt);";
+        $placeholders = [":expenseid"=>$expenseid, ":ref"=>$ref, ":amount"=>$amount, ":notes"=>$notes, ":status"=>$status, ":locationid"=>$locationid, ":userid"=>$userid, ":dt"=>$dt];
 
         return $this->insert($sql, $placeholders);
     }
 
     /**
      * @param null $Id
+     * @param null $ref
      * @return array|bool Returns false on an unexpected failure or an array of selected rows
      */
-    public function get($Id = null) {
-        $sql = 'SELECT e.*, COALESCE (SUM(i.amount)) as total FROM expenses as e LEFT OUTER JOIN expenses_items as i ON e.id=i.expenseid';
+    public function get($Id = null, $ref) {
+        $sql = 'SELECT i.*, COUNT(i.amount) as total FROM expenses as e LEFT OUTER JOIN expenses_items as i ON e.id=i.expenseid';
         $placeholders = [];
         if ($Id !== null) {
             if (empty($placeholders)) {
@@ -64,21 +72,34 @@ class ExpensesModel extends DbConfig
             $sql .= ' e.id =:id';
             $placeholders[':id'] = $Id;
         }
-        $sql.=" GROUP BY e.id";
+        if ($ref !== null){
+            if (empty($placeholders)) {
+                $sql .= ' WHERE';
+            }
+            $sql .= ' ref =:ref';
+            $placeholders[':ref'] = $ref;
+        }
 
         return $this->select($sql, $placeholders);
     }
 
     /**
      * @param $id
-     * @param $name
+     * @param $expenseid
+     * @param $ref
+     * @param $amount
+     * @param $notes
+     * @param $status
+     * @param $locationid
+     * @param $userid
+     * @param $dt
      * @return bool|int Returns false on an unexpected failure or number of affected rows
      */
-    public function edit($id, $name)
+    public function edit($id, $expenseid, $ref, $amount, $notes, $status, $locationid, $userid, $dt)
     {
 
-        $sql = "UPDATE expenses SET name=:name WHERE id=:id;";
-        $placeholders = [":id"=>$id, ":name"=>$name];
+        $sql = "UPDATE expenses_items SET `expenseid`=:expenseid, `ref`=:ref, `amount`=:amount, `notes`=:notes, `status`=:status, `locationid`=:locationid, `userid`=:userid, `dt`=:id WHERE id=:id;";
+        $placeholders = [":id"=>$id, "expenseid"=>$expenseid, ":ref"=>$ref, ":amount"=>$amount, ":notes"=>$notes, ":status"=>$status, ":locationid"=>$locationid, ":userid"=>$userid, ":dt"=>$dt];
 
         return $this->update($sql, $placeholders);
     }
@@ -90,7 +111,7 @@ class ExpensesModel extends DbConfig
     public function remove($id = null)
     {
         $placeholders = [];
-        $sql = "DELETE FROM expenses WHERE";
+        $sql = "DELETE FROM expenses_items WHERE";
         if (is_numeric($id)){
             $sql .= " `id`=:id;";
             $placeholders[":id"] = $id;

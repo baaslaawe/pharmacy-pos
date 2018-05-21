@@ -29,6 +29,11 @@ class WposAdminExpenses
      */
      private $expMdl;
     /**
+    /**
+     * @var ExpenseItemsModel
+     */
+     private $expItemMdl;
+    /**
      * @var int deviceId
      */
     var $devid;
@@ -56,6 +61,7 @@ class WposAdminExpenses
             }
         }
         $this->expMdl = new ExpensesModel();
+        $this->expItemMdl = new ExpenseItemsModel();
     }
 
     /**
@@ -77,6 +83,29 @@ class WposAdminExpenses
             $result['data'] = $this->getExpenseRecord($qresult);
             // log data
             Logger::write("Expense added with id:" . $this->data->id, "EXPENSE", json_encode($this->data));
+        }
+        return $result;
+    }
+
+    /**
+     * Add a new expense
+     * @param $result
+     * @return mixed
+     */
+    public function addExpenseItem($result)
+    {
+        $jsonval = new JsonValidate($this->data, '{"expenseid":1, "ref": ""}');
+        if (($errors = $jsonval->validate()) !== true) {
+            $result['error'] = $errors;
+            return $result;
+        }
+        $qresult = $this->expItemMdl->create($this->data->expenseid, $this->data->ref, $this->data->amount, $this->data->notes, $this->data->status, $this->data->locationid, $this->data->userid, $this->data->dt);
+        if ($qresult === false) {
+            $result['error'] = "Could not add the expense item: ".$this->expItemMdl->errorInfo;
+        } else {
+            $result['data'] = $this->getExpenseRecord($this->data->expenseid);
+            // log data
+            Logger::write("Expense item added with id:" . $this->data->id, "EXPENSE", json_encode($this->data));
         }
         return $result;
     }

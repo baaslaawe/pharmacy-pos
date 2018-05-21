@@ -276,7 +276,7 @@
         processdt.setMinutes(new Date().getMinutes());
         processdt.setSeconds(new Date().getSeconds());
         processdt.setMilliseconds(new Date().getMilliseconds());
-        item.duedt = processdt.getTime();
+        item.dt = processdt.getTime();
         item.ref = (new Date()).getTime()+"-1-"+Math.floor((Math.random() * 10000) + 1);
         item.expenseid = $('#expenseidadd').val();
         item.amount = $('#expenseamountadd').val();
@@ -286,11 +286,11 @@
         item.status = 1;
         result = WPOS.sendJsonData("expenses/item/add", JSON.stringify(item));
         if (result!==false){
-            expenses[result.expenseid].total = result.amount;
+            expenses[result.id] = result;
             reloadTable();
+            $('#expenseamountadd').val('');
             $("#addexpensedialog").dialog("close");
         }
-        console.log(result);
         //Hide loader
         WPOS.util.hideLoader();
     }
