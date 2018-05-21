@@ -156,6 +156,24 @@ CREATE TABLE expenses (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `expenses_items`, records individal expenses entry
+--
+CREATE TABLE expenses_items (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `ref` VARCHAR(128) NOT NULL,
+  `expenseid` INT(11) NOT NULL ,
+  `amount` INT(11) NOT NULL,
+  `notes` VARCHAR(2048) NOT NULL DEFAULT '',
+  `locationid` INT(11) NOT NULL,
+  `userid` INT(11) NOT NULL,
+  `status` INT(1) NOT NULL,
+  `dt` DATETIME NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `locations`
 --
 
