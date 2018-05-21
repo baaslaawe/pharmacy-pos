@@ -144,6 +144,18 @@ CREATE TABLE IF NOT EXISTS `device_map` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `locations` , records the name of the expense
+--
+CREATE TABLE expenses (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(50) NOT NULL ,
+  `dt` DATETIME NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `locations`
 --
 
