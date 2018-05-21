@@ -131,6 +131,26 @@ class WposAdminExpenses
     }
 
     /**
+     * @param $result
+     * @return mixed Returns an array of expenses
+     */
+    public function getExpenseItems($result)
+    {
+        $expenses = $this->expItemMdl->get($this->data->expenseid, $this->data->locationid);
+        if (is_array($expenses)) {
+            $expdata = [];
+            foreach ($expenses as $expense) {
+                $expdata[$expense['id']] = $expense;
+            }
+            $result['data'] = $expdata;
+        } else {
+            $result['error'] = $this->expMdl->errorInfo;
+        }
+
+        return $result;
+    }
+
+    /**
      * Update a expenses
      * @param $result
      * @return mixed

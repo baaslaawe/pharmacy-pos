@@ -91,6 +91,23 @@
         </tr>
     </table>
 </div>
+<div id="expenseshistdialog" class="hide">
+    <div style="width: 100%; overflow-x: auto;">
+        <table class="table table-responsive table-stripped">
+            <thead>
+            <tr>
+                <th>Expense</th>
+                <th>Location</th>
+                <th>User</th>
+                <th>Amount</th>
+                <th>Note</th>
+                <th>DT</th>
+            </tr>
+            </thead>
+            <tbody id="expenseshisttable"></tbody>
+        </table>
+    </div>
+</div>
 <!-- page specific plugin scripts; migrated to index.php due to heavy use -->
 
 <!-- inline scripts related to this page -->
@@ -114,7 +131,7 @@
                 { "mData":"id" },
                 { "mData":"name" },
                 { "mData": "total"},
-                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="blue" onclick="openaddexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-plus bigger-130"></i></a><a class="red" onclick="removeExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
+                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="blue" onclick="openaddexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-plus bigger-130"></i></a><a class="green" onclick="openexpensehistorydialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-time bigger-130"></i></a><a class="red" onclick="removeExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
             ],
             "columns": [
                 {},
@@ -245,6 +262,28 @@
                 $(this).css("maxWidth", "375px");
             }
         });
+        $( "#expenseshistdialog" ).removeClass('hide').dialog({
+            resizable: false,
+            width: 'auto',
+            maxWidth: '700px',
+            modal: true,
+            autoOpen: false,
+            title: "Expenses History",
+            title_html: true,
+            buttons: [
+                {
+                    html: "<i class='icon-remove bigger-110'></i>&nbsp; Close",
+                    "class" : "btn btn-xs",
+                    click: function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            ],
+            create: function( event, ui ) {
+                // Set maxWidth
+                $(this).css("maxWidth", "700px");
+            }
+        });
 
         // hide loader
         WPOS.util.hideLoader();
@@ -265,6 +304,20 @@
         $("#expensedateadd").datepicker({dateFormat:"dd/mm/yy"});
         $("#expensedateadd").datepicker('setDate', new Date());
         $("#addexpensedialog").dialog("open");
+    }
+    // show expenses
+    function openexpensehistorydialog(id){
+        WPOS.util.showLoader();
+        var expenseitems = WPOS.sendJsonData("expenses/history", JSON.stringify({expenseid: id, locationid: JSON.parse(localStorage.getItem('wpos_config')).locationid}));
+        // populate expenses dialog with list
+        $("#expenseshisttable").html("");
+        var expense;
+        for (var i in expenseitems){
+            expense = expenseitems[i];
+            $("#expenseshisttable").append('<tr><td>'+expense.expense+'</td><td>'+WPOS.locations[expense.locationid].name+'</td><td>'+WPOS.users[expense.userid].username+'</td><td>'+expense.amount+'</td><td>'+expense.notes+'</td><td>'+(moment(parseInt(expense.dt)).format('DD/MM/YYYY H:mm:ss'))+'</td></tr>');
+        }
+        WPOS.util.hideLoader();
+        $("#expenseshistdialog").dialog('open');
     }
 
     function addExpense() {

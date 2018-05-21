@@ -55,7 +55,7 @@ class ExpensesModel extends DbConfig
      * @return array|bool Returns false on an unexpected failure or an array of selected rows
      */
     public function get($Id = null) {
-        $sql = 'SELECT e.*, COALESCE (SUM(i.amount)) as total FROM expenses as e LEFT OUTER JOIN expenses_items as i ON e.id=i.expenseid';
+        $sql = 'SELECT e.*, COALESCE (SUM(i.amount), 0) as total FROM expenses as e LEFT OUTER JOIN expenses_items as i ON e.id=i.expenseid';
         $placeholders = [];
         if ($Id !== null) {
             if (empty($placeholders)) {

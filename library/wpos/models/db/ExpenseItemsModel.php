@@ -58,26 +58,28 @@ class ExpenseItemsModel extends DbConfig
     }
 
     /**
-     * @param null $Id
-     * @param null $ref
+     * @param null $expenseId
+     * @param null $locationid
      * @return array|bool Returns false on an unexpected failure or an array of selected rows
      */
-    public function get($Id = null, $ref) {
-        $sql = 'SELECT i.*, COUNT(i.amount) as total FROM expenses as e LEFT OUTER JOIN expenses_items as i ON e.id=i.expenseid';
+    public function get($expenseId = null, $locationid = null) {
+        $sql = 'SELECT i.*, e.name as expense FROM expenses_items as i RIGHT OUTER JOIN expenses AS e ON i.expenseid=e.id';
         $placeholders = [];
-        if ($Id !== null) {
+        if ($expenseId !== null) {
             if (empty($placeholders)) {
                 $sql .= ' WHERE';
             }
-            $sql .= ' e.id =:id';
-            $placeholders[':id'] = $Id;
+            $sql .= ' i.expenseid =:id';
+            $placeholders[':id'] = $expenseId;
         }
-        if ($ref !== null){
+        if ($locationid !== null){
             if (empty($placeholders)) {
                 $sql .= ' WHERE';
+            } else {
+                $sql .= ' AND';
             }
-            $sql .= ' ref =:ref';
-            $placeholders[':ref'] = $ref;
+            $sql .= ' i.locationid =:locationid';
+            $placeholders[':locationid'] = $locationid;
         }
 
         return $this->select($sql, $placeholders);
