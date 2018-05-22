@@ -38,7 +38,7 @@
 
                         <div class="infobox infobox-orange infobox-refunds">
                             <div class="infobox-icon">
-                                <i class="icon-backward"></i>
+                                <i class="glyphicon glyphicon-repeat"></i>
                             </div>
 
                             <div class="infobox-data">
@@ -63,14 +63,27 @@
 
                         <div class="infobox infobox-blue2 infobox-takings">
                             <div class="infobox-icon">
-                                <i class="icon-dollar"></i>
+                                <i class="icon-briefcase"></i>
                             </div>
 
                             <div class="infobox-data">
                                 <span id="takings" class="infobox-data-number">-</span>
                                 <div class="infobox-content">Revenue</div>
                             </div>
-                        </div><br/>
+                        </div>
+
+                        <div class="infobox infobox-orange infobox-expenses">
+                            <div class="infobox-icon">
+                                <i class="icon-forward"></i>
+                            </div>
+
+                            <div class="infobox-data">
+                                <span id="expensesnum" class="infobox-data-number">-</span>
+                                <div class="infobox-content">Expenses</div>
+                            </div>
+
+                            <div id="expenses" class="stat stat-important">-</div>
+                        </div>
 
                         <div class="infobox infobox-orange infobox-cost">
                             <div class="infobox-icon">
@@ -85,12 +98,23 @@
 
                         <div class="infobox infobox-green infobox-profit">
                             <div class="infobox-icon">
-                                <i class="icon-dollar"></i>
+                                <i class="icon-bitcoin"></i>
                             </div>
 
                             <div class="infobox-data">
                                 <span id="profit" class="infobox-data-number">-</span>
-                                <div class="infobox-content">Profit</div>
+                                <div class="infobox-content">Gross Profit</div>
+                            </div>
+                        </div>
+
+                        <div class="infobox infobox-green infobox-profit">
+                            <div class="infobox-icon">
+                                <i class="icon-trophy"></i>
+                            </div>
+
+                            <div class="infobox-data">
+                                <span id="gprofit" class="infobox-data-number">-</span>
+                                <div class="infobox-content">Net Profit</div>
                             </div>
                         </div>
 
@@ -341,13 +365,17 @@
         $("#voidnum").text(totals.voidnum);
         $("#voidtotal").text(WPOS.util.currencyFormat(totals.voidtotal));
         $("#takings").text(WPOS.util.currencyFormat(totals.totaltakings, true));
+        $("#expenses").text(WPOS.util.currencyFormat(totals.expenses, true));
+        $("#expensesnum").text(totals.expensesnum);
         $("#cost").text(WPOS.util.currencyFormat(totals.cost, true));
         $("#profit").text(WPOS.util.currencyFormat(totals.profit, true));
+        $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
         // Set onclicks
         $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(totals.salerefs); });
         $(".infobox-refunds").on('click', function(){ WPOS.transactions.openTransactionList(totals.refundrefs); });
         $(".infobox-voids").on('click', function(){ WPOS.transactions.openTransactionList(totals.voidrefs); });
         $(".infobox-takings").on('click', function(){ WPOS.transactions.openTransactionList(totals.refs); });
+        $(".infobox-expenses").on('click', function(){ WPOS.transactions.openExpensesList(totals.expensesrefs); });
         return true;
     }
     function loadPopularItems(items){
