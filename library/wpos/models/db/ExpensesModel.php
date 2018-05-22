@@ -52,10 +52,12 @@ class ExpensesModel extends DbConfig
 
     /**
      * @param null $Id
+     * @param null $stime
+     * @param null $etime
      * @return array|bool Returns false on an unexpected failure or an array of selected rows
      */
-    public function get($Id = null) {
-        $sql = 'SELECT e.*, COALESCE (SUM(i.amount), 0) as total FROM expenses as e LEFT OUTER JOIN expenses_items as i ON e.id=i.expenseid';
+    public function get($Id = null, $stime = null, $etime = null) {
+        $sql = "SELECT e.*, COUNT(i.id) as enum, COALESCE(SUM(i.amount), 0) as total, COALESCE(GROUP_CONCAT(ref SEPARATOR ','),'') as refs FROM expenses as e LEFT OUTER JOIN expenses_items as i ON e.id=i.expenseid";
         $placeholders = [];
         if ($Id !== null) {
             if (empty($placeholders)) {
@@ -64,6 +66,16 @@ class ExpensesModel extends DbConfig
             $sql .= ' e.id =:id';
             $placeholders[':id'] = $Id;
         }
+
+        if ($stime !== null && $etime !== null) {
+            if (empty($placeholders)) {
+                $sql .= ' WHERE';
+            }
+            $sql .= ' (i.dt>= :stime AND i.dt<= :etime)';
+            $placeholders[':stime'] = $stime;
+            $placeholders[':etime'] = $etime;
+        }
+
         $sql.=" GROUP BY e.id";
 
         return $this->select($sql, $placeholders);
