@@ -125,20 +125,34 @@
 
 <div id="expenseshistdialog" class="hide">
     <div style="width: 100%; overflow-x: auto;">
-        <table class="table table-responsive table-stripped">
-            <thead>
-            <tr>
-                <th>Expense</th>
-                <th>Location</th>
-                <th>User</th>
-                <th>Amount</th>
-                <th>Note</th>
-                <th>DT</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody id="expenseshisttable"></tbody>
-        </table>
+        <div class="col-xs-12">
+
+            <div class="table-header">
+                Expenses items
+            </div>
+
+            <table id="expenseshisttable" class="table table-striped table-bordered table-hover dt-responsive" style="width: 100%;">
+                <thead>
+                <tr>
+                    <th data-priority="0" class="center noexport">
+                        <label>
+                            <input type="checkbox" class="ace" />
+                            <span class="lbl"></span>
+                        </label>
+                    </th>
+                    <th data-priority="8">ID</th>
+                    <th data-priority="1">Expense</th>
+                    <th data-priority="4">Location</th>
+                    <th data-priority="5">User</th>
+                    <th data-priority="2">Amount</th>
+                    <th data-priority="5">Note</th>
+                    <th data-priority="3">Date</th>
+                    <th data-priority="7">Action</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 </div>
 <!-- page specific plugin scripts; migrated to index.php due to heavy use -->
@@ -148,6 +162,7 @@
     var expenses = null;
     var expenseitems = null;
     var datatable;
+    var itemsarray = [], expensestable, initialized = false;
     $(function() {
         expenses = WPOS.getJsonData("expenses/get");
         var suparray = [];
@@ -177,7 +192,7 @@
             "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
                 // Add selected row count to footer
                 var selected = this.api().rows('.selected').count();
-                return sPre+(selected>0 ? '<br/>'+selected+' row(s) selected <span class="action-buttons"><a class="red" onclick="removeSelectedCategories();"><i class="icon-trash bigger-130"></i></a></span>':'');
+                return sPre+(selected>0 ? '<br/>'+selected+' row(s) selected <span class="action-buttons"><a class="red" onclick="removeSelectedExpenses();"><i class="icon-trash bigger-130"></i></a></span>':'');
             }
         });
 
@@ -298,8 +313,8 @@
         });
         $( "#expenseshistdialog" ).removeClass('hide').dialog({
             resizable: false,
-            width: 'auto',
-            maxWidth: '700px',
+            width: '900px',
+            maxWidth: '900px',
             modal: true,
             autoOpen: false,
             title: "Expenses History",
@@ -315,7 +330,7 @@
             ],
             create: function( event, ui ) {
                 // Set maxWidth
-                $(this).css("maxWidth", "700px");
+                $(this).css("maxWidth", "900px");
             }
         });
         $( "#editexpenseitemdialog" ).removeClass('hide').dialog({
@@ -350,6 +365,76 @@
         // hide loader
         WPOS.util.hideLoader();
     });
+
+    function initTables() {
+        if (initialized) return;
+        var supitem;
+        for (var key in expenseitems){
+            supitem = expenseitems[key];
+            itemsarray.push(supitem);
+        }
+        expensestable = $('#expenseshisttable').dataTable({
+            "bProcessing": false,
+            "aaData": itemsarray,
+            "aaSorting": [[ 2, "asc" ]],
+            "aoColumns": [
+                { mData:null, sDefaultContent:'<div style="text-align: center"><label><input class="ace dt-select-cb" type="checkbox"><span class="lbl"></span></label><div>', bSortable: false, sClass:"noexport" },
+                { "mData":"id" },
+                { "mData":"expense" },
+                { "mData":function(data,type,val){return (data.locationid!=='0'?(WPOS.locations.hasOwnProperty(data.locationid)?WPOS.locations[data.locationid].name:'Unknown'):'Warehouse');} },
+                { "mData":function(data,type,val){return (data.userid!=='0'?(WPOS.users.hasOwnProperty(data.userid)?WPOS.users[data.userid].username:'Unknown'):'Admin');} },
+                { "mData": "amount"},
+                { "mData": "notes"},
+                { "mData": function(data,type,val){return (moment(parseInt(data.dt)).format('DD/MM/YYYY H:mm:ss'));} },
+                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditexpenseitemdialog($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-edit bigger-130"></i></a> &nbsp; &nbsp;<a class="red" onclick="deleteExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
+            ],
+            "columns": [
+                {},
+                {type: "numeric"},
+                {type: "numeric"},
+                {type: "string"},
+                {type: "numeric"},
+                {type: "numeric"},
+                {type: "numeric"},
+                {type: "numeric"},
+                {type: "numeric"},
+                {}
+            ],
+            "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                // Add selected row count to footer
+                var selected = this.api().rows('.selected').count();
+                return sPre+(selected>0 ? '<br/>'+selected+' row(s) selected <span class="action-buttons"><a class="red" onclick="removeSelectedItems();"><i class="icon-trash bigger-130"></i></a></span>':'');
+            }
+        });
+
+        expensestable.find("tbody").on('click', '.dt-select-cb', function(e){
+            var row = $(this).parents().eq(3);
+            if (row.hasClass('selected')) {
+                row.removeClass('selected');
+            } else {
+                row.addClass('selected');
+            }
+            expensestable.api().draw(false);
+            e.stopPropagation();
+        });
+
+        $('table.dataTable th input:checkbox').on('change' , function(){
+            var that = this;
+            $(this).closest('table.dataTable').find('tr > td:first-child input:checkbox')
+                .each(function(){
+                    var row = $(this).parents().eq(3);
+                    if ($(that).is(":checked")) {
+                        row.addClass('selected');
+                        $(this).prop('checked', true);
+                    } else {
+                        row.removeClass('selected');
+                        $(this).prop('checked', false);
+                    }
+                });
+            expensestable.api().draw(false);
+        });
+        initialized = true;
+    }
     // updating records
     function openeditexpensedialog(id){
         var item = expenses[id];
@@ -371,12 +456,17 @@
     function openexpensehistorydialog(id){
         WPOS.util.showLoader();
         expenseitems = WPOS.sendJsonData("expenses/history", JSON.stringify({expenseid: id, locationid: JSON.parse(localStorage.getItem('wpos_config')).locationid}));
-        // populate expenses dialog with list
-        $("#expenseshisttable").html("");
-        var expense;
-        for (var i in expenseitems){
-            expense = expenseitems[i];
-            $("#expenseshisttable").append('<tr><td>'+expense.expense+'</td><td>'+WPOS.locations[expense.locationid].name+'</td><td>'+WPOS.users[expense.userid].username+'</td><td>'+expense.amount+'</td><td>'+expense.notes+'</td><td>'+(moment(parseInt(expense.dt)).format('DD/MM/YYYY H:mm:ss'))+'</td><td><a class="green" onclick="openeditexpenseitemdialog('+ expense.id +')"><i class="icon-edit bigger-130"></i></a> &nbsp; &nbsp;<a class="red" onclick="deleteExpense('+ expense.id +')"><i class="icon-trash bigger-130"></i></a></td></tr>');
+        if (!initialized){
+            initTables();
+        } else {
+            var supitem, itemsarray = [];
+            for (var key in expenseitems){
+                supitem = expenseitems[key];
+                itemsarray.push(supitem);
+            }
+            expensestable.fnClearTable(false);
+            expensestable.fnAddData(itemsarray, false);
+            expensestable.api().draw(false);
         }
         WPOS.util.hideLoader();
         $("#expenseshistdialog").dialog('open');
@@ -496,7 +586,7 @@
         }
     }
 
-    function removeSelectedCategories(){
+    function removeSelectedExpenses(){
         var ids = datatable.api().rows('.selected').data().map(function(row){ return row.id });
 
         var answer = confirm("Are you sure you want to delete "+ids.length+" selected items?");
@@ -507,6 +597,21 @@
                 for (var i=0; i<ids.length; i++){
                     delete expenses[ids[i]];
                 }
+                reloadTable();
+            }
+            // hide loader
+            WPOS.util.hideLoader();
+        }
+    }
+
+    function removeSelectedItems(){
+        var ids = expensestable.api().rows('.selected').data().map(function(row){ return row.id });
+
+        var answer = confirm("Are you sure you want to delete "+ids.length+" selected items?");
+        if (answer){
+            // show loader
+            WPOS.util.hideLoader();
+            if (WPOS.sendJsonData("expenses/items/delete", '{"id":"'+ids.join(",")+'"}')){
                 reloadTable();
             }
             // hide loader
