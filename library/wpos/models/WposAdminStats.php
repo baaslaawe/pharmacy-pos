@@ -113,6 +113,7 @@ class WposAdminStats {
         $stats->totaltakings = round($stats->saletotal - $stats->refundtotal, 2);
         $stats->cost = round($sales[0]['ctotal'], 2);
         $stats->profit = round($stats->totaltakings - $stats->cost, 2);
+        $stats->netprofit = round($stats->profit - $stats->expenses, 2);
         $stats->refs = [];
         $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
         $temprefs = explode(',', $temprefs);
