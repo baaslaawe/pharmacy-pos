@@ -9,6 +9,7 @@
         <option value="stats/itemselling">Item Sales</option>
         <option value="stats/categoryselling">Category Sales</option>
         <option value="stats/supplyselling">Supplier Sales</option>
+        <option value="stats/expenses">Expenses</option>
         <option value="stats/stock">Current Stock</option>
         <option value="stats/order">Purchase Order</option>
         <option value="stats/expired">Expired Items</option>
@@ -95,6 +96,9 @@
             case "stats/users":
                 populateTakings("User Cash", "User Name");
                 break;
+            case "stats/expenses":
+                populateExpenses("Expenses");
+                break;
             case "stats/tax":
                 populateTax();
         }
@@ -150,6 +154,20 @@
         for (var i in repdata){
             rowdata = repdata[i];
             html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+rowdata.refs+'\');">'+rowdata.name+'</a></td><td>'+rowdata.soldqty+'</td><td>'+WPOS.util.currencyFormat(rowdata.soldtotal)+'</td><td>'+rowdata.refundqty+'</td><td>'+WPOS.util.currencyFormat(rowdata.refundtotal)+'</td><td>'+WPOS.util.currencyFormat(rowdata.balance)+'</td></tr>';
+        }
+
+        html += "</tbody></table>";
+
+        $("#reportcontain").html(html);
+    }
+
+    function populateExpenses(title){
+        var html = getReportHeader(title);
+        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td># </td><td>Total</td></tr></thead><tbody>";
+        var rowdata;
+        for (var i in repdata){
+            rowdata = repdata[i];
+            html += '<tr><td><a onclick="WPOS.transactions.openExpensesList(\''+rowdata.refs+'\');">'+rowdata.name+'</a></td><td>'+rowdata.enum+'</td><td>'+WPOS.util.currencyFormat(rowdata.total)+'</td></tr>';
         }
 
         html += "</tbody></table>";

@@ -82,6 +82,7 @@ class WposAdminStats {
 
         // get expenses
         if (($expenses = $expMdl->get(null, $stime, $etime))!==false){
+
             $stats->expensesrefs = $expenses[0]['refs'];
             $stats->expenses = $expenses[0]['total'];
             $stats->expensesnum = $expenses[0]['enum'];
