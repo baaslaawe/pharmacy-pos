@@ -86,6 +86,27 @@ class ExpenseItemsModel extends DbConfig
     }
 
     /**
+     * Get a single sale object using its reference.
+     * @param $ref
+     * @return array|bool Returns false on failure or an array with a single record on success
+     */
+    public function getByRef($ref){
+        $sql = 'SELECT i.*, e.name as expense FROM expenses_items as i RIGHT OUTER JOIN expenses AS e ON i.expenseid=e.id WHERE';
+        $placeholders = [];
+        if (is_array($ref)) {
+            $ref = array_map([$this->_db, 'quote'], $ref);
+            $sql .= " i.ref IN (" . implode(', ', $ref) . ");";
+        } else if (is_numeric(str_replace("-", "", $ref))){
+            $sql .= " i.ref=:ref;";
+            $placeholders[":ref"] = $ref;
+        } else {
+            return false;
+        }
+        return $this->select($sql, $placeholders);
+    }
+
+
+    /**
      * @param $id
      * @param $expenseid
      * @param $ref

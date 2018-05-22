@@ -318,7 +318,7 @@ function routeApiCall($action, $data, $result) {
             break;
         // expenses
         case "expenses/get":
-            $jsondata = new WposAdminExpenses();
+            $jsondata = new WposAdminExpenses($data);
             $result = $jsondata->getExpenses($result);
             break;
 

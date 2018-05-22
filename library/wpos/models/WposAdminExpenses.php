@@ -116,7 +116,11 @@ class WposAdminExpenses
      */
     public function getExpenses($result)
     {
-        $expenses = $this->expMdl->get();
+        if(isset($this->data->refs)){
+            $expenses = $this->expItemMdl->getByRef($this->data->refs);
+        } else {
+            $expenses = $this->expMdl->get();
+        }
         if (is_array($expenses)) {
             $expdata = [];
             foreach ($expenses as $expense) {
