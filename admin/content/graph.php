@@ -115,7 +115,7 @@
     var dataobj;
     // Graph functions
     function loadDefaultData() {
-        var sales = [], refunds = [], takings = [], cost = [], profit = [], salerefs = [], refundrefs = [], takingrefs = [], expenses = [], expensesrefs = [];
+        var sales = [], refunds = [], takings = [], cost = [], profit = [], netprofit = [], salerefs = [], refundrefs = [], takingrefs = [], expenses = [], expensesrefs = [];
         // get range
         var jdata = getData('graph/general');
         var tempdate;
@@ -137,6 +137,7 @@
             takings.push([ t, jdata[i].totaltakings]);
             cost.push([ t, jdata[i].cost]);
             profit.push([ t, jdata[i].profit]);
+            netprofit.push([ t, jdata[i].netprofit]);
             expenses.push([ t, jdata[i].expenses]);
             expensesrefs.push([ t, jdata[i].expensesrefs]);
             t = t + interval;
@@ -160,7 +161,7 @@
         //     profit.push([ t, jdata[i].profit]);
         //     t = t + interval;
         // }
-        dataobj = {profit:{ label: "Profit", refs: takingrefs, data: profit, color: "#29AB87" }, expense: { label: "Expenses", refs: expensesrefs, data: expenses, color: "#29AB15" }, cost:{ label: "Cost", refs: takingrefs, data: cost, color: "#EA3C53" }, "sales": { label: "Sales", refs: salerefs, data: sales, color: "#9ABC32" }, "refunds": { label: "Refunds", refs: refundrefs, data: refunds, color: "#EDC240" }, "takings": { label: "Takings", refs: takingrefs, data: takings, color: "#3983C2" }};
+        dataobj = {grossprofit:{ label: "Gross profit", refs: takingrefs, data: profit, color: "#29AB87" }, netprofit:{ label: "Net profit", refs: takingrefs, data: netprofit, color: "#29AB87" }, expense: { label: "Expenses", refs: expensesrefs, data: expenses, color: "#29AB15" }, cost:{ label: "Cost", refs: takingrefs, data: cost, color: "#EA3C53" }, "sales": { label: "Sales", refs: salerefs, data: sales, color: "#9ABC32" }, "refunds": { label: "Refunds", refs: refundrefs, data: refunds, color: "#EDC240" }, "takings": { label: "Takings", refs: takingrefs, data: takings, color: "#3983C2" }};
         drawChart();
     }
 

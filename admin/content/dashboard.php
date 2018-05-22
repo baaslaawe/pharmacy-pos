@@ -585,7 +585,7 @@
         var tempdate;
         var vals = getTimeVals($("#grange").text());
         var t = vals[0];
-        var sales = [], refunds = [], takings = [],  cost = [],  profit = [], salerefs = [], refundrefs = [], takingrefs = [], expenses = [], expensesrefs = [];
+        var sales = [], refunds = [], takings = [],  cost = [],  profit = [], netprofit = [], salerefs = [], refundrefs = [], takingrefs = [], expenses = [], expensesrefs = [];
         // create the data object
         var sorted = [];
         for(var pointa in jdata){
@@ -602,6 +602,7 @@
             takings.push([ t, jdata[i].totaltakings]);
             cost.push([ t, jdata[i].cost]);
             profit.push([ t, jdata[i].profit]);
+            netprofit.push([ t, jdata[i].netprofit]);
             expenses.push([ t, jdata[i].expenses]);
             expensesrefs.push([ t, jdata[i].expensesrefs]);
             t = t + 86400000;
@@ -624,7 +625,7 @@
         //     cost.push([ tempdate, mdata[i].cost]);
         //     profit.push([ tempdate, mdata[i].profit]);
         // }
-        var data = [{ label: "Profit", refs: takingrefs, data: profit, color: "#29AB87" },{ label: "Expenses", refs: expensesrefs, data: expenses, color: "#29AB15" },{ label: "Cost", refs: takingrefs, data: cost, color: "#EA3C53" },{ label: "Sales", refs:salerefs, data: sales, color: "#9ABC32" },{ label: "Refunds", refs:refundrefs, data: refunds, color: "#EDC240" },{ label: "Revenue", refs: takingrefs, data: takings, color: "#3983C2" }];
+        var data = [{ label: "Gross profit", refs: takingrefs, data: profit, color: "#29AB87" }, { label: "Net profit", refs: takingrefs, data: netprofit, color: "#29AB87" }, { label: "Expenses", refs: expensesrefs, data: expenses, color: "#29AB15" },{ label: "Cost", refs: takingrefs, data: cost, color: "#EA3C53" },{ label: "Sales", refs:salerefs, data: sales, color: "#9ABC32" },{ label: "Refunds", refs:refundrefs, data: refunds, color: "#EDC240" },{ label: "Revenue", refs: takingrefs, data: takings, color: "#3983C2" }];
         // render the graph
         $.plot("#sales-charts", data, {
             hoverable: true,
