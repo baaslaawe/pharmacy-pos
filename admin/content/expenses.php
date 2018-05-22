@@ -469,16 +469,27 @@
         WPOS.util.hideLoader();
     }
     function removeExpense(id){
-
         var answer = confirm("Are you sure you want to delete this expense?");
-
-
         if (answer){
             // show loader
             WPOS.util.hideLoader();
             if (WPOS.sendJsonData("expenses/delete", '{"id":'+id+'}')){
                 delete expenses[id];
                 reloadTable();
+            }
+            // hide loader
+            WPOS.util.hideLoader();
+        }
+    }
+
+    function deleteExpense(id){
+        var answer = confirm("Are you sure you want to delete this expense?");
+        if (answer){
+            // show loader
+            WPOS.util.hideLoader();
+            if (WPOS.sendJsonData("expenses/items/delete", '{"id":'+id+'}')){
+                openexpensehistorydialog(expenseitems[id].expenseid);
+                reloadData();
             }
             // hide loader
             WPOS.util.hideLoader();

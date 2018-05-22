@@ -233,4 +233,38 @@ class WposAdminExpenses
         }
         return $result;
     }
+
+    /**
+     * Delete expenses
+     * @param $result
+     * @return mixed
+     */
+    public function deleteExpenseItem($result)
+    {
+        // validate input
+        if (!is_numeric($this->data->id)) {
+            if (isset($this->data->id)) {
+                $ids = explode(",", $this->data->id);
+                foreach ($ids as $id){
+                    if (!is_numeric($id)){
+                        $result['error'] = "A valid comma separated list of ids must be supplied";
+                        return $result;
+                    }
+                }
+            } else {
+                $result['error'] = "A valid id, or comma separated list of ids must be supplied";
+                return $result;
+            }
+        }
+
+        $qresult = $this->expItemMdl->remove(isset($ids)?$ids:$this->data->id);
+        if ($qresult === false) {
+            $result['error'] = "Could not delete the expense: ".$this->expMdl->errorInfo;
+        } else {
+            $result['data'] = true;
+            // log data
+            Logger::write("Expenses(s) deleted with id:" . $this->data->id, "Expenses");
+        }
+        return $result;
+    }
 }
