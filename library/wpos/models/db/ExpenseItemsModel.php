@@ -100,7 +100,7 @@ class ExpenseItemsModel extends DbConfig
     public function edit($id, $expenseid, $ref, $amount, $notes, $status, $locationid, $userid, $dt)
     {
 
-        $sql = "UPDATE expenses_items SET `expenseid`=:expenseid, `ref`=:ref, `amount`=:amount, `notes`=:notes, `status`=:status, `locationid`=:locationid, `userid`=:userid, `dt`=:id WHERE id=:id;";
+        $sql = "UPDATE expenses_items SET `expenseid`=:expenseid, `ref`=:ref, `amount`=:amount, `notes`=:notes, `status`=:status, `locationid`=:locationid, `userid`=:userid, `dt`=:dt WHERE id=:id;";
         $placeholders = [":id"=>$id, "expenseid"=>$expenseid, ":ref"=>$ref, ":amount"=>$amount, ":notes"=>$notes, ":status"=>$status, ":locationid"=>$locationid, ":userid"=>$userid, ":dt"=>$dt];
 
         return $this->update($sql, $placeholders);

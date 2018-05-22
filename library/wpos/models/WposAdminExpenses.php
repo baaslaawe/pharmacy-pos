@@ -174,6 +174,23 @@ class WposAdminExpenses
     }
 
     /**
+     * Update a expenses
+     * @param $result
+     * @return mixed
+     */
+    public function updateExpenseItem($result)
+    {
+        $qresult = $this->expItemMdl->edit($this->data->id,$this->data->expenseid, $this->data->ref, $this->data->amount, $this->data->notes, $this->data->status, $this->data->locationid, $this->data->userid, $this->data->dt);
+        if ($qresult === false) {
+            $result['error'] = "Could not edit the expense: ".$this->expMdl->errorInfo;
+        } else {
+            $result['data'] = $this->getExpenseRecord($this->data->id);
+            // log data
+            Logger::write("Expense updated with id:" . $this->data->id, "EXPENSE", json_encode($this->data));
+        }
+        return $result;
+    }
+    /**
      * Returns expenses array by ID
      * @param $id
      * @return mixed

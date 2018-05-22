@@ -91,6 +91,38 @@
         </tr>
     </table>
 </div>
+
+<div id="editexpenseitemdialog" class="hide">
+    <table>
+        <input type="hidden" id="expenseidedit">
+        <h3>Expense :: <span id="expensenameedit"></span></h3>
+        <tr>
+            <td style="text-align: right;">
+                <label for="expenseamountedit">Amount: </label>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="expenseamountedit">
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: right;">
+                <label for="expensedateedit">Date: </label>
+            </td>
+            <td>
+                <input type="text" style="width: 100%;" class="form-control" id="expensedateedit" onclick="$(this).blur();"/>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: right;">
+                <label for="expensenoteedit">Note: </label>
+            </td>
+            <td>
+                <textarea name="note" id="expensenotesedit" cols="30" rows="3" class="form-control"></textarea>
+            </td>
+        </tr>
+    </table>
+</div>
+
 <div id="expenseshistdialog" class="hide">
     <div style="width: 100%; overflow-x: auto;">
         <table class="table table-responsive table-stripped">
@@ -114,6 +146,7 @@
 <!-- inline scripts related to this page -->
 <script type="text/javascript">
     var expenses = null;
+    var expenseitems = null;
     var datatable;
     $(function() {
         expenses = WPOS.getJsonData("expenses/get");
@@ -246,7 +279,7 @@
                     html: "<i class='icon-save bigger-110'></i>&nbsp; Add",
                     "class" : "btn btn-success btn-xs",
                     click: function() {
-                        addExpense(false);
+                        addExpense(true);
                     }
                 }
                 ,
@@ -285,7 +318,35 @@
                 $(this).css("maxWidth", "700px");
             }
         });
-
+        $( "#editexpenseitemdialog" ).removeClass('hide').dialog({
+            resizable: false,
+            width: 'auto',
+            modal: true,
+            autoOpen: false,
+            title: "Edit expense item",
+            title_html: true,
+            buttons: [
+                {
+                    html: "<i class='icon-save bigger-110'></i>&nbsp; Update",
+                    "class" : "btn btn-success btn-xs",
+                    click: function() {
+                        addExpense(false);
+                    }
+                }
+                ,
+                {
+                    html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
+                    "class" : "btn btn-xs",
+                    click: function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            ],
+            create: function( event, ui ) {
+                // Set maxWidth
+                $(this).css("maxWidth", "375px");
+            }
+        });
         // hide loader
         WPOS.util.hideLoader();
     });
@@ -309,7 +370,7 @@
     // show expenses
     function openexpensehistorydialog(id){
         WPOS.util.showLoader();
-        var expenseitems = WPOS.sendJsonData("expenses/history", JSON.stringify({expenseid: id, locationid: JSON.parse(localStorage.getItem('wpos_config')).locationid}));
+        expenseitems = WPOS.sendJsonData("expenses/history", JSON.stringify({expenseid: id, locationid: JSON.parse(localStorage.getItem('wpos_config')).locationid}));
         // populate expenses dialog with list
         $("#expenseshisttable").html("");
         var expense;
@@ -321,29 +382,58 @@
         $("#expenseshistdialog").dialog('open');
     }
 
-    function addExpense() {
+    function openeditexpenseitemdialog(id) {
+        var item = expenseitems[id];
+        $("#expenseidedit").val(item.id);
+        $("#expenseamountedit").val(item.amount);
+        $("#expensenameedit").text(item.expense);
+        $("#expensenotesedit").val(item.notes);
+        $("#expensedateedit").datepicker({dateFormat:"dd/mm/yy"});
+        $("#expensedateedit").datepicker('setDate', new Date(parseInt(item.dt)));
+        $("#editexpenseitemdialog").dialog("open");
+    }
+
+    function addExpense(isNewItem) {
         // show loader
         WPOS.util.showLoader();
-        var item = {}, result;
-        var processdt = $("#expensedateadd").datepicker("getDate");
-        processdt.setHours(new Date().getHours());
-        processdt.setMinutes(new Date().getMinutes());
-        processdt.setSeconds(new Date().getSeconds());
-        processdt.setMilliseconds(new Date().getMilliseconds());
-        item.dt = processdt.getTime();
-        item.ref = (new Date()).getTime()+"-1-"+Math.floor((Math.random() * 10000) + 1);
-        item.expenseid = $('#expenseidadd').val();
-        item.amount = $('#expenseamountadd').val();
-        item.locationid = JSON.parse(localStorage.getItem('wpos_config')).locationid;
-        item.userid = WPOS.loggeduser.id;
-        item.notes = $('#expensenoteadd').val();
-        item.status = 1;
-        result = WPOS.sendJsonData("expenses/item/add", JSON.stringify(item));
-        if (result!==false){
-            expenses[result.id] = result;
-            reloadTable();
-            $('#expenseamountadd').val('');
-            $("#addexpensedialog").dialog("close");
+        var item = {}, result, processdt;
+        if(isNewItem) {
+            processdt = $("#expensedateadd").datepicker("getDate");
+            processdt.setHours(new Date().getHours());
+            processdt.setMinutes(new Date().getMinutes());
+            processdt.setSeconds(new Date().getSeconds());
+            processdt.setMilliseconds(new Date().getMilliseconds());
+            item.dt = processdt.getTime();
+            item.ref = (new Date()).getTime()+"-1-"+Math.floor((Math.random() * 10000) + 1);
+            item.expenseid = $('#expenseidadd').val();
+            item.amount = $('#expenseamountadd').val();
+            item.locationid = JSON.parse(localStorage.getItem('wpos_config')).locationid;
+            item.userid = WPOS.loggeduser.id;
+            item.notes = $('#expensenoteadd').val();
+            item.status = 1;
+            result = WPOS.sendJsonData("expenses/item/add", JSON.stringify(item));
+            if (result!==false){
+                expenses[result.id] = result;
+                reloadTable();
+                $('#expenseamountadd').val('');
+                $("#addexpensedialog").dialog("close");
+            }
+        } else {
+            processdt = $("#expensedateedit").datepicker("getDate");
+            processdt.setHours(new Date().getHours());
+            processdt.setMinutes(new Date().getMinutes());
+            processdt.setSeconds(new Date().getSeconds());
+            processdt.setMilliseconds(new Date().getMilliseconds());
+            item = expenseitems[$('#expenseidedit').val()];
+            item.dt = processdt.getTime();
+            item.amount = $('#expenseamountedit').val();
+            item.notes = $('#expensenotesedit').val();
+            result = WPOS.sendJsonData("expenses/item/edit", JSON.stringify(item));
+            if (result!==false){
+                openexpensehistorydialog(item.expenseid);
+                reloadData();
+                $("#editexpenseitemdialog").dialog("close");
+            }
         }
         //Hide loader
         WPOS.util.hideLoader();

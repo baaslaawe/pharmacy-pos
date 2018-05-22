@@ -337,6 +337,11 @@ function routeApiCall($action, $data, $result) {
             $result = $expMdl->updateExpense($result);
             break;
 
+        case "expenses/item/edit":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->updateExpenseItem($result);
+            break;
+
         case "expenses/delete":
             $expMdl = new WposAdminExpenses($data);
             $result = $expMdl->deleteExpenses($result);
