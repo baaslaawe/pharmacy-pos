@@ -22,6 +22,7 @@
 
 function WPOSTransactions() {
     var transactions = {};
+    var expenses = {};
     var items = null;
     // functions for opening info dialogs and populating data
     var curref;
@@ -45,6 +46,25 @@ function WPOSTransactions() {
         transdialog.dialog("option", "position", {my: "center", at: "center", of: window});
         transdialog.trigger("resize");
     };
+
+    this.openExpensesList = function(refs){
+        // check input
+        if (!refs) return;
+        // Initiate UI
+        if (!uiinit) initUI();
+        var expenseslist = $("#expenseslist"), expensesdialog = $("#expenseslistdialog");
+        $("#expenseslistheader").html('<th>Ref</th>');
+        $("#expenseslistdetailsbtn").show();
+        expenseslist.html('');
+        expenseslist.data('refs', refs);
+        refs = refs.split(',');
+        for (var i in refs){
+            expenseslist.append('<tr><td>'+refs[i]+'</td></tr>');
+        }
+        expensesdialog.dialog('open');
+        expensesdialog.dialog("option", "position", {my: "center", at: "center", of: window});
+        expensesdialog.trigger("resize");
+    };
     this.loadTransactionListDetails = function(){
 
         var translist = $("#translist");
@@ -63,6 +83,24 @@ function WPOSTransactions() {
         }
         $("#translistdetailsbtn").hide();
         $("#translistdialog").dialog("option", "position", {my: "center", at: "center", of: window});
+    };
+    this.loadExpensesListDetails = function(){
+
+        var expenseslist = $("#expenseslist");
+        var refs = expenseslist.data('refs').split(',');
+        var expenses = loadExpenses(refs);
+        expenseslist.html('');
+        $("#expenseslistheader").html('<th>Name</th><th>Ref</th><th>Time</th><th>User</th><th>Total</th>');
+        for (var ref in expenses){
+            if (!expenses.hasOwnProperty(ref)) continue;
+            var exp = expenses[ref];
+            expenseslist.append('<tr><td>'+exp.expense+'</td><td>'+ref+'</td>' +
+                '<td>'+WPOS.util.getDateFromTimestamp(parseInt(exp.dt))+'</td>' +
+                '<td>'+(WPOS.users.hasOwnProperty(exp.userid) ? WPOS.users[exp.userid].username : exp.userid)+'</td>' +
+                '<td>'+WPOS.util.currencyFormat(exp.amount)+'</td></tr>');
+        }
+        $("#expenseslistdetailsbtn").hide();
+        $("#expenseslistdialog").dialog("option", "position", {my: "center", at: "center", of: window});
     };
     this.openTransactionDialog = function(ref){
         // Initiate UI
@@ -93,7 +131,7 @@ function WPOSTransactions() {
         $("#transsubtotal").text(WPOS.util.currencyFormat(record.subtotal));
 
         if (record.discount > 0) {
-            $("#transdiscount").text(record.discount + " (" + WPOS.util.currencyFormat(record.discountval) + ')');
+            $("#transdiscount").text(WPOS.util.currencyFormat(record.discount));
             $("#transdisdiv").show();
         } else {
             $("#transdisdiv").hide();
@@ -144,6 +182,14 @@ function WPOSTransactions() {
         return trans;
     }
 
+    function loadExpenses(refs){
+        var trans = WPOS.sendJsonData("expenses/get", JSON.stringify({refs: refs}));
+        for (var ref in trans){
+            expenses[ref] = trans[ref];
+        }
+        return trans;
+    }
+
     function loadTransaction(ref){
         var trans = WPOS.sendJsonData("transactions/get", JSON.stringify({ref: ref}));
         if (!trans.hasOwnProperty(ref)){
@@ -153,6 +199,21 @@ function WPOSTransactions() {
                 text: 'Could not load the selected transaction.'
               });
               
+            return false;
+        }
+        transactions[ref] = trans[ref];
+        return true;
+    }
+
+    function loadExpense(ref){
+        var trans = WPOS.sendJsonData("expenses/get", JSON.stringify({ref: ref}));
+        if (!trans.hasOwnProperty(ref)){
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Could not load the selected transaction.'
+            });
+
             return false;
         }
         transactions[ref] = trans[ref];
@@ -222,6 +283,8 @@ function WPOSTransactions() {
         $(itemtable).html('');
         var taxitems = WPOS.getTaxTable().items;
         for (var i = 0; i < items.length; i++) {
+            if (items[i].qty==0)
+                continue;
             // tax data
             var taxStr = "";
             for (var x in items[i].tax.values){
@@ -422,7 +485,18 @@ function WPOSTransactions() {
     }
 
     this.calculateItemTotals = function(){
-        calculateItemTotals();
+      var qty = parseInt($('#transitemqty').val());
+      var stocklevel = parseInt($('#transitemstocklevel').val());
+      if(qty > stocklevel) {
+          swal({
+              type: 'info',
+              title: 'Stock level ',
+              text: 'Stocklevel is at '+ stocklevel+', you cant add '+qty
+          });
+          $('#transitemqty').val('');
+      } else {
+          calculateItemTotals();
+      }
     };
 
     function calculateItemTotals() {
@@ -497,9 +571,9 @@ function WPOSTransactions() {
     function populateTemplateSelect(element){
         var templates = WPOS.getConfigTable()['templates'];
         element.html('');
-        element.append('<option value="" selected="selected">Use Default</option>');
+        element.append('<option value="invoice" selected="selected">Use Default</option>');
         for (var i in templates){
-            if (templates[i].type=="invoice")
+            if (templates[i].type=="invoice" && templates[i].name !=="Print Invoice")
                 element.append('<option value="'+i+'">'+templates[i].name+'</option>');
         }
     }
@@ -566,7 +640,7 @@ function WPOSTransactions() {
     this.saveInvoiceItem = function() {
         WPOS.util.showLoader();
         var action, itemid = $("#transitemid").val();
-        var data = {id: curid, sitemid: $("#transitemsitemid").val(), qty: $("#transitemqty").val(), name: $('#transitemname').val(), alt_name: $('#transitemaltname').val(), desc: $('#transitemdesc').val(), cost: $('#transitemcost').val(), unit: $('#transitemunit').val(), taxid: $('#transitemtaxid').val(), tax: JSON.parse($('#transitemtaxval').val()), price: $('#transitempriceval').val()};
+        var data = {id: curid, sitemid: $("#transitemsitemid").val(), saleitemid:$('#transitemsaleitemid').val(), qty: $("#transitemqty").val(), name: $('#transitemname').val(), alt_name: $('#transitemaltname').val(), desc: $('#transitemdesc').val(), cost: $('#transitemcost').val(), unit: $('#transitemunit').val(), taxid: $('#transitemtaxid').val(), tax: JSON.parse($('#transitemtaxval').val()), price: $('#transitemunit').val(), locationid: $('#transitemlocationid').val(), inventoryNo: $('#transiteminventoryNo').val(), expiryDate: $('#transitemexpirydate').val(), code: $('#transitemcode').val()};
         if (itemid == 0) {
             action = "invoices/items/add";
             data.unit_original = $('#transitemunit').data("unit_original");
@@ -729,6 +803,11 @@ function WPOSTransactions() {
         window.open(link, '_blank');
     };
 
+    this.printInvoice = function(type, download, template) {
+        var data = WPOS.getJsonData("invoices/print?id=" + curid);
+        WPOS.print.printInvoice(data);
+    };
+
     this.emailInvoice = function(){
         var to = $("#emailto").val();
         var cc = $("#emailcc").val();
@@ -820,13 +899,13 @@ function WPOSTransactions() {
         if (query !== '') {
             var upquery = query.toUpperCase();
             // search items for the text.
-            if (items === null) {
-                items = WPOS.getJsonData("stock/get");
-            }
+            items = WPOS.getJsonData("stock/get");
             for (var key in items) {
                 if (!items.hasOwnProperty(key)) {
                     continue;
                 }
+                if(parseInt(items[key].stocklevel) < 1)
+                  continue;
                 if (items[key].name.toUpperCase().indexOf(upquery) != -1) {
                     results.push(items[key]);
                 } else if (items[key].code.toUpperCase().indexOf(upquery) != -1) {
@@ -1006,6 +1085,40 @@ function WPOSTransactions() {
                 }
             });
 
+            $("#expenseslistdialog").removeClass('hide').css('padding', '0').dialog({
+                width: 'auto',
+                maxWidth: 600,
+                minWidth: 275,
+                maxHeight: 520,
+                modal: true,
+                closeOnEscape: false,
+                autoOpen: false,
+                title: "Expenses Report",
+                title_html: true,
+                buttons: [
+                    {
+                        html: "<i class='icon-refresh bigger-110'></i>&nbsp; Details",
+                        "class": "btn btn-success btn-xs",
+                        "id": "translistdetailsbtn",
+                        click: function () {
+                            WPOS.transactions.loadExpensesListDetails();
+                        }
+                    },
+                    {
+                        html: "<i class='icon-remove bigger-110'></i>&nbsp; Close",
+                        "class": "btn btn-xs",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                ],
+                create: function (event, ui) {
+                    // Set maxWidth
+                    $(this).css("max-width", "600px");
+                    $(this).css("min-width", "275px");
+                    $(this).css("max-height", "520px");
+                }
+            });
             // Edit invoice datepickers
             var invpaydt = $("#transpaydt");
             invpaydt.datepicker({dateFormat: "dd/mm/yy"});
@@ -1048,7 +1161,7 @@ function WPOSTransactions() {
 
             // item autocomplete
             $.ui.autocomplete.prototype._renderItem = function (ul, item) {
-                return $("<li>").data("ui-autocomplete-item", item).append("<a>" + (item.email != undefined ? item.email : item.name) + "</a>").appendTo(ul);
+                return $("<li>").data("ui-autocomplete-item", item).append("<a>" + item.name + " (" + item.stocklevel + ")" + "</a>").appendTo(ul);
             };
             $("#stitemsearch").autocomplete({
                 source: function (request, response) {
@@ -1072,6 +1185,20 @@ function WPOSTransactions() {
                     $('#transitemcost').val(ui.item.cost);
                     $('#transitemunit').val(ui.item.price).data("unit_original", ui.item.price);
                     $('#transitemtaxid').val(ui.item.taxid);
+                    $('#transitemsaleitemid').val(ui.item.stockinventoryid);
+                    $('#transitemlocationid').val(ui.item.locationid);
+                    $('#transitemreorderPoint').val(ui.item.reorderPoint);
+                    $('#transiteminventoryNo').val(ui.item.inventoryNo);
+                    $('#transitemexpirydate').val(ui.item.expiryDate);
+                    $('#transitemcode').val(ui.item.code);
+                    $('#transitemdt').val(ui.item.dt);
+                    $('#transitemstocklevel').val(ui.item.stocklevel);
+                    $('#transitemstocktype').val(ui.item.stockType);
+
+                    var typeselecthtml = "";
+                    typeselecthtml += "<option selected value='" + ui.item.price + "'>Retail</option>";
+                    typeselecthtml += "<option value='" + ui.item.wprice + "'>Wholesale</option>";
+                    $('#itemtype').html(typeselecthtml);
                     // lock fields
                     setDisabledItemFields();
                     calculateItemTotals();
@@ -1088,6 +1215,12 @@ function WPOSTransactions() {
     this.refreshTaxSelects = function(){
         refreshTaxSelects();
     };
+
+    this.updateUnitPrice = function (unit) {
+      $('#transitemunit').val(unit).data("unit_original", unit);
+        WPOS.transactions.calculateItemTotals();
+    };
+
     function refreshTaxSelects(){
         var taxsel = $(".taxselect");
         taxsel.html('');

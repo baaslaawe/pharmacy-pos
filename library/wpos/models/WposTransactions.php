@@ -377,6 +377,26 @@ class WposTransactions {
 
     /**
      * Generate invoice for the specified transaction
+     */
+    public function printInvoice($results){
+        // make sure sale is loaded
+        $config = new WposAdminSettings();
+        if (!$this->trans){
+            if ($this->loadTransaction()===false){
+                die("Failed to load the transaction!");
+            }
+        }
+        $invval = $config->getSettingsObject("invoice");
+        $genval = $config->getSettingsObject("general");
+        // create the data class
+        $data = new WposTemplateData($this->trans, ['general'=>$genval, 'invoice'=>$invval], true);
+
+        $results['data'] = $data;
+        return $results;
+    }
+
+    /**
+     * Generate invoice for the specified transaction
      * @param $result
      * @return mixed
      */

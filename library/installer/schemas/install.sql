@@ -58,11 +58,11 @@ CREATE TABLE IF NOT EXISTS `config` (
 --
 
 INSERT INTO `config` (`id`, `name`, `data`) VALUES
-  (1, 'general', '{"version":"1.4.0","dateformat":"d\\/m\\/y","currencyformat":"Kshs ~2~.~,~0","accntype":"cash","bizname":"Magnum Digital Limited","biznumber":"9999 999 999","bizemail":"info@magnumdigitalke.com","bizaddress":"1 Some St","bizsuburb":"Someville","bizstate":"NSW","bizpostcode":"2000","bizcountry":"Kenya","bizlogo":"\\/assets\\/images\\/receipt-logo.png","bizicon":"\\/icon.ico","gcontact":0,"gcontacttoken":"","altlabels":{"cash":"Cash","credit":"Credit","eftpos":"Eftpos","mpesa":"Mpesa","deposit":"Deposit","tendered":"Tendered","change":"Change","transaction-ref":"Transaction Ref","sale-time":"Sale Time","subtotal":"Subtotal","total":"Total","item":"Item","items":"Items","refund":"Refund","void-transaction":"Void Transaction"}}'),
+  (1, 'general', '{"version":"1.4.0","dateformat":"d\\/m\\/y","currencyformat":"Kshs ~2~.~,~0","accntype":"cash","bizname":"Magnum Digital Limited","biznumber":"9999 999 999","bizemail":"info@magnumdigitalke.com","bizaddress":"1 Some St","bizsuburb":"Someville","bizstate":"NSW","bizpostcode":"2000","bizcountry":"Kenya","bizlogo":"\\/assets\\/images\\/receipt-logo.png","bizicon":"\\/icon.ico","gcontact":0,"gcontacttoken":"","altlabels":{"cash":"Cash","credit":"Credit","bank":"Bank","mpesa":"Mpesa","deposit":"Deposit","tendered":"Tendered","change":"Change","transaction-ref":"Transaction Ref","sale-time":"Sale Time","subtotal":"Subtotal","total":"Total","item":"Item","items":"Items","refund":"Refund","void-transaction":"Void Transaction"}}'),
   (2, 'pos', '{"rectemplate":"receipt","recline2":"Your business in the cloud","recline3":"an application by WallaceIT","reclogo":"\\/assets\\/images\\/receipt-logo-mono.png","recprintlogo":true,"reccurrency":"","reccurrency_codepage":"0","recemaillogo":"\\/assets\\/images\\/receipt-logo.png","recfooter":"Thanks for shopping with us!","recqrcode":"https:\\/\\/wallaceit.com.au","salerange":"week","saledevice":"location","priceedit":"blank","cashrounding":"5", "negative_items":false}'),
-  (3, 'invoice', '{"defaulttemplate":"invoice","defaultduedt":"+2 weeks","payinst":"Please contact us for payment instructions","emailmsg":"<div align=\\"left\\">Dear %name%,<br><\\/div><br>Please find the attached invoice.<br><br>Kind regards,<br>Administration"}'),
+  (3, 'invoice', '{"defaulttemplate":"invoice","defaultduedt":"+2 weeks","payinst":"Please contact us for payment instructions on","emailmsg":"<div align=\\"left\\">Dear %name%,<br><\\/div><br>Please find the attached invoice.<br><br>Kind regards,<br>Administration"}'),
   (4, 'accounting', '{"xeroenabled":0,"xerotoken":"","xeroaccnmap":""}'),
-  (5, 'templates', '{"invoice":{"name":"Default Invoice","type":"invoice","filename":"invoice.mustache"},"invoice_mixed":{"name":"Mixed Language","type":"invoice","filename":"invoice_mixed.mustache"},"invoice_alt":{"name":"Alternate Language","type":"invoice","filename":"invoice_alt.mustache"},"receipt":{"name":"Default Receipt","type":"receipt","filename":"receipt.mustache"},"receipt_mixed":{"name":"Mixed Language","type":"receipt","filename":"receipt_mixed.mustache"},"receipt_alt":{"name":"Alternate Language","type":"receipt","filename":"receipt_alt.mustache"}}');
+  (5, 'templates', '{"invoice":{"name":"Default Invoice","type":"invoice","filename":"invoice.mustache"},"print_invoice":{"name":"Print Invoice","type":"invoice","filename":"print_invoice.mustache"},"invoice_mixed":{"name":"Mixed Language","type":"invoice","filename":"invoice_mixed.mustache"},"invoice_alt":{"name":"Alternate Language","type":"invoice","filename":"invoice_alt.mustache"},"receipt":{"name":"Default Receipt","type":"receipt","filename":"receipt.mustache"},"receipt_mixed":{"name":"Mixed Language","type":"receipt","filename":"receipt_mixed.mustache"},"receipt_alt":{"name":"Alternate Language","type":"receipt","filename":"receipt_alt.mustache"}}');
 -- --------------------------------------------------------
 --
 -- Table structure for table `customers`
@@ -140,6 +140,36 @@ CREATE TABLE IF NOT EXISTS `device_map` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uuid` (`uuid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 DEFAULT COLLATE utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `locations` , records the name of the expense
+--
+CREATE TABLE expenses (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(50) NOT NULL ,
+  `dt` DATETIME NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `expenses_items`, records individal expenses entry
+--
+CREATE TABLE expenses_items (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `ref` VARCHAR(128) NOT NULL,
+  `expenseid` INT(11) NOT NULL ,
+  `amount` INT(11) NOT NULL,
+  `notes` VARCHAR(2048) NOT NULL DEFAULT '',
+  `locationid` INT(11) NOT NULL,
+  `userid` INT(11) NOT NULL,
+  `status` INT(1) NOT NULL,
+  `dt` DATETIME NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 DEFAULT COLLATE utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -295,6 +325,7 @@ CREATE TABLE IF NOT EXISTS `stock_items` (
   `expiryDate` VARCHAR(30) NOT NULL,
   `cost` VARCHAR(30) NOT NULL,
   `price` VARCHAR(30) NOT NULL,
+  `wprice` VARCHAR(30) NOT NULL DEFAULT 0.00,
   `code` VARCHAR(30) NOT NULL,
   `inventoryNo` VARCHAR(30) NOT NULL,
   `data` VARCHAR(2048) NOT NULL,

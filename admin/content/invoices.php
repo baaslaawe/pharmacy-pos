@@ -42,7 +42,7 @@
                             <th data-priority="7">Total</th>
                             <th data-priority="6">Balance</th>
                             <th data-priority="5">Status</th>
-                            <th data-priority="2"></th>
+                            <th data-priority="2">Actions</th>
                         </tr>
                         </thead>
 
@@ -65,11 +65,11 @@
         </tr>
         <tr>
           <td><label class="fixedlabel">Invoice Date: </label></td>
-          <td> <input class="form-control" type="text" id="ninvprocessdt" onclick="$(this).blur();"/></td>
+          <td> <input style="width: 100%;" class="form-control" type="text" id="ninvprocessdt" onclick="$(this).blur();"/></td>
         </tr>
         <tr>
           <td><label class="fixedlabel">Due Date: </label></td>
-          <td><input class="form-control" type="text" id="ninvduedt" onclick="$(this).blur();"/></td>
+          <td><input style="width: 100%;" class="form-control" type="text" id="ninvduedt" onclick="$(this).blur();"/></td>
         </tr>
         <tr>
           <td colspan="2"><label class="fixedlabel">Notes: </label></td>
@@ -130,8 +130,10 @@
     function reloadInvoicesTable(){
         var invoices = WPOS.transactions.getTransactions();
         var itemarray = [];
-        for (var key in invoices){
-            itemarray.push(invoices[key]);
+        for (var key in invoices) {
+            var status = getTransactionStatus(invoices[key]);
+            if (status !== 1 && status !== 2)
+                itemarray.push(invoices[key]);
         }
         datatable.fnClearTable(false);
         if (itemarray.length>0)
@@ -158,7 +160,6 @@
                     itemarray.push(tempitem);
                 }
                 datatable.fnClearTable(false);
-                console.log(itemarray);
                 if (itemarray.length>0)
                     datatable.fnAddData(itemarray, false);
                 datatable.api().draw(false);
@@ -176,6 +177,9 @@
     function getStatusHtml(status){
         var stathtml;
         switch(status){
+            case -3:
+                stathtml='<span class="label label-warning arrowed">Empty</span>';
+                break;
             case -2:
                 stathtml='<span class="label label-danger arrowed">Overdue</span>';
                 break;
@@ -197,6 +201,7 @@
         }
         return stathtml;
     }
+
     function getTransactionStatus(record){
         if (record.hasOwnProperty('voiddata')){
             return 2;
@@ -206,9 +211,12 @@
         } else if (record.balance == 0 && record.total!=0){
             // closed
             return 1;
-        } else if ((record.duedt < (new Date).getTime()) && record.balace!=0) {
+        } else if ((record.duedt < (new Date).getTime()) && record.balance!=0) {
             // overdue
             return -2
+        } else if (record.items.length === 0 && record.balance== 0) {
+            // empty
+            return -3
         }
         return -1;
     }
@@ -227,25 +235,27 @@
                     data[ref] = invoices[ref];
             }
         } else {
-            data = invoices;
+            var tempinvoices = [];
+            for (var key in invoices) {
+                var status = getTransactionStatus(invoices[key]);
+                if (status !== 1 && status !== 2 && status !== -3)
+                    tempinvoices.push(invoices[key]);
+            }
+            data = tempinvoices;
         }
 
         var csv = WPOS.data2CSV(
-            ['ID', 'Reference', 'User', 'Device', 'Location', 'Customer ID', 'Customer Email', 'Items', '# Items', 'Payments', 'Subtotal', 'Discount', 'Total', 'Balance', 'Invoice DT', 'Due DT', 'Created DT', 'Status', 'JSON Data'],
+            ['Reference', 'User', 'Location', 'Customer', 'Items', '# Items', 'Payments', 'Subtotal', 'Discount', 'Total', 'Balance', 'Invoice Date', 'Due Date', 'Created Date', 'Status'],
             [
-                'id', 'ref',
+                'ref',
                 {key:'userid', func: function(value){
                     return WPOS.users.hasOwnProperty(value) ? WPOS.users[value].username : 'Unknown';
-                }},
-                {key:'devid', func: function(value){
-                    return WPOS.devices.hasOwnProperty(value) ? WPOS.devices[value].name : 'Unknown';
                 }},
                 {key:'locid', func: function(value){
                     return WPOS.locations.hasOwnProperty(value) ? WPOS.locations[value].name : 'Unknown';
                 }},
-                'custid',
                 {key:'custid', func: function(value){
-                    return customers.hasOwnProperty(value) ? customers[value].email : '';
+                    return customers.hasOwnProperty(value) ? customers[value].name : '';
                 }},
                 {key:'items', func: function(value){
                     var itemstr = '';
@@ -280,9 +290,6 @@
                         case 3: status = "Refunded"; break;
                     }
                     return status;
-                }},
-                {key:'id', func: function(value, record){
-                    return record;
                 }}
             ],
             data
@@ -309,7 +316,9 @@
         var invoices = WPOS.transactions.getTransactions();
         var itemarray = [];
         for (var key in invoices){
-            itemarray.push(invoices[key]);
+            var status = getTransactionStatus(invoices[key]);
+            if (status !== 1 && status !== 2)
+                itemarray.push(invoices[key]);
         }
         datatable = $('#invoicestable').dataTable({
             "bProcessing": true,
@@ -326,7 +335,7 @@
                 { "sType": "currency", "mData":function(data,type,val){return WPOS.util.currencyFormat(data["total"]);} },
                 { "sType": "currency", "mData":function(data,type,val){return WPOS.util.currencyFormat(data["balance"]);} },
                 { "sType": "html", "mData":function(data,type,val){return getStatusHtml(getTransactionStatus(data));} },
-                { "sType": "html", mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="WPOS.transactions.openTransactionDialog($(this).closest(\'tr\').find(\'.reflabel\').attr(\'title\'));"><i class="icon-pencil bigger-130"></i></a><a class="red" onclick="WPOS.transactions.deleteTransaction($(this).closest(\'tr\').find(\'.reflabel\').attr(\'title\'))"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false }
+                { "sType": "html", mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="WPOS.transactions.openTransactionDialog($(this).closest(\'tr\').find(\'.reflabel\').attr(\'title\'));"><i class="icon-pencil bigger-130"></i></a>'+(WPOS.loggeduser.isadmin === "1"? '<a class="red" onclick="WPOS.transactions.deleteTransaction($(this).closest(\'tr\').find(\'.reflabel\').attr(\'title\'))"><i class="icon-trash bigger-130"></i></a>':'')+'</div>', "bSortable": false }
             ],
             "columns": [
                 {},

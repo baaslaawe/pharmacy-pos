@@ -4,11 +4,11 @@
         POS Sales
     </h1>
     <button class="btn btn-success btn-sm pull-right" onclick="exportCurrentSales();"><i class="icon-cloud-download align-top bigger-125"></i>Export CSV</button>
-    <div class="pull-right refsearchbox">
+    <!--<div class="pull-right refsearchbox">
         <label for="refsearch">Ref:</label>&nbsp;<input id="refsearch" type="text" style="height: 35px;" onkeypress="if(event.keyCode == 13){doSearch();}"/>
         <button class="btn btn-primary btn-sm" style="vertical-align: top;" onclick="doSearch();"><i class="icon-search align-top bigger-125"></i>Search</button>
         <button id="refsearch_clearbtn" class="btn btn-warning btn-sm" style="display: none; vertical-align: top;" onclick="reloadSalesData();"><i class="icon-remove align-top bigger-125"></i></button>
-    </div>
+    </div>-->
 </div><!-- /.page-header -->
 
 <div class="row">
@@ -40,7 +40,7 @@
                                 <th data-priority="4">Sale Time</th>
                                 <th data-priority="6">Total</th>
                                 <th data-priority="5">Status</th>
-                                <th data-priority="2"></th>
+                                <th data-priority="2">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

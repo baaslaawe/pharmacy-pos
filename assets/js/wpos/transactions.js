@@ -25,7 +25,7 @@ function WPOSTransactions() {
     var transdialog = $("#transactiondiv");
     var creditdialog = $("#creditpaymentsdiv");
     var creditpaymentdialog = $("#creditpaymentstable");
-    var paymentMethods = ['eftpos', 'cash', 'mpesa'];
+    var paymentMethods = ['bank', 'cash', 'mpesa'];
     var sale = {};
     var curcredit = 0;
 
@@ -51,7 +51,7 @@ function WPOSTransactions() {
         var inteftbtn = $("#eftpospaybtn");
         if (WPOS.hasOwnProperty('eftpos') && WPOS.eftpos.isEnabledAndReady()){
           inteftbtn.show();
-          inteftbtn.text(WPOS.util.capFirstLetter(WPOS.eftpos.getType())+' Eftpos');
+          inteftbtn.text(WPOS.util.capFirstLetter(WPOS.eftpos.getType())+' Bank');
         } else {
           inteftbtn.hide();
         }
@@ -83,7 +83,7 @@ function WPOSTransactions() {
 
       var payrow =  '<tr '+data+'><td>' +
         '<select class="paymethod form-control" style="max-width:150px;" onchange="WPOS.sales.onPaymentMethodChange(this);">' +
-        '<option value="eftpos" '+(method=='eftpos'?'selected':'')+'>Eftpos</option>' +
+        '<option value="eftpos" '+(method=='eftpos'?'selected':'')+'>Bank</option>' +
         '<option value="cash" '+(method=='cash'?'selected':'')+'>Cash</option>' +
         '<option value="mpesa" '+(method=='mpesa'?'selected':'')+'>Mpesa</option>' +
         exmethod+ '</select>' +
@@ -368,7 +368,7 @@ function WPOSTransactions() {
         $("#transsubtotal").text(WPOS.util.currencyFormat(record.subtotal));
         populateTaxinfo(record);
         if (record.discount>0){
-            $("#transdiscount").text(record.discount+"% ("+WPOS.util.currencyFormat((parseFloat(record.total)-Math.abs(parseFloat(record.subtotal)+parseFloat(record.tax))).toFixed(2))+')');
+            $("#transdiscount").text(WPOS.util.currencyFormat(record.discount));
             $("#transdisdiv").show();
         } else {
             $("#transdisdiv").hide();
@@ -416,6 +416,8 @@ function WPOSTransactions() {
         $(itemtable).html('');
         var taxitems = WPOS.getTaxTable().items;
         for (var i = 0; i<items.length; i++){
+            if (items[i].qty==0)
+                continue;
             // tax details
             var taxStr = "";
             for (var x in items[i].tax.values){

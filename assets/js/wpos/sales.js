@@ -29,7 +29,7 @@ function WPOSItems() {
      */
     this.addManualItemRow = function () {
         // add the row
-        addItemRow(1, "", "0.00", 1, 0, 0, 0, {desc:"general", cost:0.00, unit_original:0.00}, 0, 0, false);
+        addItemRow(1, "", "0.00", "0.00", 1, 0, 0, 0, {desc:"general", cost:0.00, unit_original:0.00}, 0, 0, false);
         // focus on qty
         $("#itemtable")
             .children('tr :last')
@@ -236,17 +236,19 @@ function WPOSItems() {
         };
         item.name = items[i].name;
         for (var s in sorted) {
-          if (items[i].name === sorted[s][1].name && sorted[s][1].locationid === locationid && (items[i].stockType ==='1'?(sorted[s][1].stocklevel > 0): true)) {
-            item.qty = parseInt(item.qty) + parseInt(sorted[s][1].stocklevel); // Sum all the stock
-            item.price = sorted[s][1].price;
-            item.id.push(sorted[s][1].id);
-            item.code = sorted[s][1].code;
-            item.stockType = sorted[s][1].stockType;
-            item.locationid = sorted[s][1].locationid;
-            item.categoryid = sorted[s][1].categoryid;
-            item.supplier = sorted[s][1].supplier;
-            item.expiryDate = sorted[s][1].expiryDate;
-            item.description = sorted[s][1].description;
+          if (items[i].name === sorted[s][1].name && sorted[s][1].locationid === locationid ) {
+            if(parseInt(sorted[s][1].stocklevel) > 0){
+                item.qty = parseInt(item.qty) + parseInt(sorted[s][1].stocklevel); // Sum all the stock
+                item.price = sorted[s][1].price;
+                item.id.push(sorted[s][1].id);
+                item.code = sorted[s][1].code;
+                item.stockType = sorted[s][1].stockType;
+                item.locationid = sorted[s][1].locationid;
+                item.categoryid = sorted[s][1].categoryid;
+                item.supplier = sorted[s][1].supplier;
+                item.expiryDate = sorted[s][1].expiryDate;
+                item.description = sorted[s][1].description;
+            }
           }
         }
         // Filter by location and stock amount
@@ -263,6 +265,7 @@ function WPOSItems() {
      * @param {Number} qty
      * @param {String} name
      * @param {String} unit
+     * @param {String} wunit
      * @param {Number} taxid
      * @param {Number} sitemid ; the stored item id to keep track of inventory sales
      * @param {Number} reorderpoint
@@ -272,7 +275,7 @@ function WPOSItems() {
      * @param {Boolean} hidden
      * @param data
      */
-    function addItemRow(qty, name, unit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden) {
+    function addItemRow(qty, name, unit, wunit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden) {
         sitemid = (sitemid>0?sitemid:0);
         var disable = (sitemid>0); // disable fields that are filled by the stored item
         // var disableprice = (sitemid>0 && WPOS.getConfigTable().pos.priceedit!="always");
@@ -281,7 +284,8 @@ function WPOSItems() {
         var row = $('<tr class="item_row"' + ' style="display: '+ (hidden? "none": "visible")+';">' +
             '<td><input type="hidden" class="reorderpoint" value="' + reorderpoint + '" /><input type="hidden" class="newItem" value="true" /><input type="hidden" name="relatedItems[]" class="otherRelatedItemsId" value="' + otherRelatedItemsId + '" /><input type="hidden" class="totalStockLevel" value="' + totalStockLevel + '" /><input type="hidden" class="totalItems" value="' + totalItems + '" data-options=\''+JSON.stringify(data)+'\' /><input class="itemid form-control" type="hidden" value="' + sitemid + '" data-options=\''+JSON.stringify(data)+'\' /><input onChange="WPOS.sales.updateSalesTotal();" style="width:50px;" type="text" class="itemqty numpad form-control" value="' + qty + '" /></td>' +
             '<td><input '+((disable==true && name!="")?"disabled":"")+' type="text" class="itemname form-control" value="' + name + '" onChange="WPOS.sales.updateSalesTotal();" /><div class="itemmodtxt"></div></td>' +
-            '<td><input onChange="WPOS.sales.updateSalesTotal();" style="max-width:50px;" type="text" class="itemunit form-control numpad" value="' + unit + '" /></td>' +
+            '<td><select onchange="WPOS.sales.updateSaleUnit($(this).val(), $(this).parent().parent());" style="max-width:110px;" class="itemtype form-control">' +getTypeSelectHTML(unit, wunit)+ '</select><input class="itemtypeval" type="hidden" value="0" /></td>' +
+            '<td class="itemprice"><input onChange="WPOS.sales.updateSalesTotal();" style="max-width:50px;" type="text" class="itemunit form-control numpad" value="' + unit + '" /></td>' +
             '<td><select '+((!newItem && disabletax==true && taxid!=null)?"disabled":"")+' onChange="WPOS.sales.updateSalesTotal();" style="max-width:110px;" class="itemtax form-control">' +getTaxSelectHTML(taxid)+ '</select><input class="itemtaxval" type="hidden" value="0.00" /></td>' +
             '<td><input style="max-width:75px;" type="text" class="itemprice form-control" value="0.00" disabled /></td>' +
             '<td style="text-align: center;"><button class="btn btn-sm btn-danger" onclick="WPOS.items.removeItem($(this));"><span class="glyphicon glyphicon-trash"></span></button></td>' +
@@ -296,8 +300,8 @@ function WPOSItems() {
         WPOS.initKeypad();
         WPOS.sales.updateSalesTotal();
     }
-    this.addItemRow = function(qty, name, unit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden){
-        addItemRow(qty, name, unit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden);
+    this.addItemRow = function(qty, name, unit,  wunit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden){
+        addItemRow(qty, name, unit, wunit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden);
     };
 
     /**
@@ -314,6 +318,18 @@ function WPOSItems() {
                 }
             }
         return taxselecthtml;
+    }
+/**
+     * Gets or generates the price type select HTML depending on input
+     * @param {Number} unit
+     * @param {Number} wunit
+     * @returns {String}
+     */
+    function getTypeSelectHTML(unit, wunit) {
+        var typeselecthtml = "";
+        typeselecthtml += "<option selected value='" + unit + "'>Retail</option>";
+        typeselecthtml += "<option value='" + wunit + "'>Wholesale</option>";
+        return typeselecthtml;
     }
 
   function getStockItem(id) {
@@ -372,11 +388,11 @@ function WPOSItems() {
         // check if a priced item is already present in the sale and if so increment it's qty
         if (item.price==""){
           // insert item into table
-          addItemRow(1, item.name, item.price, item.taxid, item.reorderPoint, item.stocklevel, item.id[item.id.length-1], {desc:item.description, cost:item.cost, unit_original:item.price, alt_name:item.alt_name}, item.otherIds, item.totalStockLevel, false);
+          addItemRow(1, item.name, item.price, item.wprice, item.taxid, item.reorderPoint, item.stocklevel, item.id[item.id.length-1], {desc:item.description, cost:item.cost, unit_original:item.price, alt_name:item.alt_name}, item.otherIds, item.totalStockLevel, false);
         } else {
           if (!isItemAdded(item.name, true)){
             // insert item into table
-            addItemRow(1, item.name, item.price, item.taxid, item.reorderPoint, item.stocklevel, item.id[item.id.length-1], {desc:item.description, cost:item.cost, unit_original:item.price, alt_name:item.alt_name}, item.otherIds, item.totalStockLevel, false);
+            addItemRow(1, item.name, item.price, item.wprice, item.taxid, item.reorderPoint, item.stocklevel, item.id[item.id.length-1], {desc:item.description, cost:item.cost, unit_original:item.price, alt_name:item.alt_name}, item.otherIds, item.totalStockLevel, false);
           }
         }
         $("#codeinput").val('');
@@ -622,7 +638,7 @@ function WPOSItems() {
 // Item UI stuff
 $(function () {
     $.ui.autocomplete.prototype._renderItem = function (ul, item) {
-        return $("<li>").data("ui-autocomplete-item", item).append("<a>" + (item.email!=undefined?item.email:item.name) + "</a>").appendTo(ul);
+        return $("<li>").data("ui-autocomplete-item", item).append("<a>" + item.name + " (" + item.qty + ")" + "</a>").appendTo(ul);
     };
 
     $("#itemsearch").autocomplete({
@@ -745,6 +761,13 @@ function WPOSSales() {
         $("#subtotal").text(WPOS.util.currencyFormat(cursubtotal.toFixed(2)));
         $("#totaltax").text(WPOS.util.currencyFormat(curtaxtotal.toFixed(2)));
         this.updateDiscount();
+    };
+
+    this.updateSaleUnit = function (unit, parent) {
+        parent.children('.itemprice').each(function(index, element){
+            $(element).find('.itemunit').val(unit);
+        });
+        WPOS.sales.updateSalesTotal();
     };
 
     /**
@@ -995,7 +1018,7 @@ function WPOSSales() {
             var inteftbtn = $("#eftpospaybtn");
             if (WPOS.hasOwnProperty('eftpos') && WPOS.eftpos.isEnabledAndReady()){
                 inteftbtn.show();
-                inteftbtn.text(WPOS.util.capFirstLetter(WPOS.eftpos.getType())+' Eftpos');
+                inteftbtn.text(WPOS.util.capFirstLetter(WPOS.eftpos.getType())+' Bank');
             } else {
                 inteftbtn.hide();
             }
@@ -1120,7 +1143,7 @@ function WPOSSales() {
 
         var payrow =  '<tr '+data+'><td>' +
             '<select class="paymethod form-control" style="max-width:150px;" onchange="WPOS.sales.onPaymentMethodChange(this);">' +
-            '<option value="eftpos" '+(method=='eftpos'?'selected':'')+'>Eftpos</option>' +
+            '<option value="eftpos" '+(method=='eftpos'?'selected':'')+'>Bank</option>' +
             '<option value="credit" '+(method=='credit'?'selected':'')+'>Credit</option>' +
             '<option value="cash" '+(method=='cash'?'selected':'')+'>Cash</option>' +
             '<option value="mpesa" '+(method=='mpesa'?'selected':'')+'>Mpesa</option>' +
@@ -1274,7 +1297,7 @@ function WPOSSales() {
                 };
                 if (item.hasOwnProperty('mod')) data.mod = item.mod;
                 var originalItem = WPOS.items.findOrderItem(item.name);
-                WPOS.items.addItemRow(item.qty, item.name, item.unit, item.taxid, item.reorderpoint, originalItem.qty, item.sitemid, data, originalItem.id, originalItem.qty, false);
+                WPOS.items.addItemRow(item.qty, item.name, item.unit, item.unit, item.taxid, item.reorderpoint, originalItem.qty, item.sitemid, data, originalItem.id, originalItem.qty, false);
             }
             // add a new order row
             if (WPOS.isOrderTerminal())

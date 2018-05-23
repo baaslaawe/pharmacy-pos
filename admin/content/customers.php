@@ -31,10 +31,8 @@
                             <th data-priority="3" >Name</th>
                             <th data-priority="4" >Email</th>
                             <th data-priority="5" >Phone</th>
-                            <th data-priority="6" >Mobile</th>
-                            <th data-priority="7" >Suburb</th>
-                            <th data-priority="8" >Postcode</th>
-                            <th data-priority="1" ></th>
+                            <th data-priority="7" >Address</th>
+                            <th data-priority="1" >Actions</th>
                         </tr>
                         </thead>
 
@@ -68,11 +66,9 @@
                 { "mData":"id" },
                 { "mData":"name" },
                 { "mData":"email" },
-                { "mData":"phone" },
                 { "mData":"mobile" },
-                { "mData":"suburb" },
-                { "mData":"postcode" },
-                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="WPOS.customers.openCustomerDialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="red" onclick="WPOS.customers.deleteCustomer($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', bSortable: false }
+                { "mData":"address" },
+                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="WPOS.customers.openCustomerDialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a>'+(WPOS.loggeduser.isadmin==='1'? '<a class="red" onclick="WPOS.customers.deleteCustomer($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a>':'')+'</div>', bSortable: false }
             ],
             "columns": [
                 {},
@@ -82,8 +78,6 @@
                 {type: "string"},
                 {type: "numeric"},
                 {type: "currency"},
-                {type: "string"},
-                {type: "string"},
                 {type: "string"},
                 {}
             ],

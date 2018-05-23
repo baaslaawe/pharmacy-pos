@@ -46,17 +46,17 @@ class StockItemsModel extends DbConfig
      * @param $expiryDate
      * @param $cost
      * @param $price
+     * @param $wprice
      * @param $code
      * @param $inventoryNo
      * @param $data
-     * @param $locationid
      * @param $dt
      * @return bool|string Returns false on an unexpected failure, returns -1 if a unique constraint in the database fails, or the new rows id if the insert is successful
      */
-    public function create($stockinventoryid, $stocklevel, $expiryDate, $cost, $price, $code, $inventoryNo, $data, $locationid, $dt)
+    public function create($stockinventoryid, $stocklevel, $expiryDate, $cost, $price,  $wprice, $code, $inventoryNo, $data, $locationid, $dt)
     {
-        $sql          = "INSERT INTO stock_items (`stockinventoryid`, `stocklevel`, `expiryDate`,  `cost`, `price`, `code`, `inventoryNo`, `data`, `locationid`,`dt`) VALUES (:stockinventoryid, :stocklevel, :expiryDate, :cost, :price, :code, :inventoryNo, :data, :locationid, :dt);";
-        $placeholders = [":stockinventoryid"=>$stockinventoryid, ":stocklevel"=>$stocklevel,   ":expiryDate"=>$expiryDate, ":cost"=>$cost, ":price"=>$price, ":code"=>$code,  ":inventoryNo"=>$inventoryNo, ":data"=>$data,  ":locationid"=>$locationid, ":dt"=>$dt];
+        $sql          = "INSERT INTO stock_items (`stockinventoryid`, `stocklevel`, `expiryDate`,  `cost`, `price`, `wprice`, `code`, `inventoryNo`, `data`, `locationid`,`dt`) VALUES (:stockinventoryid, :stocklevel, :expiryDate, :cost, :price, :wprice, :code, :inventoryNo, :data, :locationid, :dt);";
+        $placeholders = [":stockinventoryid"=>$stockinventoryid, ":stocklevel"=>$stocklevel,   ":expiryDate"=>$expiryDate, ":cost"=>$cost, ":price"=>$price,  ":wprice"=>$wprice, ":code"=>$code,  ":inventoryNo"=>$inventoryNo, ":data"=>$data,  ":locationid"=>$locationid, ":dt"=>$dt];
 
         return $this->insert($sql, $placeholders);
     }
@@ -137,16 +137,16 @@ class StockItemsModel extends DbConfig
      * @param $expiryDate
      * @param $cost
      * @param $price
+     * @param $wprice
      * @param $code
      * @param $inventoryNo
      * @param $data
-     * @param $locationid
      * @return bool|int|string Returns false on failure, number of rows affected or a newly inserted id.
      */
-    public function setStockLevel($id, $stockinventoryid, $stocklevel, $expiryDate, $cost, $price, $code, $inventoryNo, $data, $locationid){
+    public function setStockLevel($id, $stockinventoryid, $stocklevel, $expiryDate, $cost, $price, $wprice, $code, $inventoryNo, $data, $locationid){
 
-        $sql = "UPDATE stock_items SET `stockinventoryid`=:stockinventoryid, `stocklevel`=:stocklevel, `expiryDate`=:expiryDate,  `cost`=:cost, `price`=:price, `code`=:code, `inventoryNo`=:inventoryNo, `data`=:data, `locationid`=:locationid WHERE `stockinventoryid`=:stockinventoryid AND `id`=:id";
-        $placeholders = [":id"=>$id, ":stockinventoryid"=>$stockinventoryid, ":stocklevel"=>$stocklevel, ":expiryDate"=>$expiryDate,  ":cost"=>$cost, ":price"=>$price, ":code"=>$code, ":inventoryNo"=>$inventoryNo, ":data"=>$data,  ":locationid"=>$locationid];
+        $sql = "UPDATE stock_items SET `stockinventoryid`=:stockinventoryid, `stocklevel`=:stocklevel, `expiryDate`=:expiryDate,  `cost`=:cost, `price`=:price, `wprice`=:wprice, `code`=:code, `inventoryNo`=:inventoryNo, `data`=:data, `locationid`=:locationid WHERE `stockinventoryid`=:stockinventoryid AND `id`=:id";
+        $placeholders = [":id"=>$id, ":stockinventoryid"=>$stockinventoryid, ":stocklevel"=>$stocklevel, ":expiryDate"=>$expiryDate,  ":cost"=>$cost, ":price"=>$price,  ":wprice"=>$wprice, ":code"=>$code, ":inventoryNo"=>$inventoryNo, ":data"=>$data,  ":locationid"=>$locationid];
         $result=$this->update($sql, $placeholders);
         if ($result>0) // if row has been updated, return
             return $result;
@@ -155,7 +155,7 @@ class StockItemsModel extends DbConfig
             return false;
 
         // Otherwise add a new stock record, none exists
-        return $this->create($stockinventoryid, $stocklevel, $expiryDate,  $cost, $price, $code, $inventoryNo, $data, $locationid, time());
+        return $this->create($stockinventoryid, $stocklevel, $expiryDate,  $cost, $price, $wprice, $code, $inventoryNo, $data, $locationid, time());
     }
 
     /**
@@ -166,15 +166,15 @@ class StockItemsModel extends DbConfig
      * @param $expiryDate
      * @param $cost
      * @param $price
+     * @param $wprice
      * @param $code
      * @param $data
-     * @param $locationid
      * @param bool $decrement
      * @return bool|int|string Returns false on failure, number of rows affected or a newly inserted id.
      */
-    public function incrementStockLevel($stockinventoryid, $stocklevel, $locationid, $decrement = false, $expiryDate=null, $cost=null, $price=null, $code=null, $inventoryNo=null, $data=null){
-        $sql = "UPDATE stock_items SET  `stockinventoryid`=:stockinventoryid, `stocklevel`= (`stocklevel` ".($decrement==true?'-':'+')." :stocklevel), `expiryDate`=:expiryDate,  `cost`=:cost, `price`=:price, `code`=:code, `inventoryNo`=:inventoryNo, `data`=:data, `locationid`=:locationid WHERE `stockinventoryid`=:stockinventoryid AND `locationid`=:locationid";
-        $placeholders = [":stockinventoryid"=>$stockinventoryid, ":stocklevel"=>$stocklevel,   ":expiryDate"=>$expiryDate,  ":cost"=>$cost, ":price"=>$price, ":code"=>$code, ":inventoryNo"=>$inventoryNo, ":data"=>$data,  ":locationid"=>$locationid];
+    public function incrementStockLevel($stockinventoryid, $stocklevel, $locationid, $decrement = false, $expiryDate=null, $cost=null, $price=null, $wprice=null, $code=null, $inventoryNo=null, $data=null){
+        $sql = "UPDATE stock_items SET  `stockinventoryid`=:stockinventoryid, `stocklevel`= (`stocklevel` ".($decrement==true?'-':'+')." :stocklevel), `expiryDate`=:expiryDate,  `cost`=:cost, `price`=:price, `wprice`=:wprice, `code`=:code, `inventoryNo`=:inventoryNo, `data`=:data, `locationid`=:locationid WHERE `stockinventoryid`=:stockinventoryid AND `locationid`=:locationid";
+        $placeholders = [":stockinventoryid"=>$stockinventoryid, ":stocklevel"=>$stocklevel,   ":expiryDate"=>$expiryDate,  ":cost"=>$cost, ":price"=>$price, ":wprice"=>$wprice, ":code"=>$code, ":inventoryNo"=>$inventoryNo, ":data"=>$data,  ":locationid"=>$locationid];
         $result=$this->update($sql, $placeholders);
 
         if ($result>0) return $result;
@@ -182,7 +182,7 @@ class StockItemsModel extends DbConfig
         if ($result===false) return false;
 
         if ($decrement===false){ // if adding stock and no record exists, create it
-            return $this->create($stockinventoryid, $stocklevel, $expiryDate,  $cost, $price, $code, $inventoryNo, $data, $locationid, time());
+            return $this->create($stockinventoryid, $stocklevel, $expiryDate,  $cost, $price, $wprice, $code, $inventoryNo, $data, $locationid, time());
         }
 
         return true;

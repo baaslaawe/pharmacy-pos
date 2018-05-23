@@ -46,31 +46,9 @@
                         <div class="col-sm-5">
                         <select id="currency_symbol">
                             <option value="$">$ Dollar</option>
-                            <option value="&nbsp;Kshs">Ksh Kenyan Shillings</option>
+                            <option value="Kshs ">Ksh Kenyan Shillings</option>
                             <option value="€">€ Euro</option>
                             <option value="£">£ Pound</option>
-                            <option value="¥">¥ Yen/Yuan</option>
-                            <option value="₣">₣ Franc</option>
-                            <option value="₤">₤ Lira</option>
-                            <option value="﷼">﷼ Saudi Riyal</option>
-                            <option value="₧">₧ Peseta</option>
-                            <option value="₹">₹ Indian Rupee</option>
-                            <option value="₨">₨ Rupee</option>
-                            <option value="₩">₩ Won</option>
-                            <option value="₴">₴ Hryvnia</option>
-                            <option value="₯">₯ Drachma</option>
-                            <option value="₮">₮ Tugrik</option>
-                            <option value="₲">₲ Guarani</option>
-                            <option value="₱">₱ Peso</option>
-                            <option value="₳">₳ Austral</option>
-                            <option value="₵">₵ Cedi</option>
-                            <option value="₭">₭ Kip</option>
-                            <option value="₪">₪ New Sheqel</option>
-                            <option value="₫">₫ Dong</option>
-                            <option value="៛">៛ Riel</option>
-                            <option value="Rp">Rp Rupiah</option>
-                            <option value="kr">kr Krone/Kroon/Krona</option>
-                            <option value="Kč">Kč Koruna</option>
                         </select>
                         </div>
                     </div>
@@ -147,13 +125,13 @@
                     </div>
                     <div class="space-4"></div>
                     <div class="form-group">
-                        <div class="col-sm-5"><label>Eftpos:</label></div>
-                        <div class="col-sm-5"><input type="text" id="altlabel_eftpos" /></div>
+                        <div class="col-sm-5"><label>Bank:</label></div>
+                        <div class="col-sm-5"><input type="text" id="altlabel_bank" /></div>
                     </div>
                     <div class="space-4"></div>
                     <div class="form-group">
                         <div class="col-sm-5"><label>Mpesa:</label></div>
-                        <div class="col-sm-5"><input type="text" id="altlabel_cheque" /></div>
+                        <div class="col-sm-5"><input type="text" id="altlabel_mpesa" /></div>
                     </div>
                     <div class="space-4"></div>
                     <div class="form-group">
