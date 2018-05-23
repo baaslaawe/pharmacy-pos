@@ -116,51 +116,6 @@
                     <div class="infobox-content">Net Profit</div>
                 </div>
             </div>
-
-            <div class="infobox infobox-red infobox-voids">
-                <div class="infobox-icon">
-                    <i class="icon-ban-circle"></i>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="voidnum" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Voids</div>
-                </div>
-                <div id="voidtotal" class="stat stat-important">-</div>
-            </div>
-
-            <div class="infobox infobox-blue2 infobox-takings">
-                <div class="infobox-icon">
-                    <i class="icon-dollar"></i>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="takings" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Revenue</div>
-                </div>
-            </div>
-
-            <div class="infobox infobox-orange infobox-cost">
-                <div class="infobox-icon">
-                    <i class="icon-dollar"></i>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="cost" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Cost</div>
-                </div>
-            </div>
-
-            <div class="infobox infobox-green infobox-profit">
-                <div class="infobox-icon">
-                    <i class="icon-dollar"></i>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="profit" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Profit</div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
