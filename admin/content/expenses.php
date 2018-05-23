@@ -374,9 +374,9 @@
             itemsarray.push(supitem);
         }
         expensestable = $('#expenseshisttable').dataTable({
-            "bProcessing": false,
+            "bProcessing": true,
             "aaData": itemsarray,
-            "aaSorting": [[ 2, "asc" ]],
+            "aaSorting": [[ 7, "asc" ]],
             "aoColumns": [
                 { mData:null, sDefaultContent:'<div style="text-align: center"><label><input class="ace dt-select-cb" type="checkbox"><span class="lbl"></span></label><div>', bSortable: false, sClass:"noexport" },
                 { "mData":"id" },
@@ -416,6 +416,9 @@
             }
             expensestable.api().draw(false);
             e.stopPropagation();
+        });
+        $('div#expenseshisttable_filter input').on('search', function () {
+            $(this).focus();
         });
 
         $('table.dataTable th input:checkbox').on('change' , function(){
