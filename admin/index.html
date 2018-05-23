@@ -780,17 +780,17 @@
         </div>
         <div id="miscdialog" class="hide">
             <div id="geninvoiceform" style="text-align: center; min-width: 150px;">
-                <h3>Invoice Template</h3>
+                <!--<h3>Invoice Template</h3>
                 <select id="invoicetemplate" class="form-control">
-                </select>
+                </select>-->
                 <h3>Invoice Receipt</h3>
-                <button onclick="WPOS.transactions.printInvoice('html', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;"><span class="glyphicon glyphicon-print"></span> PRINT</button>
+                <button onclick="WPOS.transactions.printInvoice('html', 0, '');" class="btn btn-sm btn-primary" style="padding: 5px;"><span class="glyphicon glyphicon-print"></span> PRINT</button>
                 <h3>View</h3>
-                <button onclick="WPOS.transactions.generateInvoice('html', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">HTML</button>
-                <button onclick="WPOS.transactions.generateInvoice('pdf', 0, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
+                <button onclick="WPOS.transactions.generateInvoice('html', 0, 'invoice');" class="btn btn-sm btn-primary" style="padding: 5px;">HTML</button>
+                <button onclick="WPOS.transactions.generateInvoice('pdf', 0, 'invoice_mixed');" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
                 <h3>Download</h3>
-                <button onclick="WPOS.transactions.generateInvoice('html', 1, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">HTML</button>
-                <button onclick="WPOS.transactions.generateInvoice('pdf', 1, $('#invoicetemplate').val());" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
+                <button onclick="WPOS.transactions.generateInvoice('html', 1, 'invoice');" class="btn btn-sm btn-primary" style="padding: 5px;">HTML</button>
+                <button onclick="WPOS.transactions.generateInvoice('pdf', 1, 'invoice_mixed');" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
             </div>
             <div id="sendinvoiceform" style="min-width: 420px;">
                 <label class="smfixedlabel inline">Invoice Template: </label><div class="inline"><select id="emlinvoicetemplate"></select></div>
