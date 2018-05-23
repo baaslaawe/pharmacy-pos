@@ -585,7 +585,7 @@ function WPOS() {
     // get initial data for pos startup.
     function initData(loginloader) {
         getSubscription();
-       // startFeed();
+        startFeed();
         if (loginloader){
             $("#loadingprogdiv").show();
             $("#loadingdiv").show();
@@ -1395,7 +1395,7 @@ function WPOS() {
                     logout();
                    
                     swal({
-                        type: 'error',
+                        type: 'info',
                         title: 'Oops...',
                         text: 'This device has been " + data.a + " by the administrator,\ncontact your device administrator for help.'
                       });
