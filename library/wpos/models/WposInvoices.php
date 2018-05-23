@@ -626,7 +626,7 @@ class WposInvoices {
         $this->invoice->subtotal = number_format($total - $this->invoice->tax, 2, ".", "");
         // Get discount amount & apply to total & tax values
         if ($this->invoice->discount>0){
-            $this->invoice->discountval = number_format(($this->invoice->total*($this->invoice->discount/100)), 2, ".", "");;
+            $this->invoice->discountval = number_format($this->invoice->discount, 2, ".", "");
             $this->invoice->total = number_format(($this->invoice->total - $this->invoice->discountval), 2, ".", "");
         } else {
             $this->invoice->discountval = 0;

@@ -28,7 +28,6 @@
                 <div class="infobox-icon">
                     <i class="icon-shopping-cart"></i>
                 </div>
-
                 <div class="infobox-data">
                     <span id="salenum" class="infobox-data-number">-</span>
                     <div class="infobox-content">Sales</div>
@@ -38,7 +37,7 @@
 
             <div class="infobox infobox-orange infobox-refunds">
                 <div class="infobox-icon">
-                    <i class="icon-backward"></i>
+                    <i class="glyphicon glyphicon-repeat"></i>
                 </div>
 
                 <div class="infobox-data">
@@ -47,7 +46,7 @@
                 </div>
 
                 <div id="refundtotal" class="stat stat-important">-</div>
-            </div>
+            </div><br/>
 
             <div class="infobox infobox-red infobox-voids">
                 <div class="infobox-icon">
@@ -63,13 +62,26 @@
 
             <div class="infobox infobox-blue2 infobox-takings">
                 <div class="infobox-icon">
-                    <i class="icon-dollar"></i>
+                    <i class="icon-briefcase"></i>
                 </div>
 
                 <div class="infobox-data">
                     <span id="takings" class="infobox-data-number">-</span>
                     <div class="infobox-content">Revenue</div>
                 </div>
+            </div>
+
+            <div class="infobox infobox-orange infobox-expenses">
+                <div class="infobox-icon">
+                    <i class="icon-forward"></i>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="expensesnum" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Expenses</div>
+                </div>
+
+                <div id="expenses" class="stat stat-important">-</div>
             </div>
 
             <div class="infobox infobox-orange infobox-cost">
@@ -85,12 +97,23 @@
 
             <div class="infobox infobox-green infobox-profit">
                 <div class="infobox-icon">
-                    <i class="icon-dollar"></i>
+                    <i class="icon-bitcoin"></i>
                 </div>
 
                 <div class="infobox-data">
                     <span id="profit" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Profit</div>
+                    <div class="infobox-content">Gross Profit</div>
+                </div>
+            </div>
+
+            <div class="infobox infobox-green infobox-profit">
+                <div class="infobox-icon">
+                    <i class="icon-trophy"></i>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="gprofit" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Net Profit</div>
                 </div>
             </div>
         </div>
@@ -347,15 +370,19 @@
         // $("#mpesa").text(WPOS.util.currencyFormat(totals.totalmpesa));
         // $("#credit").text(WPOS.util.currencyFormat(totals.totalcredit));
         // $("#bank").text(WPOS.util.currencyFormat(totals.totalbank));
-        $("#takings").text(WPOS.util.currencyFormat((parseFloat(totals.saletotal) - parseFloat(totals.refundtotal)), true));
+        $("#takings").text(WPOS.util.currencyFormat(totals.totaltakings, true));
+        $("#expenses").text(WPOS.util.currencyFormat(totals.expenses, true));
+        $("#expensesnum").text(totals.expensesnum);
         $("#cost").text(WPOS.util.currencyFormat(totals.cost, true));
         $("#profit").text(WPOS.util.currencyFormat(totals.profit, true));
+        $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
         // Set onclicks
         $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(totals.salerefs); });
         $(".infobox-invoices").on('click', function(){ WPOS.transactions.openTransactionList(totals.invoicerefs); });
         $(".infobox-refunds").on('click', function(){ WPOS.transactions.openTransactionList(totals.refundrefs); });
         $(".infobox-voids").on('click', function(){ WPOS.transactions.openTransactionList(totals.voidrefs); });
         $(".infobox-takings").on('click', function(){ WPOS.transactions.openTransactionList(totals.refs); });
+        $(".infobox-expenses").on('click', function(){ WPOS.transactions.openExpensesList(totals.expensesrefs); });
         return true;
     }
     function loadPopularItems(items){
@@ -565,7 +592,7 @@
         var tempdate;
         var vals = getTimeVals($("#grange").text());
         var t = vals[0];
-        var sales = [], refunds = [], takings = [],  cost = [],  profit = [], salerefs = [], refundrefs = [], takingrefs = [];
+        var sales = [], refunds = [], takings = [],  cost = [],  profit = [], netprofit = [], salerefs = [], refundrefs = [], takingrefs = [], expenses = [], expensesrefs = [];
         // create the data object
         var sorted = [];
         for(var pointa in jdata){
@@ -582,6 +609,9 @@
             takings.push([ t, jdata[i].totaltakings]);
             cost.push([ t, jdata[i].cost]);
             profit.push([ t, jdata[i].profit]);
+            netprofit.push([ t, jdata[i].netprofit]);
+            expenses.push([ t, jdata[i].expenses]);
+            expensesrefs.push([ t, jdata[i].expensesrefs]);
             t = t + 86400000;
         }
         // for (var i in mdata) {
@@ -602,7 +632,7 @@
         //     cost.push([ tempdate, mdata[i].cost]);
         //     profit.push([ tempdate, mdata[i].profit]);
         // }
-        var data = [{ label: "Profit", refs: takingrefs, data: profit, color: "#29AB87" },{ label: "Cost", refs: takingrefs, data: cost, color: "#EA3C53" },{ label: "Sales", refs:salerefs, data: sales, color: "#9ABC32" },{ label: "Refunds", refs:refundrefs, data: refunds, color: "#EDC240" },{ label: "Revenue", refs: takingrefs, data: takings, color: "#3983C2" }];
+        var data = [{ label: "Gross profit", refs: takingrefs, data: profit, color: "#29AB87" }, { label: "Net profit", refs: takingrefs, data: netprofit, color: "#29AB87" }, { label: "Expenses", refs: expensesrefs, data: expenses, color: "#29AB15" },{ label: "Cost", refs: takingrefs, data: cost, color: "#EA3C53" },{ label: "Sales", refs:salerefs, data: sales, color: "#9ABC32" },{ label: "Refunds", refs:refundrefs, data: refunds, color: "#EDC240" },{ label: "Revenue", refs: takingrefs, data: takings, color: "#3983C2" }];
         // render the graph
         $.plot("#sales-charts", data, {
             hoverable: true,

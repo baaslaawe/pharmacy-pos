@@ -29,16 +29,17 @@
                     <span class="lbl"></span>
                 </label>
             </th>
-            <th data-priority="7">Code</th>
+            <th data-priority="9">Code</th>
             <th data-priority="2">Name</th>
             <th data-priority="10">Description</th>
             <th data-priority="3">Location</th>
             <th data-priority="5">Cost</th>
-            <th data-priority="6">Price</th>
+            <th data-priority="6">Retail</th>
+            <th data-priority="7">Wholesale</th>
             <th data-priority="4">Qty</th>
             <th data-priority="5">Supplier</th>
             <th data-priority="8">Invoice No</th>
-            <th data-priority="9">Expiry Date</th>
+            <th data-priority="13">Expiry Date</th>
             <th data-priority="11">Tax</th>
             <th data-priority="12">Category</th>
             <th data-priority="1" class="noexport">Actions</th>
@@ -72,9 +73,13 @@
         <td><input id="setstockcost" class="form-control" type="text"/></td>
       </tr>
       <tr>
-        <td style="text-align: right;"><label>Price:&nbsp;</label></td>
+        <td style="text-align: right;"><label>Retail:&nbsp;</label></td>
         <td><input id="setstockprice" class="form-control" type="text"/></td>
       </tr>
+        <tr>
+            <td style="text-align: right;"><label>Wholesale:&nbsp;</label></td>
+            <td><input id="setstockwprice" class="form-control" type="text"/></td>
+        </tr>
       <tr>
         <td style="text-align: right;"><label>Expiry Date:&nbsp;</label></td>
         <td><input id="setstockexpiryDate" class="form-control" type="text" value=""/></td>
@@ -107,8 +112,9 @@
 </div>
 <div id="addstockdialog" class="hide">
     <table>
+        <p><span class="text-danger">*</span> means Required field</p>
         <tr>
-            <td style="text-align: right;"><label>Item(<span class="text-danger">Required</span>):</label></td>
+            <td style="text-align: right;"><label>Item(<span class="text-danger">*</span>):</label></td>
             <td><select id="addstockitemid" class="itemselect form-control">
                 </select></td>
         </tr>
@@ -123,16 +129,20 @@
           </select></td>
       </tr>
         <tr>
-            <td style="text-align: right;"><label>Qty(<span class="text-danger">Required</span>):&nbsp;</label></td>
+            <td style="text-align: right;"><label>Qty(<span class="text-danger">*</span>):&nbsp;</label></td>
             <td><input id="addstockqty" type="text" class="form-control" value="1"/></td>
         </tr>
         <tr>
-            <td style="text-align: right;"><label>Cost(<span class="text-danger">Required</span>):&nbsp;</label></td>
+            <td style="text-align: right;"><label>Cost(<span class="text-danger">*</span>):&nbsp;</label></td>
             <td><input id="addstockcost" class="form-control" value="0.00" type="text"/></td>
         </tr>
         <tr>
-            <td style="text-align: right;"><label>Price(<span class="text-danger">Required</span>):&nbsp;</label></td>
+            <td style="text-align: right;"><label>Retail Price(<span class="text-danger">*</span>):&nbsp;</label></td>
             <td><input id="addstockprice" class="form-control" value="0.00" type="text"/></td>
+        </tr>
+        <tr>
+            <td style="text-align: right;"><label>Wholesale:&nbsp;</label></td>
+            <td><input id="addstockwprice" class="form-control" value="0.00" type="text"/></td>
         </tr>
         <tr>
             <td style="text-align: right;"><label>Expiry Date:&nbsp;</label></td>
@@ -170,9 +180,7 @@
                 <th>DT</th>
             </tr>
         </thead>
-        <tbody id="stockhisttable">
-
-        </tbody>
+        <tbody id="stockhisttable"></tbody>
     </table>
     </div>
 </div>
@@ -223,6 +231,7 @@
                 { mData:function(data,type,val){return (data.locationid!=='0'?(WPOS.locations.hasOwnProperty(data.locationid)?WPOS.locations[data.locationid].name:'Unknown'):'Warehouse');} },
                 { mData:"cost" },
                 { mData:"price" },
+                { mData:"wprice" },
                 { mData:"stocklevel" },
                 { mData:"supplier" },
                 { mData:"inventoryNo" },
@@ -236,6 +245,7 @@
                 {type: "string"},
                 {type: "string"},
                 {type: "string"},
+                {type: "numeric"},
                 {type: "numeric"},
                 {type: "numeric"},
                 {type: "numeric"},
@@ -502,6 +512,7 @@
         $("#setstockqty").val(item.stocklevel);
         $("#setstockcost").val(item.cost);
         $("#setstockprice").val(item.price);
+        $("#setstockwprice").val(item.wprice);
         $("#setstockexpiryDate").val(item.expiryDate);
         $("#setstockinventoryNo").val(item.inventoryNo);
         $("#setstockcode").val(item.code);
@@ -528,12 +539,24 @@
     }
     function populateItems(){
         WPOS.util.showLoader();
-        items = WPOS.sendJsonData("items/get");
+        var sortable=[];
+        var items = WPOS.getJsonData("items/get");
+        var list = {};
+        for(var item in items) {
+            if (items[item].stockType === '1')
+                list[items[item].name] = items[item];
+        }
+        for(var key in list)
+            if(list.hasOwnProperty(key))
+                sortable.push([key, list[key]]);
+        var sorted = sortable.sort(function(a, b) {
+            return a[1].name.localeCompare(b[1].name);
+        });
         var itemselect = $(".itemselect");
         itemselect.html('');
-        for (var i in items){
-          if (items[i].stockType === '1')
-            itemselect.append('<option class="itemid-'+items[i].id+'" value="'+items[i].id+'">'+items[i].name+'</option>');
+        for (var i in sorted){
+          if (sorted[i][1].stockType === '1')
+            itemselect.append('<option class="itemid-'+sorted[i][1].id+'" value="'+sorted[i][1].id+'">'+sorted[i][1].name+'</option>');
         }
         WPOS.util.hideLoader();
     }
@@ -550,6 +573,7 @@
             item.amount = $("#addstockqty").val();
             item.cost = $("#addstockcost").val();
             item.price = $("#addstockprice").val();
+            item.wprice = $("#addstockwprice").val();
             item.expiryDate = $("#addstockexpiryDate").val();
             item.inventoryNo = $("#addstockinventoryNo").val();
             item.code = $("#addstockcode").val();
@@ -567,6 +591,7 @@
             item.stocklevel = $("#setstockqty").val();
             item.cost = $("#setstockcost").val();
             item.price = $("#setstockprice").val();
+            item.wprice = $("#setstockwprice").val();
             item.expiryDate = $("#setstockexpiryDate").val();
             item.code = $("#setstockcode").val();
             item.inventoryNo = $("#setstockinventoryNo").val();
@@ -622,7 +647,7 @@
         var data = {};
         var config = JSON.parse(localStorage.getItem('wpos_config'));
         var sortable=[];
-        var items = WPOS.getJsonData("items/get");
+        var items = WPOS.getJsonData("stock/get");
         var list = {};
         for(var item in items) {
             if (items[item].stockType === '1')
@@ -643,7 +668,8 @@
                 description: sorted[item][1].description,
                 locationid: config.deviceconfig.locationid,
                 cost: 0.00,
-                price: 0.00,
+                price: '=(PRODUCT(E'+(i)+',1.3))',
+                wprice: '=(PRODUCT(E'+(i)+',1.2))',
                 stocklevel: "",
                 reorderpoint: sorted[item][1].reorderPoint,
                 supplier: '',
@@ -655,46 +681,29 @@
         }
 
         if (Object.keys(data).length === 0) {
-            data[0] = {
-                code: "M00001",
-                name: "Cooking oil 2kg (Example item)",
-                description: "Liquid",
-                locationid: config.deviceconfig.locationid,
-                cost: 300,
-                price: 350,
-                supplier: "Pwani Oils",
-                taxname: "VAT",
-                category: "Groceries"
-            }
-            data[1] = {
-                code: "M00002",
-                name: "Bic Pen Blue(Example item)",
-                description: "Packet",
-                locationid: config.deviceconfig.locationid,
-                cost: 100,
-                price: 150,
-                supplier: "Haico Brands",
-                taxname: "VAT",
-                category: "Stationaries"
-            }
-            data[2] = {
-                code: "M00003",
-                name: "Polo T-shirt White (Example item)",
-                description: "Box",
-                locationid: config.deviceconfig.locationid,
-                cost: 1500,
-                price: 2000,
-                supplier: "Polo",
-                taxname: "VAT",
-                category: "Cloths"
-            }
+          data[0] = {
+            code: "M00001",
+            name: "Flu-gone 200ml",
+            description: "Syrup",
+            locationid: config.deviceconfig.locationid,
+            cost: 100,
+            price: 150,
+            wprice: 130,
+            stocklevel: 25,
+            reorderpoint: 10,
+            supplier: 'Freb',
+            inventoryNo: "INV0001",
+            expiryDate: "30/12/2050",
+            taxname: "VAT",
+            category: "Medicine"
+          }
         }
 
         var csv = WPOS.data2CSV(
-            ['Stock Code', '*Name', 'Description', '*Location', '*Unit Cost', '*Unit Price', '*Stock Level', 'Reorder Point', '*Supplier Name', 'Invoice No', 'Expiry Date', 'Tax Name', 'Category Name'],
+            ['Stock Code', '*Name', 'Description', '*Location', '*Unit Cost', '*Unit Retail', '*Unit Wholesale', '*Stock Level', 'Reorder Point', '*Supplier Name', 'Invoice No', 'Expiry Date', 'Tax Name', 'Category Name'],
             ['code', 'name', 'description',
               {key:'locationid', func: function(value){ return WPOS.locations.hasOwnProperty(value) ? WPOS.locations[value].name : 'Unknown'; }},
-              'cost', 'price', 'stocklevel', 'reorderpoint', 'supplier', 'inventoryNo', 'expiryDate', 'taxname',
+              'cost', 'price',  'wprice', 'stocklevel', 'reorderpoint', 'supplier', 'inventoryNo', 'expiryDate', 'taxname',
               {key:'categoryid', func: function(value){ return categories.hasOwnProperty(value) ? categories[value].name : 'GENERAL'; }}
             ],
             data
@@ -714,7 +723,8 @@
           'description': {title:'Description', required: false, value: "No Description"},
           'location': {title:'*Location', required: true},
           'cost': {title:'*Unit Cost', required: true},
-          'price': {title:'*Unit Price', required: true},
+          'price': {title:'*Unit Retail', required: true},
+          'wprice': {title:'*Unit Wholesale', required: true},
           'amount': {title:'*Stock Level', required: true},
           'reorderpoint': {title:'Reorder Point', required: false, value: "0"},
           'supplier_name': {title:'*Supplier Name', required: true},
@@ -744,6 +754,7 @@
               locationid: getLocation(jsondata[i].location),
               cost: jsondata[i].cost,
               price: jsondata[i].price,
+              wprice: jsondata[i].wprice,
               stockType: '1',
               amount: jsondata[i].amount,
               reorderPoint: jsondata[i].reorderpoint !== '' ? jsondata[i].reorderpoint: "0",

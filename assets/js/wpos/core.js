@@ -584,8 +584,8 @@ function WPOS() {
 
     // get initial data for pos startup.
     function initData(loginloader) {
-        // getSubscription();
-        startFeed();
+        getSubscription();
+       // startFeed();
         if (loginloader){
             $("#loadingprogdiv").show();
             $("#loadingdiv").show();

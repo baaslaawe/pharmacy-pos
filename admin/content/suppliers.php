@@ -29,7 +29,7 @@
     <th data-priority="4">ID</th>
     <th data-priority="2">Name</th>
     <th data-priority="3"># Items</th>
-    <th data-priority="1" class="noexport"></th>
+    <th data-priority="1" class="noexport">Actions</th>
 </tr>
 </thead>
 

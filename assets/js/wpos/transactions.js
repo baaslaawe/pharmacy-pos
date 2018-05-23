@@ -368,7 +368,7 @@ function WPOSTransactions() {
         $("#transsubtotal").text(WPOS.util.currencyFormat(record.subtotal));
         populateTaxinfo(record);
         if (record.discount>0){
-            $("#transdiscount").text(record.discount+"% ("+WPOS.util.currencyFormat((parseFloat(record.total)-Math.abs(parseFloat(record.subtotal)+parseFloat(record.tax))).toFixed(2))+')');
+            $("#transdiscount").text(WPOS.util.currencyFormat(record.discount));
             $("#transdisdiv").show();
         } else {
             $("#transdisdiv").hide();
@@ -416,6 +416,8 @@ function WPOSTransactions() {
         $(itemtable).html('');
         var taxitems = WPOS.getTaxTable().items;
         for (var i = 0; i<items.length; i++){
+            if (items[i].qty==0)
+                continue;
             // tax details
             var taxStr = "";
             for (var x in items[i].tax.values){
