@@ -223,6 +223,35 @@ function routeApiCall($action, $data, $result) {
             $result = $invMdl->printInvoice($result);
             break;
 
+        case "expenses/get":
+            $jsondata = new WposAdminExpenses($data);
+            $result = $jsondata->getExpenses($result);
+            break;
+
+        case "expenses/add":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->addExpense($result);
+            break;
+
+        case "expenses/edit":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->updateExpense($result);
+            break;
+
+        case "expenses/item/add":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->addExpenseItem($result);
+            break;
+
+        case "expenses/item/edit":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->updateExpenseItem($result);
+            break;
+
+        case "expenses/history":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->getExpenseItems($result);
+            break;
         default:
             $notinprev = true;
     }
@@ -317,25 +346,6 @@ function routeApiCall($action, $data, $result) {
             $result = $adminMdl->deleteCategory($result);
             break;
         // expenses
-        case "expenses/get":
-            $jsondata = new WposAdminExpenses($data);
-            $result = $jsondata->getExpenses($result);
-            break;
-
-        case "expenses/history":
-            $expMdl = new WposAdminExpenses($data);
-            $result = $expMdl->getExpenseItems($result);
-            break;
-
-        case "expenses/add":
-            $expMdl = new WposAdminExpenses($data);
-            $result = $expMdl->addExpense($result);
-            break;
-
-        case "expenses/edit":
-            $expMdl = new WposAdminExpenses($data);
-            $result = $expMdl->updateExpense($result);
-            break;
 
         case "expenses/delete":
             $expMdl = new WposAdminExpenses($data);
@@ -343,16 +353,6 @@ function routeApiCall($action, $data, $result) {
             break;
 
             //expenses item
-        case "expenses/item/add":
-            $expMdl = new WposAdminExpenses($data);
-            $result = $expMdl->addExpenseItem($result);
-            break;
-
-        case "expenses/item/edit":
-            $expMdl = new WposAdminExpenses($data);
-            $result = $expMdl->updateExpenseItem($result);
-            break;
-
         case "expenses/items/delete":
             $expMdl = new WposAdminExpenses($data);
             $result = $expMdl->deleteExpenseItem($result);
