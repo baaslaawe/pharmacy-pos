@@ -93,7 +93,7 @@ class WposAdminStats {
         }
 
         // get non voided sales
-        if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, 'sale'))!==false){
+        if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, $this->data->type))!==false){
             $stats->salerefs = $sales[0]['refs'];
             $stats->saletotal = $sales[0]['stotal'];
             $stats->salenum = $sales[0]['snum'];
