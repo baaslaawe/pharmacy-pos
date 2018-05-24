@@ -74,12 +74,24 @@ class WposAdminStats {
         $stats->refundnum = 0;
         $stats->voidtotal = 0;
         $stats->voidnum = 0;
+        $stats->expenses = 0;
         $salesMdl = new TransactionsModel();
         $voidMdl = new SaleVoidsModel();
         $paymentsMdl = new SalePaymentsModel();
+        $expMdl = new ExpensesModel();
         // check if params set, if not set defaults
         $stime = isset($this->data->stime)?$this->data->stime:(strtotime('-1 week')*1000);
         $etime = isset($this->data->etime)?$this->data->etime:(time()*1000);
+
+        // get expenses
+        if (($expenses = $expMdl->get(null, $stime, $etime))!==false){
+
+            $stats->expensesrefs = $expenses[0]['refs'];
+            $stats->expenses = $expenses[0]['total'];
+            $stats->expensesnum = $expenses[0]['enum'];
+        } else {
+            $result['error']= $expMdl->errorInfo;
+        }
 
         // get non voided sales
         if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, 'sale'))!==false){
@@ -154,6 +166,7 @@ class WposAdminStats {
         $stats->totaltakings = round($stats->totalpayments, 2);
         $stats->cost = round($sales[0]['ctotal']+ $invoices[0]['ctotal'], 2);
         $stats->profit = round($stats->saletotal - $stats->refundtotal - $sales[0]['ctotal'], 2);
+        $stats->netprofit = round($stats->profit - $stats->expenses, 2);
         $stats->refs = [];
         $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
         $temprefs = explode(',', $temprefs);

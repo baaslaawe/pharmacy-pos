@@ -128,6 +128,7 @@ function WPOSAdmin(){
                 // load the first allowed section
                 var secval;
                 for (var i in curuser.sections){
+                    debugger;
                     if (i!="access" && i!="dashboard"){
                         secval = curuser.sections[i];
                         if (secval>0){
@@ -322,6 +323,7 @@ function WPOSAdmin(){
         curuser.sections.graph>0?$("#menugraph").show():$("#menugraph").hide();
         curuser.sections.sales>0?$("#menusales").show():$("#menusales").hide();
         curuser.sections.invoices>0?$("#menuinvoices").show():$("#menuinvoices").hide();
+        curuser.sections.expenses>0?$("#menuexpenses").show():$("#menuexpenses").hide();
         curuser.sections.items>0?$("#menuitems").show():$("#menuitems").hide();
         curuser.sections.stock>0?$("#menustock").show():$("#menustock").hide();
         curuser.sections.suppliers>0?$("#menusuppliers").show():$("#menusuppliers").hide();

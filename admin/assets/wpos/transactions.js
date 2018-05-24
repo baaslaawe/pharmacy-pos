@@ -22,6 +22,7 @@
 
 function WPOSTransactions() {
     var transactions = {};
+    var expenses = {};
     var items = null;
     // functions for opening info dialogs and populating data
     var curref;
@@ -45,6 +46,25 @@ function WPOSTransactions() {
         transdialog.dialog("option", "position", {my: "center", at: "center", of: window});
         transdialog.trigger("resize");
     };
+
+    this.openExpensesList = function(refs){
+        // check input
+        if (!refs) return;
+        // Initiate UI
+        if (!uiinit) initUI();
+        var expenseslist = $("#expenseslist"), expensesdialog = $("#expenseslistdialog");
+        $("#expenseslistheader").html('<th>Ref</th>');
+        $("#expenseslistdetailsbtn").show();
+        expenseslist.html('');
+        expenseslist.data('refs', refs);
+        refs = refs.split(',');
+        for (var i in refs){
+            expenseslist.append('<tr><td>'+refs[i]+'</td></tr>');
+        }
+        expensesdialog.dialog('open');
+        expensesdialog.dialog("option", "position", {my: "center", at: "center", of: window});
+        expensesdialog.trigger("resize");
+    };
     this.loadTransactionListDetails = function(){
 
         var translist = $("#translist");
@@ -63,6 +83,24 @@ function WPOSTransactions() {
         }
         $("#translistdetailsbtn").hide();
         $("#translistdialog").dialog("option", "position", {my: "center", at: "center", of: window});
+    };
+    this.loadExpensesListDetails = function(){
+
+        var expenseslist = $("#expenseslist");
+        var refs = expenseslist.data('refs').split(',');
+        var expenses = loadExpenses(refs);
+        expenseslist.html('');
+        $("#expenseslistheader").html('<th>Name</th><th>Ref</th><th>Time</th><th>User</th><th>Total</th>');
+        for (var ref in expenses){
+            if (!expenses.hasOwnProperty(ref)) continue;
+            var exp = expenses[ref];
+            expenseslist.append('<tr><td>'+exp.expense+'</td><td>'+ref+'</td>' +
+                '<td>'+WPOS.util.getDateFromTimestamp(parseInt(exp.dt))+'</td>' +
+                '<td>'+(WPOS.users.hasOwnProperty(exp.userid) ? WPOS.users[exp.userid].username : exp.userid)+'</td>' +
+                '<td>'+WPOS.util.currencyFormat(exp.amount)+'</td></tr>');
+        }
+        $("#expenseslistdetailsbtn").hide();
+        $("#expenseslistdialog").dialog("option", "position", {my: "center", at: "center", of: window});
     };
     this.openTransactionDialog = function(ref){
         // Initiate UI
@@ -144,6 +182,14 @@ function WPOSTransactions() {
         return trans;
     }
 
+    function loadExpenses(refs){
+        var trans = WPOS.sendJsonData("expenses/get", JSON.stringify({refs: refs}));
+        for (var ref in trans){
+            expenses[ref] = trans[ref];
+        }
+        return trans;
+    }
+
     function loadTransaction(ref){
         var trans = WPOS.sendJsonData("transactions/get", JSON.stringify({ref: ref}));
         if (!trans.hasOwnProperty(ref)){
@@ -153,6 +199,21 @@ function WPOSTransactions() {
                 text: 'Could not load the selected transaction.'
               });
               
+            return false;
+        }
+        transactions[ref] = trans[ref];
+        return true;
+    }
+
+    function loadExpense(ref){
+        var trans = WPOS.sendJsonData("expenses/get", JSON.stringify({ref: ref}));
+        if (!trans.hasOwnProperty(ref)){
+            swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Could not load the selected transaction.'
+            });
+
             return false;
         }
         transactions[ref] = trans[ref];
@@ -1024,6 +1085,40 @@ function WPOSTransactions() {
                 }
             });
 
+            $("#expenseslistdialog").removeClass('hide').css('padding', '0').dialog({
+                width: 'auto',
+                maxWidth: 600,
+                minWidth: 275,
+                maxHeight: 520,
+                modal: true,
+                closeOnEscape: false,
+                autoOpen: false,
+                title: "Expenses Report",
+                title_html: true,
+                buttons: [
+                    {
+                        html: "<i class='icon-refresh bigger-110'></i>&nbsp; Details",
+                        "class": "btn btn-success btn-xs",
+                        "id": "translistdetailsbtn",
+                        click: function () {
+                            WPOS.transactions.loadExpensesListDetails();
+                        }
+                    },
+                    {
+                        html: "<i class='icon-remove bigger-110'></i>&nbsp; Close",
+                        "class": "btn btn-xs",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                ],
+                create: function (event, ui) {
+                    // Set maxWidth
+                    $(this).css("max-width", "600px");
+                    $(this).css("min-width", "275px");
+                    $(this).css("max-height", "520px");
+                }
+            });
             // Edit invoice datepickers
             var invpaydt = $("#transpaydt");
             invpaydt.datepicker({dateFormat: "dd/mm/yy"});

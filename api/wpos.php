@@ -223,6 +223,35 @@ function routeApiCall($action, $data, $result) {
             $result = $invMdl->printInvoice($result);
             break;
 
+        case "expenses/get":
+            $jsondata = new WposAdminExpenses($data);
+            $result = $jsondata->getExpenses($result);
+            break;
+
+        case "expenses/add":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->addExpense($result);
+            break;
+
+        case "expenses/edit":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->updateExpense($result);
+            break;
+
+        case "expenses/item/add":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->addExpenseItem($result);
+            break;
+
+        case "expenses/item/edit":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->updateExpenseItem($result);
+            break;
+
+        case "expenses/history":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->getExpenseItems($result);
+            break;
         default:
             $notinprev = true;
     }
@@ -316,6 +345,20 @@ function routeApiCall($action, $data, $result) {
             $adminMdl = new WposAdminItems($data);
             $result = $adminMdl->deleteCategory($result);
             break;
+        // expenses
+
+        case "expenses/delete":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->deleteExpenses($result);
+            break;
+
+            //expenses item
+        case "expenses/items/delete":
+            $expMdl = new WposAdminExpenses($data);
+            $result = $expMdl->deleteExpenseItem($result);
+            break;
+
+            // Stock
         case "stock/get":
             $jsondata = new WposPosData();
             $result = $jsondata->getStock($result);
@@ -611,6 +654,10 @@ function routeApiCall($action, $data, $result) {
         case "stats/tax": // whats selling, grouped by stored items
             $statsMdl = new WposAdminStats($data);
             $result = $statsMdl->getTaxStats($result);
+            break;
+        case "stats/expenses":
+            $jsondata = new WposAdminExpenses($data);
+            $result = $jsondata->getExpenses($result);
             break;
 
         // GRAPH
