@@ -154,22 +154,13 @@
                     <div class="infobox-content">Cost</div>
                 </div>
             </div>
-            <div class="infobox infobox-green infobox-profit">
+            <div class="infobox infobox-green infobox-actual-cash">
                 <div class="infobox-icon">
                     <i class="icon-bitcoin"></i>
                 </div>
                 <div class="infobox-data">
-                    <span id="profit" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Gross Profit</div>
-                </div>
-            </div>
-            <div class="infobox infobox-green infobox-profit">
-                <div class="infobox-icon">
-                    <i class="icon-trophy"></i>
-                </div>
-                <div class="infobox-data">
-                    <span id="gprofit" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Net Profit</div>
+                    <span id="actualcash" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Actual cash</div>
                 </div>
             </div>
     </div>
@@ -430,8 +421,8 @@
         $("#expenses").text(WPOS.util.currencyFormat(totals.expenses, true));
         $("#expensesnum").text(totals.expensesnum);
         $("#cost").text(WPOS.util.currencyFormat(totals.cost, true));
-        $("#profit").text(WPOS.util.currencyFormat(totals.profit, true));
-        $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
+        $("#actualcash").text(WPOS.util.currencyFormat(totals.totalcash-totals.expenses, true));
+        // $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
         // Set onclicks
         $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(totals.salerefs); });
         $(".infobox-invoices").on('click', function(){ WPOS.transactions.openTransactionList(totals.invoicerefs); });
