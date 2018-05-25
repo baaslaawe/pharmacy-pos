@@ -20,6 +20,9 @@
                 <i class="icon-dollar"></i>
                 Today's Takings
             </h4>
+            <div style="display: inline-block; vertical-align:middle; margin-right: 20px;">
+                <label>Date: <input type="text" style="width: 85px;" id="repstime" onclick="$(this).blur();" /></label>
+            </div>
         </div>
         <div class="widget-body" style="padding-top: 10px; text-align: center;">
           <div class="infobox infobox-green infobox-sales">
@@ -397,6 +400,9 @@
 
     var placeholder = $('#piechart-placeholder').css({'width':'90%' , 'min-height':'150px'});
     var piedata = [];
+    var etime;
+    var stime;
+
 
     function loadTodayStats(totals){
         if (!totals){
@@ -734,8 +740,7 @@
         isExpired ? $("#status").html('<span style="vertical-align: middle;margin-right: 5px;" class="label label-success arrowed">Activated</span> Expires on: <small>'+ new Date(data.expiryDate).toDateString() + '</small>'): $("#status").html('<span style="vertical-align: middle;" class="label label-danger arrowed">Expired</span>');
     }
 
-    jQuery(function($) {
-
+    function initDashboard() {
         // Chart hover Tooltip
         var $tooltip = $("<div class='tooltip top in'><div class='tooltip-inner'></div></div>").hide().appendTo('body');
         var previousPoint = null;
@@ -784,7 +789,13 @@
         var ttoday = getTodayTimeVals();
         var pvals = getPieValues();
         var gvals = getTimeVals($("#grange").text());
-        var req = {"stats/itemselling":{"stime":tmonth[0], "etime":tmonth[1]}, "stats/general":{"stime":ttoday[0], "etime":ttoday[1]}, "graph/general":{"stime":gvals[0], "etime":gvals[1], "interval":86400000}, "pos/subscription":{}};
+        var sdate = $("#repstime").datepicker("getDate");
+        sdate.setHours(0); sdate.setMinutes(0); sdate.setSeconds(0);
+        var stime = sdate.getTime();
+        var edate = sdate;
+        edate.setHours(23); edate.setMinutes(59); edate.setSeconds(59);
+        etime = edate.getTime();
+        var req = {"stats/itemselling":{"stime":tmonth[0], "etime":tmonth[1]}, "stats/general":{"stime":stime, "etime":etime}, "graph/general":{"stime":gvals[0], "etime":gvals[1], "interval":86400000}, "pos/subscription":{}};
         req[pvals[0]] = {"stime":pvals[1], "etime":pvals[2], "totals":true};
         var data = WPOS.sendJsonData("multi", JSON.stringify(req));
         // Load todays stats
@@ -799,6 +810,20 @@
         loadSubscriptionStatus(data['pos/subscription']);
         // hide loader
         WPOS.util.hideLoader();
+    }
+
+    jQuery(function($) {
+        $("#repstime").datepicker({dateFormat:"dd/mm/yy", maxDate: new Date(etime),
+            onSelect: function(text, inst){
+                var date = $("#repstime").datepicker("getDate");
+                date.setHours(0); date.setMinutes(0); date.setSeconds(0);
+                stime = date.getTime();
+                initDashboard();
+            }
+        });
+
+        $("#repstime").datepicker('setDate', new Date(stime));
+        initDashboard()
     });
 
 </script>
