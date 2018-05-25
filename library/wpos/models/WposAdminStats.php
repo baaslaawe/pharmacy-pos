@@ -83,6 +83,14 @@ class WposAdminStats {
         $stime = isset($this->data->stime)?$this->data->stime:(strtotime('-1 week')*1000);
         $etime = isset($this->data->etime)?$this->data->etime:(time()*1000);
 
+        if(!isset($this->data->type)){
+            $typeSale = 'sale';
+            $typeInvoice = 'invoice';
+        } else {
+            $typeSale = $this->data->type;
+            $typeInvoice = $this->data->type;
+        }
+
         // get expenses
         if (($expenses = $expMdl->get(null, $stime, $etime))!==false){
 
@@ -94,7 +102,7 @@ class WposAdminStats {
         }
 
         // get non voided sales
-        if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, 'sale'))!==false){
+        if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, $typeSale))!==false){
             $stats->salerefs = $sales[0]['refs'];
             $stats->saletotal = $sales[0]['stotal'];
             $stats->salenum = $sales[0]['snum'];
@@ -103,7 +111,7 @@ class WposAdminStats {
         }
 
         // get non voided invoices
-        if (($invoices = $salesMdl->getTotals($stime, $etime, null, false, false, 'invoice'))!==false){
+        if (($invoices = $salesMdl->getTotals($stime, $etime, null, false, false, $typeInvoice))!==false){
             $stats->invoicerefs = $invoices[0]['refs'];
             $stats->invoicetotal = $invoices[0]['stotal'];
             $stats->invoicenum = $invoices[0]['snum'];
@@ -193,7 +201,16 @@ class WposAdminStats {
         // check if params set, if not set defaults
         $stime = isset($this->data->stime)?$this->data->stime:(strtotime('-1 week')*1000);
         $etime = isset($this->data->etime)?$this->data->etime:(time()*1000);
-        // get sales total for each method: actually is payment num total! There may be > one payment per sale
+        $totals = $payMdl->getDaily($stime, $etime);
+        for($i=0;$i<sizeof($totals);$i++)
+            $stats[$totals[$i]['method']] += $totals[$i]['amount'];
+
+        //Get void and refund payments
+        $voidPay = $voidMdl->getDayVoids($stime, $etime);
+        for($i=0;$i<sizeof($voidPay);$i++)
+            $stats[$voidPay[$i]['method']] -= $voidPay[$i]['amount'];
+
+        /*// get sales total for each method: actually is payment num total! There may be > one payment per sale
         if (is_array($payments = $payMdl->getTotals($stime, $etime, 3, false, true, $this->data->type))){
             foreach ($payments as $payment){
                 $stats[$payment['method']] = new stdClass();
@@ -240,7 +257,7 @@ class WposAdminStats {
         // calcuate balances
         foreach ($stats as $key => $stat){
             $stats[$key]->balance = round($stats[$key]->saletotal-$stats[$key]->refundtotal, 2);
-        }
+        }*/
         // include totals if requested
         if (isset($this->data->totals) &&  $this->data->totals == true){
             $stats["Totals"] = $this->getOverviewStats($result)['data'];

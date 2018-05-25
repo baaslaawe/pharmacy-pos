@@ -22,86 +22,68 @@
             </h4>
         </div>
         <div class="widget-body" style="padding-top: 10px; text-align: center;">
-            <div class="infobox infobox-green infobox-sales">
-                <div class="infobox-icon">
-                    <i class="icon-shopping-cart"></i>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="salenum" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Sales</div>
-                </div>
-                <div id="saletotal" class="stat stat-success">-</div>
-            </div>
-
-            <div class="infobox infobox-green infobox-invoices">
+          <div class="infobox infobox-green infobox-sales">
               <div class="infobox-icon">
-                <span class="octicon octicon-clippy"></span>
-              </div>
-              <div class="infobox-data">
-                <span id="invoicenum" class="infobox-data-number">-</span>
-                <div class="infobox-content">Invoices</div>
-              </div>
-              <div id="invoicetotal" class="stat stat-success">-</div>
-            </div>
-
-            <div class="infobox infobox-red">
-              <div class="infobox-icon">
-                <span class="octicon octicon-diff"></span>
+                  <i class="icon-shopping-cart"></i>
               </div>
 
               <div class="infobox-data">
-                <div id="invoicesbalance" class="stat stat-success">-</div>
-                <div class="infobox-content">Invoices Balance</div>
+                  <span id="salenum" class="infobox-data-number">-</span>
+                  <div class="infobox-content">Sales</div>
               </div>
+              <div id="saletotal" class="stat stat-success">-</div>
+          </div>
+          <div class="infobox infobox-green infobox-invoices">
+            <div class="infobox-icon">
+              <span class="octicon octicon-clippy"></span>
+            </div>
+            <div class="infobox-data">
+              <span id="invoicenum" class="infobox-data-number">-</span>
+              <div class="infobox-content">Invoices</div>
+            </div>
+            <div id="invoicetotal" class="stat stat-success">-</div>
+          </div>
+
+          <div class="infobox infobox-red">
+            <div class="infobox-icon">
+              <span class="octicon octicon-diff"></span>
             </div>
 
-            <div class="infobox infobox-green">
+            <div class="infobox-data">
+              <div id="invoicesbalance" class="stat stat-success">-</div>
+              <div class="infobox-content">Invoices Balance</div>
+            </div>
+          </div>
+
+          <div class="infobox infobox-green">
+            <div class="infobox-icon">
+              <span class="octicon octicon-checklist"></span>
+            </div>
+            <div class="infobox-data">
+              <div id="invoicespaid" class="stat stat-success">-</div>
+              <div class="infobox-content">Invoices Paid</div>
+            </div>
+          </div>
+          <div class="infobox infobox-orange infobox-refunds">
               <div class="infobox-icon">
-                <span class="octicon octicon-checklist"></span>
+                  <i class="glyphicon glyphicon-repeat"></i>
               </div>
-
               <div class="infobox-data">
-                <div id="invoicespaid" class="stat stat-success">-</div>
-                <div class="infobox-content">Invoices Paid</div>
+                  <span id="refundnum" class="infobox-data-number">-</span>
+                  <div class="infobox-content">Refunds</div>
               </div>
-            </div>
-            <div class="infobox infobox-orange infobox-expenses">
-                <div class="infobox-icon">
-                    <i class="icon-forward"></i>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="expensesnum" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Expenses</div>
-                </div>
-                <div id="expenses" class="stat stat-important">-</div>
-            </div>
-
-            <div class="infobox infobox-orange infobox-refunds">
-                <div class="infobox-icon">
-                    <i class="icon-backward"></i>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="refundnum" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Refunds</div>
-                </div>
-
-                <div id="refundtotal" class="stat stat-important">-</div>
-            </div>
-            <div class="infobox infobox-orange infobox-voids">
-                <div class="infobox-icon">
-                    <i class="icon-forward"></i>
-                </div>
-
-                <div class="infobox-data">
-                    <span id="voidsnum" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Voids</div>
-                </div>
-
-                <div id="voids" class="stat stat-important">-</div>
-            </div>
+              <div id="refundtotal" class="stat stat-important">-</div>
+          </div>
+          <div class="infobox infobox-red infobox-voids">
+              <div class="infobox-icon">
+                  <i class="icon-ban-circle"></i>
+              </div>
+              <div class="infobox-data">
+                  <span id="voidnum" class="infobox-data-number">-</span>
+                  <div class="infobox-content">Voids</div>
+              </div>
+              <div id="voidtotal" class="stat stat-important">-</div>
+          </div>
             <div class="infobox infobox-red infobox-voids">
                 <div class="infobox-icon">
                     <i class="icon-ban-circle"></i>
@@ -144,36 +126,51 @@
                     <div class="infobox-content">Total Credit</div>
                 </div>
             </div>
-
             <div class="infobox infobox-blue2 infobox-takings">
                 <div class="infobox-icon">
-                    <span class="octicon octicon-briefcase"></span>
+                    <i class="icon-briefcase"></i>
                 </div>
-
                 <div class="infobox-data">
                     <span id="takings" class="infobox-data-number">-</span>
                     <div class="infobox-content">Revenue</div>
+                </div>
+            </div>
+            <div class="infobox infobox-orange infobox-expenses">
+                <div class="infobox-icon">
+                    <i class="icon-forward"></i>
+                </div>
+                <div class="infobox-data">
+                    <span id="expensesnum" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Expenses</div>
+                </div>
+                <div id="expenses" class="stat stat-important">-</div>
+            </div>
+            <div class="infobox infobox-orange infobox-cost">
+                <div class="infobox-icon">
+                    <i class="icon-dollar"></i>
+                </div>
+                <div class="infobox-data">
+                    <span id="cost" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Cost</div>
                 </div>
             </div>
             <div class="infobox infobox-green infobox-profit">
                 <div class="infobox-icon">
                     <i class="icon-bitcoin"></i>
                 </div>
-
                 <div class="infobox-data">
                     <span id="profit" class="infobox-data-number">-</span>
                     <div class="infobox-content">Gross Profit</div>
                 </div>
             </div>
             <div class="infobox infobox-green infobox-profit">
-              <div class="infobox-icon">
-                  <i class="icon-trophy"></i>
-              </div>
-
-              <div class="infobox-data">
-                  <span id="gprofit" class="infobox-data-number">-</span>
-                  <div class="infobox-content">Net Profit</div>
-              </div>
+                <div class="infobox-icon">
+                    <i class="icon-trophy"></i>
+                </div>
+                <div class="infobox-data">
+                    <span id="gprofit" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Net Profit</div>
+                </div>
             </div>
     </div>
 </div>
