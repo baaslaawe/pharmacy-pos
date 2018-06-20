@@ -1,6 +1,13 @@
 # QuePhram POS
 ## An intuitive &amp; modern web based POS system
+
+#### Cashier Dashboard
 ![Screenshot](assets/images/CashierScreenshot.png)
+
+***
+
+#### Admin Dashboard
+![Screenshot](assets/images/AdminDashboardScreenshot.png)
 
 
 ***
