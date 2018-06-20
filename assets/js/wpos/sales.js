@@ -961,6 +961,8 @@ function WPOSSales() {
         var numinvalid = 0;
         var allow_negative = WPOS.getConfigTable().pos.negative_items;
         var newItem = false;
+        var hasDaa = false;
+
         $("#itemtable").children(".item_row").each(function (index, element) {
                 qty = parseFloat($(element).find(".itemqty").val());
                 stockLevel = parseFloat($(element).find(".totalItems").val());
@@ -972,9 +974,7 @@ function WPOSSales() {
                 mod = itemdata.hasOwnProperty('mod') ? itemdata.mod.total : 0;
                 tempprice = parseFloat("0.00");
                 newItem = $(element).find(".newItem").val();
-                if (!WPOS.sales.hasDaaDrug) {
-                    WPOS.sales.hasDaaDrug = $(element).find(".isDaa").val();
-                }
+                hasDaa =  $(element).find(".isDaa").val() !== "false" ;
                 if (name === "" || unit <= 0 || totalStockLevel <=0)
                   $(element).find(".newItem").val("true");
                 else
@@ -1012,6 +1012,7 @@ function WPOSSales() {
                     numinvalid++;
                 }
         });
+        WPOS.sales.hasDaaDrug = hasDaa;
         // show warning if items invalid
         if (numinvalid>0){
             $("#invaliditemnotice").show();
@@ -1022,7 +1023,8 @@ function WPOSSales() {
 
     this.showPaymentDialog = function () {
         if (WPOS.sales.hasDaaDrug){
-            $("#patientsdiv").dialog('open');
+            console.log("Has a DAA drug")
+            // $("#patientsdiv").dialog('open');
         }
         WPOS.sales.updatePaymentSums();
         if (getNumSalesItems() && curgrandtotal>0){
