@@ -24,6 +24,8 @@
 function WPOSItems() {
     var stock;
     // public members for modifying the current sales items
+    this.hasDaaDrug = false;
+    // Mark sale with no DAA drug
     /**
      * Adds a blank item row for the user to fill in
      */
@@ -947,6 +949,7 @@ function WPOSSales() {
         $("#invaliditemnotice").hide();
         //Reload items from server
         WPOS.refreshData();
+        WPOS.sales.hasDaaDrug = false;
     }
 
     function getNumSalesItems(){
@@ -969,6 +972,9 @@ function WPOSSales() {
                 mod = itemdata.hasOwnProperty('mod') ? itemdata.mod.total : 0;
                 tempprice = parseFloat("0.00");
                 newItem = $(element).find(".newItem").val();
+                if (!WPOS.sales.hasDaaDrug) {
+                    WPOS.sales.hasDaaDrug = $(element).find(".isDaa").val();
+                }
                 if (name === "" || unit <= 0 || totalStockLevel <=0)
                   $(element).find(".newItem").val("true");
                 else
@@ -1015,6 +1021,9 @@ function WPOSSales() {
     }
 
     this.showPaymentDialog = function () {
+        if (WPOS.sales.hasDaaDrug){
+            $("#patientsdiv").dialog('open');
+        }
         WPOS.sales.updatePaymentSums();
         if (getNumSalesItems() && curgrandtotal>0){
             // Show integrated eftpos button if enabled
@@ -1687,6 +1696,7 @@ function WPOSSales() {
         salesobj.cost = parseFloat(totalcost).toFixed(2);
         salesobj.subtotal = cursubtotal.toFixed(2);
         salesobj.total = parseFloat(curgrandtotal).toFixed(2);
+        salesobj.hasDaaDrug = hasDaaDrug;
         salesobj.numitems = numitems;
         salesobj.processdt = date;
         salesobj.items = items;
