@@ -4,7 +4,7 @@
     <meta name="copyright" content="Copyright (c) 2014 WallaceIT <micwallace@gmx.com> <https://www.gnu.org/licenses/lgpl.html>" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pharmacy+ POS</title>
+    <title>QuePharm | Your stock companion</title>
 
     <link rel="manifest" href="/wpos.json">
     <link rel="shortcut icon" href="/assets/images/favicon.ico">
@@ -49,7 +49,6 @@
     <script src="/assets/js/jquery-ui-1.10.3.full.min.js"></script>
     <script src="/assets/js/jquery.mustache.js"></script>
 
-
     <!-- Wpos Libraries -->
     <script type="text/javascript" src="/assets/js/wpos/core.js"></script>
     <script type="text/javascript" src="/assets/js/wpos/sales.js"></script>
@@ -74,6 +73,7 @@
 <div id="tabs">
     <div class="panel with-nav-tabs panel-primary" style="position: relative;">
         <div class="panel-heading clearfix" style="max-width: 100%">
+            <h3 id="brand-name">QuePharm</h3>
             <ul class="nav nav-tabs pull-right" id="admin-cog">
                 <li id="cashier" class="active"><a href="#tab1primary" id="cash" data-toggle="tab">Cashier</a></li>
                 <li id="salesLink" onclick="WPOS.trans.setupTransactionView();"><a href="#tab2primary" onclick="$('#transactiontable_filter').find('input').attr('placeholder', 'Receipt No...');" data-toggle="tab">Sales</a></li>
