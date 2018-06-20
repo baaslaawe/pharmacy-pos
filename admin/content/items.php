@@ -32,6 +32,7 @@
     <th data-priority="2">Name</th>
     <th data-priority="3">Description</th>
     <th data-priority="7">Stock Type</th>
+    <th data-priority="8">DAA</th>
     <th data-priority="4">Category</th>
     <th data-priority="5">Tax</th>
     <th data-priority="6">Reorder Point</th>
@@ -172,6 +173,7 @@
                 { "mData":"name" },
                 { "mData":"description" },
                 { "mData":function(data){return (data.stockType === '1' ?'Inventory':'Non-Inventory'); } },
+                { "mData":function(data){return (data.isDaa?'DAA':'Non-DAA'); } },
                 { "mData":function(data,type,val){return (categories.hasOwnProperty(data.categoryid)?categories[data.categoryid].name:'None'); } },
                 { "mData":"taxname"},
                 { "mData":"reorderPoint"},
@@ -180,6 +182,7 @@
             "columns": [
                 {},
                 {type: "numeric"},
+                {type: "string"},
                 {type: "string"},
                 {type: "string"},
                 {type: "string"},
@@ -533,14 +536,15 @@
             name: sorted[item][1].name,
             description: sorted[item][1].description,
             stockType: sorted[item][1].stockType === '1'? 'Inventory': 'Non-Inventory',
+            isDaa: sorted[item][1].isDaa ? 'DAA': 'Non-DAA',
             categoryid: sorted[item][1].categoryid,
             taxname: WPOS.getTaxTable().rules[sorted[item][1].taxid].name,
             reorderPoint: sorted[item][1].reorderPoint
           };
         }
         var csv = WPOS.data2CSV(
-            ['ID', 'Name', 'Description', 'Stock Type', 'Category Name', 'Tax', 'Reorder Point'],
-            ['id', 'name', 'description', 'stockType',
+            ['ID', 'Name', 'Description', 'Stock Type', 'DAA', 'Category Name', 'Tax', 'Reorder Point'],
+            ['id', 'name', 'description', 'stockType', 'isDaa',
                 {key:'categoryid', func: function(value){ return categories.hasOwnProperty(value) ? categories[value].name : 'Unknown'; }},
               'taxname', 'reorderPoint'
             ],
@@ -562,7 +566,8 @@
                 'category_name': {title:'Category Name', required: true},
                 'tax_name': {title:'Tax Name', required: true},
                 'reorderPoint': {title:'Reorder Point', required: true},
-                'stockType': {title:'Stock Type', required: true}
+                'stockType': {title:'Stock Type', required: true},
+                'isDaa': {title:'DAA', required: true}
             },
             csvHasHeader: true,
             importOptions: [
@@ -581,6 +586,7 @@
                     description: jsondata[i].description !== '' ? jsondata[i].description: "No description",
                     reorderPoint: jsondata[i].reorderPoint !== '' ? jsondata[i].reorderPoint: "0",
                     stockType: jsondata[i].stockType !== '' ? jsondata[i].stockType: "Inventory",
+                    isDaa: jsondata[i].isDaa !== '' ? jsondata[i].isDaa:false,
                     tax_name: jsondata[i].tax_name !== '' ? jsondata[i].tax_name.toUpperCase(): "No Tax",
                     category_name: jsondata[i].category_name !== '' ? jsondata[i].category_name.toUpperCase(): "GENERAL"
                   });
