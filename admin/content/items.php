@@ -84,7 +84,7 @@
         <tr>
             <td style="text-align: right;"><label>Is DAA required:&nbsp;</label></td>
             <td>
-                <input type="checkbox" id="itemIsDaa">
+                <input type="checkbox" checked="false" id="itemIsDaa">
             </td>
         </tr>
     </table>
@@ -340,6 +340,11 @@
         $("#itemtax").val(item.taxid);
         $("#itemreorderpoint").val(item.reorderPoint);
         $("#itemtype").val(item.type);
+        if (item.isDaa) {
+            $("#itemIsDaa").prop('checked', true);
+        }else {
+            $("#itemIsDaa").prop('checked', false);
+        }
         var modtable = $("#itemmodtable");
         var modselecttable = $("#itemselmodtable");
         modtable.html('');
@@ -395,7 +400,7 @@
             item.taxid = $("#newitemtax").val();
             item.reorderPoint = $("#newitemreorderpoint").val();
             item.stockType = $("#newstocktype").val();
-            item.isDaa = $("#newItemIsDaa").val();
+            item.isDaa = $("#newItemIsDaa").is(':checked');
             item.type = "general";
             item.modifiers = [];
             result = WPOS.sendJsonData("items/add", JSON.stringify(item));
@@ -413,7 +418,7 @@
           item.taxid = $("#itemtax").val();
           item.reorderPoint = $("#itemreorderpoint").val();
           item.stockType = $("#stocktype").val();
-          item.isDaa = $("#itemIsDaa").val();
+          item.isDaa = $("#itemIsDaa").is(':checked');
           item.type = $("#itemtype").val();
           item.modifiers = [];
             item.modifiers = [];
