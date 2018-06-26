@@ -1022,10 +1022,6 @@ function WPOSSales() {
     }
 
     this.showPaymentDialog = function () {
-        if (WPOS.sales.hasDaaDrug){
-            console.log("Has a DAA drug")
-            // $("#patientsdiv").dialog('open');
-        }
         WPOS.sales.updatePaymentSums();
         if (getNumSalesItems() && curgrandtotal>0){
             // Show integrated eftpos button if enabled
@@ -1037,6 +1033,9 @@ function WPOSSales() {
                 inteftbtn.hide();
             }
             $("#paymentsdiv").dialog('open');
+            if (WPOS.sales.hasDaaDrug){
+                $("#patientInfoDialog").dialog('open');
+            }
             $("#endsalebtn").prop("disabled", false); // make sure the damn button is active, dunno why but when the page reloads it seems to keep its state.
         } else {
             swal({
@@ -1046,6 +1045,31 @@ function WPOSSales() {
               });
               
         }
+    };
+
+    this.saveCustomer = function() {
+        // show loader
+        WPOS.util.showLoader();
+        var customer = {};
+        var result;
+        // adding a new item
+        customer.email = $("#newcustemail").val();
+        customer.name = $("#newcustname").val();
+        customer.phone = $("#newcustphone").val();
+        customer.mobile = $("#newcustmobile").val();
+        customer.address = $("#newcustaddress").val();
+        customer.suburb = $("#newcustsuburb").val();
+        customer.postcode = $("#newcustpostcode").val();
+        customer.state = $("#newcuststate").val();
+        customer.country = $("#newcustcountry").val();
+        result = WPOS.sendJsonData("customers/add", JSON.stringify(customer));
+        if (result !== false) {
+            console.log(result)
+            WPOS.updateCustTable(result);
+            $("#addcustdialog").dialog("close");
+        }
+        // hide loader
+        WPOS.util.hideLoader();
     };
 
     this.addAdditionalPayment = function(){
