@@ -171,6 +171,7 @@ class WposAdminStock {
                     }
                 }
             }
+
             $storedItem = $storedItemsMdl->get($id);
             var_dump($storedItem[0]);
             if ($storedItem !== false || $storedItem === null) {
