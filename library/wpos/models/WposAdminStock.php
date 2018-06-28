@@ -115,17 +115,7 @@ class WposAdminStock {
 
             $validator->validate($item);
 
-            // TODO :: Allow items with same code
-//            $item->code = strtoupper($item->code); // make sure stockcode is upper case
-//            $dupitems = $stockItemsMdl->get(null, $item->code);
-//            if (sizeof($dupitems) > 0) {
-//                $dupitem = $dupitems[0];
-//                if ($dupitem['id'] != $item->id) {
-//                    $result['error'] = "An item with the stockcode ".$item->code." already exists on line ".$count;
-//                    EventStream::sendStreamData($result);
-//                    return $result;at
-//                }
-//            }
+
 
             // remove currency symbol from price & cost
             $item->price = preg_replace("/([^0-9\\.])/i", "", $item->price);
@@ -181,6 +171,20 @@ class WposAdminStock {
                     }
                 }
             }
+            $storedItem = $storedItemsMdl->get($id);
+            var_dump($storedItem[0]);
+            if ($storedItem !== false || $storedItem === null) {
+                $storedItem[0]['reorderPoint'] = $item->reorderPoint;
+                $sitem = $storedItem[0];
+                EventStream::sendStreamData(['status'=>$sitem['name']]);
+                $rpoint = $storedItemsMdl->edit($id, $sitem);
+                if (!is_numeric($rpoint)){
+                    $result['error'] = "Could not set reorder point " . $item->reorderPoint . " on line ".$count." of the CSV: ".$storedItemsMdl->errorInfo;
+                    EventStream::sendStreamData($result);
+                    return $result;
+                }
+            }
+
             $item->storeditemid = $id;
             $storedItems[] = ['id'=>$id, 'name'=>$item->name];
             unset($item->name);
