@@ -301,7 +301,7 @@ function WPOSTransactions() {
                 }
             }
             $(itemtable).append('<tr><td>' + items[i].qty + '</td><td>' + items[i].name + modStr + '</td><td>' + WPOS.util.currencyFormat(items[i].unit) + '</td><td>' + taxStr + '</td><td>' + WPOS.util.currencyFormat(items[i].price) + '</td>' +
-                '<td><div class="action-buttons itembuttons" style="text-align: right;"><a onclick="WPOS.transactions.openInvoiceItemDialog(' + i + ');" class="green"><i class="icon-pencil bigger-130"></i></a><a onclick="WPOS.transactions.deleteInvoiceItem(' + items[i].id + ')" class="red"><i class="icon-trash bigger-130"></i></a></div></td></tr>');
+                '<td><div class="action-buttons itembuttons" style="text-align: right;"><a onclick="WPOS.transactions.deleteInvoiceItem(' + items[i].id + ')" class="red"><i class="icon-trash bigger-130"></i></a></div></td></tr>');
         }
     }
 
@@ -438,10 +438,19 @@ function WPOSTransactions() {
         $("#voidform").dialog('open');
     };
 
+    function getItem(id) {
+        var items = WPOS.getJsonData("stock/get");
+        for(var i in items){
+            if (items[i]['id'] === id)
+                return items[i];
+        }
+        }
+
     this.openInvoiceItemDialog = function(index){
         var itemdialog = $('#transitemdialog');
         if (index !== false) {
             var item = transactions[curref].items[index];
+            var sitem = getItem(item.sitemid);
             $('#transitemid').val(item.id);
             $('#transitemsitemid').val(item.sitemid);
             $('#transitemname').val(item.name);
@@ -451,6 +460,7 @@ function WPOSTransactions() {
             $('#transitemcost').val(item.cost);
             $('#transitemunit').val(item.unit);
             $('#transitemtaxid').val(item.taxid);
+            $('#transitemstocklevel').val(sitem.stocklevel);
             $('#transitemprice').text(WPOS.util.currencyFormat(item.price));
             itemdialog.dialog('option', 'title', 'Edit Item');
         } else {
