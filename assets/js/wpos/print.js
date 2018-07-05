@@ -964,11 +964,11 @@ function WPOSPrint(kitchenMode) {
         // Date for today in bold followed by new line
         var today = new Date();
         var date = today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
-        cmd += esc_a_c + esc_bold_on + getEscTableRow(formatLabel(translateLabel("Date #: "), true, 1), date, false, false, false) + font_reset;
+        cmd += esc_a_c + esc_bold_on + getEscTableRow(formatLabel(translateLabel("Date #"), true, 1), date, false, false, false) + font_reset;
         cmd += '\n';
 
         // Headings
-        cmd += esc_a_c + esc_ul_on + esc_bold_on + translateLabel('Customer\tDate\tTotal\tBalance') + font_reset + '\n';
+        cmd += esc_a_l + esc_ul_on + esc_bold_on + translateLabel('Customer                  Date        Balance') + font_reset + '\n';
 
         var item, total_balance = 0, total_paid = 0, total = 0;
         for (var i in debtors) {
@@ -976,10 +976,35 @@ function WPOSPrint(kitchenMode) {
             total_balance += parseFloat(item.balance);
             total_paid += parseFloat(item.paid);
             total += parseFloat(item.total);
-            cmd += getEscTableRow(item.customer + '\t' + item.date, '\t' + item.total + '\t' + item.balance, false, true, true);
+            today = new Date(item.date);
+            date = today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
+            if (item.customer.length > 21)
+                item.customer = item.customer.substring(0, 21) + '..   ';
+            else{
+                var pad = '';
+                for(var i=0;i<(21-item.customer.length);i++)
+                    pad += ' ';
+                item.customer = item.customer + pad + '     ';   
+            }
+        
+            item.balance  = parseInt(item.balance);
+            item.balance += '';
+            if(item.balance.length <7){
+               var pad = '';
+                for(var i=0;i<(7-item.balance.length);i++)
+                    pad += ' '; 
+                item.balance = item.balance + pad; 
+            }
+            if(date.length <9){
+               var pad = '';
+                for(var i=0;i<(9-date.length);i++)
+                    pad += ' '; 
+                date = date + pad; 
+            }
+            cmd += esc_a_l + item.customer + date + '   ' + item.balance + font_reset + '\n';
         }
         cmd += '\n';
-        // totals
+        // totals  
 
         cmd += getEscTableRow(formatLabel(translateLabel('Total') + ' (' + debtors.length + ') ' + translateLabel('invoices'), true, 1), WPOS.util.currencyFormat(total, false, true), true, true, true);
         cmd += getEscTableRow(formatLabel(translateLabel('Total Due') , true, 1), WPOS.util.currencyFormat(total_balance, false, true), true, true, true);
@@ -998,24 +1023,46 @@ function WPOSPrint(kitchenMode) {
         // Date for today in bold followed by new line
         var today = new Date();
         var date = today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
-        cmd += esc_a_c + esc_bold_on + getEscTableRow(formatLabel(translateLabel("Date #: "), true, 1), date, false, false, false) + font_reset;
+        cmd += esc_a_c + esc_bold_on + getEscTableRow(formatLabel(translateLabel("Date #"), true, 1), date, false, false, false) + font_reset;
         cmd += '\n';
 
         // Headings
-        cmd += esc_a_c + esc_ul_on + esc_bold_on + getEscTableRow('Item', 'Total\tBalance', true, true, true) + font_reset + '\n';
+        cmd += esc_a_l + esc_ul_on + esc_bold_on + translateLabel('Item                   Qty    Value') + font_reset + '\n';
 
         var item, total_stock = 0, total_value = 0, total = 0;
         for (var i in stock) {
             item = stock[i];
             total_stock += parseFloat(item.qty);
             total_value += parseFloat(item.value);
-            cmd += getEscTableRow(item.name, item.qty + '\t' + item.value, false, true, true);
+            if (item.name.length > 19)
+                item.name = item.name.substring(0, 19) + '..';
+            else{
+                var pad = '';
+                for(var i=0;i<(21-item.name.length);i++)
+                    pad += ' ';
+                item.name = item.name + pad;   
+            }
+            item.value  = parseInt(item.value);
+            item.value + '';
+            if(item.value.length <7){
+               var pad = '';
+                for(var i=0;i<(7-item.value.length);i++)
+                    pad += ' '; 
+                item.value = item.value + pad; 
+            }
+            item.qty  += '';
+            if(item.qty.length <5){
+               var pad = '';
+                for(var i=0;i<=(5-item.qty.length);i++)
+                    pad += ' '; 
+                item.qty = item.qty + pad; 
+            }
+            cmd += esc_a_l + item.name + '  ' + item.qty + '  ' + item.value + '\n' + font_reset;
         }
         cmd += '\n';
         // totals
 
         cmd += getEscTableRow(formatLabel(translateLabel('Total') + ' (' + stock.length + ') ' + translateLabel('items'), true, 1), WPOS.util.currencyFormat(total_value, false, true), true, true, true);
-        console.log(cmd);
         return cmd;
     }
 
