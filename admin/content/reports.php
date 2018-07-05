@@ -339,7 +339,10 @@
     }
 
     function printCurrentReport(){
-        browserPrintHtml($("#reportcontain").html());
+        if($('#reportcontain').find('h3').text() == 'Current Stock')
+            printCurrentStock();
+        else
+            browserPrintHtml($("#reportcontain").html())
     }
 
     function exportCurrentReport(){
@@ -363,6 +366,20 @@
         //   printw.close();
         // }, 1000);
         WPOS.print.printCurrentReport();
+    }
+
+    function printCurrentStock() {
+        var stock = [], item = {};
+        for(var i in repdata){
+            item = repdata[i];
+            if (item['stockType'] == 1 && item['stocklevel'] > 0)
+                stock.push({
+                    name: item['name'],
+                    qty: item['stocklevel'],
+                    value: item['stockvalue']
+                });
+        }
+        WPOS.print.printStock(stock);
     }
 
     $(function(){

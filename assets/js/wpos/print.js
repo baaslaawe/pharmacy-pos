@@ -490,6 +490,10 @@ function WPOSPrint(kitchenMode) {
     printDebtors(record);
   };
 
+    this.printStock = function (stock) {
+        printStock(stock);
+    };
+
     function printReceipt(ref, record) {
         record == null ? record = WPOS.trans.getTransactionRecord(ref): "";
 
@@ -564,6 +568,24 @@ function WPOSPrint(kitchenMode) {
         }
       }
 
+    function printStock(stock) {
+        var method = getPrintSetting('receipts', 'method');
+        switch (method) {
+            case "br":
+            // browserPrintHtml(getHtmlReceipt(debtors, false, true), 'Biashara Pos Invoice', 600, 800);
+            // return true;
+            case "qz":
+            // alert("QZ-Print integration is no longer available, switch to the new webprint applet");
+            // return false;
+            case "ht":
+            case "wp":
+                var data = getEscStock(stock);
+                printESCPInvoice(data);
+                return true;
+            default :
+                return false;
+        }
+    }
     function printESCPReceipt(data){
         if (WPOS.getConfigTable().pos.recprintlogo == true) {
             getESCPImageString(window.location.protocol + "//" + document.location.hostname + WPOS.getConfigTable().pos.reclogo, function (imgdata) {
@@ -962,6 +984,38 @@ function WPOSPrint(kitchenMode) {
         cmd += getEscTableRow(formatLabel(translateLabel('Total') + ' (' + debtors.length + ') ' + translateLabel('invoices'), true, 1), WPOS.util.currencyFormat(total, false, true), true, true, true);
         cmd += getEscTableRow(formatLabel(translateLabel('Total Due') , true, 1), WPOS.util.currencyFormat(total_balance, false, true), true, true, true);
         cmd += getEscTableRow(formatLabel(translateLabel('Amount Paid') , true, 1), WPOS.util.currencyFormat(total_paid, false, true), true, true, true);
+        return cmd;
+    }
+
+    function getEscStock(stock) {
+        ltr = getGlobalPrintSetting('rec_orientation')=="ltr";
+        lang = getGlobalPrintSetting('rec_language');
+        altlabels = WPOS.getConfigTable()['general'].altlabels;
+
+        // header
+        var cmd =  esc_init + esc_a_c + esc_double + 'Current Stock' + "\n" + font_reset;
+        cmd += (ltr ? esc_a_l : esc_a_r);
+        // Date for today in bold followed by new line
+        var today = new Date();
+        var date = today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
+        cmd += esc_a_c + esc_bold_on + getEscTableRow(formatLabel(translateLabel("Date #: "), true, 1), date, false, false, false) + font_reset;
+        cmd += '\n';
+
+        // Headings
+        cmd += esc_a_c + esc_ul_on + esc_bold_on + getEscTableRow('Item', 'Total\tBalance', true, true, true) + font_reset + '\n';
+
+        var item, total_stock = 0, total_value = 0, total = 0;
+        for (var i in stock) {
+            item = stock[i];
+            total_stock += parseFloat(item.qty);
+            total_value += parseFloat(item.value);
+            cmd += getEscTableRow(item.name, item.qty + '\t' + item.value, false, true, true);
+        }
+        cmd += '\n';
+        // totals
+
+        cmd += getEscTableRow(formatLabel(translateLabel('Total') + ' (' + stock.length + ') ' + translateLabel('items'), true, 1), WPOS.util.currencyFormat(total_value, false, true), true, true, true);
+        console.log(cmd);
         return cmd;
     }
 
