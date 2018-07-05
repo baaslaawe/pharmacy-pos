@@ -486,6 +486,10 @@ function WPOSPrint(kitchenMode) {
     printInvoice(record);
   };
 
+  this.printDebtors = function (record) {
+    printDebtors(record);
+  };
+
     function printReceipt(ref, record) {
         record == null ? record = WPOS.trans.getTransactionRecord(ref): "";
 
@@ -539,6 +543,26 @@ function WPOSPrint(kitchenMode) {
         return false;
     }
   }
+
+
+    function printDebtors(debtors) {
+        var method = getPrintSetting('receipts', 'method');
+        switch (method) {
+          case "br":
+              // browserPrintHtml(getHtmlReceipt(debtors, false, true), 'Biashara Pos Invoice', 600, 800);
+            // return true;
+          case "qz":
+            // alert("QZ-Print integration is no longer available, switch to the new webprint applet");
+            // return false;
+          case "ht":
+          case "wp":
+            var data = getEscDebtors(debtors);
+            printESCPInvoice(data);
+            return true;
+          default :
+            return false;
+        }
+      }
 
     function printESCPReceipt(data){
         if (WPOS.getConfigTable().pos.recprintlogo == true) {
@@ -904,6 +928,40 @@ function WPOSPrint(kitchenMode) {
         cmd += getEscTableRow(formatLabel(translateLabel('Amount Due') , true, 1), WPOS.util.currencyFormat(record.invoice_balance, false, true), true, true, true);
         cmd += getEscTableRow(formatLabel(translateLabel('Amount Paid') , true, 1), WPOS.util.currencyFormat(record.invoice_paid, false, true), true, true, true);
 
+        return cmd;
+    }
+
+    function getEscDebtors(debtors) {
+        ltr = getGlobalPrintSetting('rec_orientation')=="ltr";
+        lang = getGlobalPrintSetting('rec_language');
+        altlabels = WPOS.getConfigTable()['general'].altlabels;
+
+        // header
+        var cmd =  esc_init + esc_a_c + esc_double + 'Invoice Debtors' + "\n" + font_reset;
+        cmd += (ltr ? esc_a_l : esc_a_r);
+        // Date for today in bold followed by new line
+        var today = new Date();
+        var date = today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
+        cmd += esc_a_c + esc_bold_on + getEscTableRow(formatLabel(translateLabel("Date #: "), true, 1), date, false, false, false) + font_reset;
+        cmd += '\n';
+
+        // Headings
+        cmd += esc_a_c + esc_ul_on + esc_bold_on + translateLabel('Customer\tDate\tTotal\tBalance') + font_reset + '\n';
+
+        var item, total_balance = 0, total_paid = 0, total = 0;
+        for (var i in debtors) {
+            item = debtors[i];
+            total_balance += parseFloat(item.balance);
+            total_paid += parseFloat(item.paid);
+            total += parseFloat(item.total);
+            cmd += getEscTableRow(item.customer + '\t' + item.date, '\t' + item.total + '\t' + item.balance, false, true, true);
+        }
+        cmd += '\n';
+        // totals
+
+        cmd += getEscTableRow(formatLabel(translateLabel('Total') + ' (' + debtors.length + ') ' + translateLabel('invoices'), true, 1), WPOS.util.currencyFormat(total, false, true), true, true, true);
+        cmd += getEscTableRow(formatLabel(translateLabel('Total Due') , true, 1), WPOS.util.currencyFormat(total_balance, false, true), true, true, true);
+        cmd += getEscTableRow(formatLabel(translateLabel('Amount Paid') , true, 1), WPOS.util.currencyFormat(total_paid, false, true), true, true, true);
         return cmd;
     }
 
