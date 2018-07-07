@@ -898,8 +898,15 @@ function WPOS() {
         }*/
     };
 
-    this.refreshData = function() {
-      loadOnlineData(1, false);
+    this.refreshData = function(step, loginloader) {
+        /*if(step && (loginloader || loginloader == false))
+            loadOnlineData(step, loginloader);
+        if(step)
+            loadOnlineData(step, false);
+        if(loginloader)
+            loadOnlineData(1, loginloader);
+        if(!step && false)*/
+            loadOnlineData(1, false);
     };
 
     this.backupOfflineSales = function(){
@@ -1588,6 +1595,12 @@ function WPOS() {
         delete salestable[ref];
     };
 
+    this.loadSales = function () {
+        fetchSalesTable(function () {
+            WPOS.trans.setupTransactionView();
+        });
+    };
+
     function fetchSalesTable(callback) {
         return WPOS.sendJsonDataAsync("sales/get", JSON.stringify({deviceid: configtable.deviceid}), function(data){
             if (data) {
@@ -1860,6 +1873,7 @@ function WPOS() {
                         break;
 
                     case "sale":
+                        // alert(data.data)
                         updateSalesTable(data.data);
                         break;
 
