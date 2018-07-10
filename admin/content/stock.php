@@ -59,6 +59,7 @@
             <input type="hidden" id="setstockid" />
             <input type="hidden" id="setstockinventoryid" />
             <input type="hidden" id="setstocklocid" />
+            <input type="hidden" id="setstockpreviouslevel" />
         </tr>
       <tr>
         <td style="text-align: right;"><label>Name:</label></td>
@@ -510,6 +511,7 @@
         $("#setstockinventoryid").val(item.stockinventoryid);
         $("#setstocklocid").val(item.locationid);
         $("#setstockqty").val(item.stocklevel);
+        $("#setstockpreviouslevel").val(item.stocklevel);
         $("#setstockcost").val(item.cost);
         $("#setstockprice").val(item.price);
         $("#setstockwprice").val(item.wprice);
@@ -589,6 +591,7 @@
             item.stockinventoryid = $("#setstockinventoryid").val();
             item.locationid = $("#setstocklocid").val();
             item.stocklevel = $("#setstockqty").val();
+            item.previousstocklevel = $("#setstockpreviouslevel").val();
             item.cost = $("#setstockcost").val();
             item.price = $("#setstockprice").val();
             item.wprice = $("#setstockwprice").val();

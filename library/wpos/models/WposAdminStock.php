@@ -376,10 +376,14 @@ class WposAdminStock {
             $this->data->stocklevel += $this->data->newstock;
             $qty = $this->data->newstock;
             unset($this->data->newstock);
+            $message = 'Added '.$qty.' via + button';
+        } else {
+            $qty = $this->data->stocklevel;
+            $message = 'Item edited '. $this->data->previousstocklevel . ' ==> '.$qty;
         }
 
         // create history record for added stock
-        if ($this->createStockHistory($this->data->id, $this->data->locationid, 'Stock Add', $qty)===false){
+        if ($this->createStockHistory($this->data->id, $this->data->locationid, $message, $qty)===false){
             $result['error'] = "Could not create stock history record";
             return $result;
         }
@@ -388,7 +392,7 @@ class WposAdminStock {
         }
 
         // Success; log data
-        Logger::write("Stock added", "STOCK", json_encode($this->data));
+        Logger::write($message, "STOCK", json_encode($this->data));
 
         return $result;
     }
