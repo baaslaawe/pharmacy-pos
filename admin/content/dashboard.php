@@ -404,17 +404,17 @@
     var stime;
 
 
-    function loadTodayStats(totals){
+    function loadTodayStats(totals, sales, invoices){
         if (!totals){
             return false;
         }
         // populate the fields
-        $("#salenum").text(totals.salenum);
-        $("#saletotal").text(WPOS.util.currencyFormat(totals.saletotal));
-        $("#invoicenum").text(totals.invoicenum);
-        $("#invoicetotal").text(WPOS.util.currencyFormat(totals.invoicetotal));
-        $("#invoicesbalance").text(WPOS.util.currencyFormat(totals.invoicebalance));
-        $("#invoicespaid").text(WPOS.util.currencyFormat(totals.invoicetotal-totals.invoicebalance));
+        $("#salenum").text(sales.salenum);
+        $("#saletotal").text(WPOS.util.currencyFormat(sales.saletotal));
+        $("#invoicenum").text(invoices.invoicenum);
+        $("#invoicetotal").text(WPOS.util.currencyFormat(invoices.invoicetotal));
+        $("#invoicesbalance").text(WPOS.util.currencyFormat(invoices.invoicebalance));
+        $("#invoicespaid").text(WPOS.util.currencyFormat(parseFloat(invoices.invoicetotal) - parseFloat(invoices.invoicebalance)));
         $("#refundnum").text(totals.refundnum);
         $("#refundtotal").text(WPOS.util.currencyFormat(totals.refundtotal));
         $("#voidnum").text(totals.voidnum);
@@ -426,12 +426,12 @@
         $("#takings").text(WPOS.util.currencyFormat((parseFloat(totals.saletotal) + parseFloat(totals.invoicetotal) - parseFloat(totals.refundtotal)), true));
         $("#expenses").text(WPOS.util.currencyFormat(totals.expenses, true));
         $("#expensesnum").text(totals.expensesnum);
-        $("#cost").text(WPOS.util.currencyFormat(totals.cost, true));
+        $("#cost").text(WPOS.util.currencyFormat(parseFloat(sales.cost) + parseFloat(invoices.invoicecost), true));
         $("#actualcash").text(WPOS.util.currencyFormat(totals.totalcash-totals.expenses, true));
         // $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
         // Set onclicks
-        $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(totals.salerefs); });
-        $(".infobox-invoices").on('click', function(){ WPOS.transactions.openTransactionList(totals.invoicerefs); });
+        $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(sales.salerefs); });
+        $(".infobox-invoices").on('click', function(){ WPOS.transactions.openTransactionList(invoices.invoicerefs); });
         $(".infobox-refunds").on('click', function(){ WPOS.transactions.openTransactionList(totals.refundrefs); });
         $(".infobox-voids").on('click', function(){ WPOS.transactions.openTransactionList(totals.voidrefs); });
         $(".infobox-takings").on('click', function(){ WPOS.transactions.openTransactionList(totals.refs); });
@@ -795,11 +795,13 @@
         var edate = sdate;
         edate.setHours(23); edate.setMinutes(59); edate.setSeconds(59);
         etime = edate.getTime();
-        var req = {"stats/itemselling":{"stime":tmonth[0], "etime":tmonth[1]}, "stats/general":{"stime":stime, "etime":etime}, "graph/general":{"stime":gvals[0], "etime":gvals[1], "interval":86400000}, "pos/subscription":{}};
+        var req = {"stats/itemselling":{"stime":tmonth[0], "etime":tmonth[1]}, "stats/general":{"stime":stime, "etime":etime, "type": 'sale'}, "graph/general":{"stime":gvals[0], "etime":gvals[1], "interval":86400000}, "pos/subscription":{}};
         req[pvals[0]] = {"stime":pvals[1], "etime":pvals[2], "totals":true};
         var data = WPOS.sendJsonData("multi", JSON.stringify(req));
-        // Load todays stats
-        loadTodayStats(data['stats/general']);
+        var sales = WPOS.sendJsonData('multi', JSON.stringify({"stats/general":{"stime":stime, "etime":etime, "type": 'sale'}}));
+        var invoices = WPOS.sendJsonData('multi', JSON.stringify({"stats/general":{"stime":stime, "etime":etime, "type": 'invoice'}}));
+        // Load today's stats
+        loadTodayStats(data['stats/general'], sales['stats/general'], invoices['stats/general']);
         // load graph
         drawGraph(data['graph/general']);
         // initialize the initial pie chart

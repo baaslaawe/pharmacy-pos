@@ -120,15 +120,20 @@
     function populateSummary(){
         var rtype = $("#reptranstype").val();
         var html = getReportHeader("Summary");
-        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td></td><td># Sales</td><td>Total</td></tr></thead><tbody>";
-        html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.salerefs+'\');">Sales</a></td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.saletotal)+'</td></tr>';
+        var all = rtype === 'all';
+        var sale = rtype === 'sale';
+        var invoice = rtype === 'invoice';
+        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td></td><td>#</td><td>Total</td></tr></thead><tbody>";
+        all ? html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.salerefs+'\');">Sales & Invoices</a></td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.saletotal)+'</td></tr>': '';
+        sale ? html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.salerefs+'\');">Sales</a></td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.saletotal)+'</td></tr>': '';
+        invoice ? html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.invoicerefs+'\');">Invoices</a></td><td>'+repdata.invoicenum+'</td><td>'+WPOS.util.currencyFormat(repdata.invoicetotal)+'</td></tr>': '';
         html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refundrefs+'\');">Refunds</a></td><td>'+repdata.refundnum+'</td><td>'+WPOS.util.currencyFormat(repdata.refundtotal)+'</td></tr>';
         html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.voidrefs+'\');">Voids</a></td><td>'+repdata.voidnum+'</td><td>'+WPOS.util.currencyFormat(repdata.voidtotal)+'</td></tr>';
-        rtype === 'all'? html += '<tr><td><a onclick="WPOS.transactions.openExpensesList(\''+repdata.expensesrefs+'\');">Expenses</a></td><td>'+repdata.expensesnum+'</td><td>'+WPOS.util.currencyFormat(repdata.expenses)+'</td></tr>': '';
-        html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refs+'\');">Revenue</a></td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.totaltakings)+'</td></tr>';
+        all ? html += '<tr><td><a onclick="WPOS.transactions.openExpensesList(\''+repdata.expensesrefs+'\');">Expenses</a></td><td>'+repdata.expensesnum+'</td><td>'+WPOS.util.currencyFormat(repdata.expenses)+'</td></tr>': '';
+        all ? html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refs+'\');">Revenue</a></td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.totaltakings)+'</td></tr>': '';
         html += '<tr><td>Cost</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.cost)+'</td></tr>';
-        rtype === 'all'? html += '<tr><td>Gross profit</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.profit)+'</td></tr>': html += '<tr><td>Profit</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.profit)+'</td></tr>';
-        rtype === 'all'? html += '<tr><td>Net profit</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.netprofit)+'</td></tr>': '';
+        all ? html += '<tr><td>Gross profit</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.profit)+'</td></tr>': html += '<tr><td>Profit</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.profit)+'</td></tr>';
+        all ? html += '<tr><td>Net profit</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.netprofit)+'</td></tr>': '';
         html += "</tbody></table>";
 
         $("#reportcontain").html(html);

@@ -83,14 +83,6 @@ class WposAdminStats {
         $stime = isset($this->data->stime)?$this->data->stime:(strtotime('-1 week')*1000);
         $etime = isset($this->data->etime)?$this->data->etime:(time()*1000);
 
-        if(!isset($this->data->type)){
-            $typeSale = 'sale';
-            $typeInvoice = 'invoice';
-        } else {
-            $typeSale = $this->data->type;
-            $typeInvoice = $this->data->type;
-        }
-
         // get expenses
         if (($expenses = $expMdl->get(null, $stime, $etime))!==false){
 
@@ -98,27 +90,48 @@ class WposAdminStats {
             $stats->expenses = $expenses[0]['total'];
             $stats->expensesnum = $expenses[0]['enum'];
         } else {
+            var_dump('Error in igetting expenses');
             $result['error']= $expMdl->errorInfo;
         }
 
-        // get non voided sales
-        if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, $typeSale))!==false){
-            $stats->salerefs = $sales[0]['refs'];
-            $stats->saletotal = $sales[0]['stotal'];
-            $stats->salenum = $sales[0]['snum'];
-        } else {
-            $result['error']= $salesMdl->errorInfo;
+        if($this->data->type == null){
+            // get non voided sales
+            if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, null))!==false){
+                $stats->salerefs = $sales[0]['refs'];
+                $stats->saletotal = $sales[0]['stotal'];
+                $stats->saletotalcost = $sales[0]['ctotal'];
+                $stats->salenum = $sales[0]['snum'];
+            } else {
+                $result['error']= $salesMdl->errorInfo;
+            }
         }
 
-        // get non voided invoices
-        if (($invoices = $salesMdl->getTotals($stime, $etime, null, false, false, $typeInvoice))!==false){
-            $stats->invoicerefs = $invoices[0]['refs'];
-            $stats->invoicetotal = $invoices[0]['stotal'];
-            $stats->invoicenum = $invoices[0]['snum'];
-        } else {
-            $result['error']= $salesMdl->errorInfo;
+        if($this->data->type == 'sale') {
+            if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, 'sale'))!==false){
+                $stats->salerefs = $sales[0]['refs'];
+                $stats->saletotal = $sales[0]['stotal'];
+                $stats->saletotalcost = $sales[0]['ctotal'];
+                $stats->salenum = $sales[0]['snum'];
+            } else {
+                $result['error']= $salesMdl->errorInfo;
+            }
         }
 
+        if($this->data->type == 'invoice') {
+            // get non voided invoices
+            if (($invoices = $salesMdl->getTotals($stime, $etime, null, false, false, 'invoice'))!==false){
+                $stats->invoicerefs = $invoices[0]['refs'];
+                $stats->invoicetotal = $invoices[0]['stotal'];
+                $stats->invoicecost = $invoices[0]['ctotal'];
+                $stats->invoicenum = $invoices[0]['snum'];
+            } else {
+                var_dump('1Error in igetting invoices');
+                $result['error']= $salesMdl->errorInfo;
+            }
+        }
+
+        // Get all payments(sales and invoices) made within that time window
+        // aggregates all payment methods and the total
         $totals = $paymentsMdl->getDaily($stime, $etime);
         for($i=0;$i<sizeof($totals);$i++){
             if($totals[$i]['method'] == 'cash')
@@ -155,6 +168,7 @@ class WposAdminStats {
                 $stats->invoicebalance += $invoicesBal[$i]['balance'];
             }
         } else {
+            var_dump('2Error in igetting invoices');
             $result['error']= $saleMdl->errorInfo;
         }
 
@@ -171,12 +185,31 @@ class WposAdminStats {
         $stats->refundnum = $refund[0]['snum'];
 
         // calc total takings
-        $stats->totaltakings = round($stats->totalpayments, 2);
-        $stats->cost = round($sales[0]['ctotal']+ $invoices[0]['ctotal'], 2);
-        $stats->profit = round($stats->saletotal - $stats->refundtotal - $sales[0]['ctotal'], 2);
-        $stats->netprofit = round($stats->profit - $stats->expenses, 2);
         $stats->refs = [];
-        $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
+        if($this->data->type == null) {
+            $stats->totaltakings = round($stats->totalpayments, 2);
+            $stats->cost = round($sales[0]['ctotal'], 2);
+            $stats->profit = round($stats->saletotal - $stats->refundtotal - $stats->cost, 2);
+            $stats->netprofit = round($stats->profit - $stats->expenses, 2);
+            $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
+        }
+
+        if($this->data->type == 'sale') {
+            $stats->totaltakings = round($stats->saletotal - $stats->refundtotal, 2);
+            $stats->cost = round($sales[0]['ctotal'], 2);
+            $stats->profit = round($stats->totaltakings - $stats->cost, 2);
+            $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
+        }
+
+        if($this->data->type == 'invoice') {
+            $total = $stats->invoicetotal == 0? 1: $stats->invoicetotal;
+            $invoices[0]['ctotal'] = (($stats->invoicetotal - $stats->invoicebalance)/ $total) * ($stats->invoicecost);
+            $stats->totaltakings = round($stats->invoicetotal- $stats->refundtotal, 2);
+            $stats->cost = round($invoices[0]['ctotal'], 0);
+            $stats->profit = round($stats->invoicetotal - $stats->invoicebalance - $stats->refundtotal - $stats->cost, 0);
+            $temprefs = $stats->invoicerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
+        }
+
         $temprefs = explode(',', $temprefs);
         foreach ($temprefs as $value){
             if (!in_array($value, $stats->refs));

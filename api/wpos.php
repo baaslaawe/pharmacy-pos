@@ -873,7 +873,7 @@ function routeApiCall($action, $data, $result) {
  */
 function returnResult($result){
     if (($resstr = json_encode($result)) === false) {
-        echo(json_encode(["error" => "Failed to encode the reponse data into json"]));
+        echo(json_encode(["error" => "Failed to encode the response data into json"]));
     } else {
         echo($resstr);
     }
