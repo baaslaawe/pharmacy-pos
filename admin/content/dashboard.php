@@ -32,7 +32,7 @@
 
               <div class="infobox-data">
                   <span id="salenum" class="infobox-data-number">-</span>
-                  <div class="infobox-content">Sales</div>
+                  <div class="infobox-content">POS Sales</div>
               </div>
               <div id="saletotal" class="stat stat-success">-</div>
           </div>
@@ -423,7 +423,7 @@
         $("#mpesa").text(WPOS.util.currencyFormat(totals.totalmpesa));
         $("#credit").text(WPOS.util.currencyFormat(totals.totalcredit));
         $("#bank").text(WPOS.util.currencyFormat(totals.totalbank));
-        $("#takings").text(WPOS.util.currencyFormat((parseFloat(totals.saletotal) + parseFloat(totals.invoicetotal) - parseFloat(totals.refundtotal)), true));
+        $("#takings").text(WPOS.util.currencyFormat((parseFloat(totals.totalpayments) - parseFloat(totals.refundtotal)), true));
         $("#expenses").text(WPOS.util.currencyFormat(totals.expenses, true));
         $("#expensesnum").text(totals.expensesnum);
         $("#cost").text(WPOS.util.currencyFormat(parseFloat(sales.cost) + parseFloat(invoices.invoicecost), true));

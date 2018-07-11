@@ -376,10 +376,10 @@ class WposAdminStock {
             $this->data->stocklevel += $this->data->newstock;
             $qty = $this->data->newstock;
             unset($this->data->newstock);
-            $message = 'Added '.$qty.' via + button';
+            $message = 'Stock added';
         } else {
             $qty = $this->data->stocklevel;
-            $message = 'Item edited '. $this->data->previousstocklevel . ' ==> '.$qty;
+            $message = 'Stock edited from '. $this->data->previousstocklevel . ' to '.$qty;
         }
 
         // create history record for added stock

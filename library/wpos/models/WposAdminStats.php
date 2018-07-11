@@ -203,7 +203,7 @@ class WposAdminStats {
 
         if($this->data->type == 'invoice') {
             $total = $stats->invoicetotal == 0? 1: $stats->invoicetotal;
-            $invoices[0]['ctotal'] = (($stats->invoicetotal - $stats->invoicebalance)/ $total) * ($stats->invoicecost);
+//            $invoices[0]['ctotal'] = (($stats->invoicetotal - $stats->invoicebalance)/ $total) * ($stats->invoicecost);
             $stats->totaltakings = round($stats->invoicetotal- $stats->refundtotal, 2);
             $stats->cost = round($invoices[0]['ctotal'], 0);
             $stats->profit = round($stats->invoicetotal - $stats->invoicebalance - $stats->refundtotal - $stats->cost, 0);
