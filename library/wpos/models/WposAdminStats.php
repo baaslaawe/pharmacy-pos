@@ -214,6 +214,8 @@ class WposAdminStats {
 
         if($group == 2) {
             $items = $itemsMdl->getStoredItemTotalsSupplier($stime, $etime, $group, true, $this->data->type);
+        } else if($group == 1) {
+            $items = $itemsMdl->getStoredItemTotalsCategory($stime, $etime, $group, true, $this->data->type);
         } else {
             $items = $itemsMdl->getStoredItemTotals($stime, $etime, $group, true, $this->data->type);
         }
