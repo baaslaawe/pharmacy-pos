@@ -316,7 +316,10 @@ function WPOS() {
     function getSubscription() {
         WPOS.getJsonDataAsync("pos/subscription", function (result) {
           if (result !== false) {
-              subscriptionStatus =  new Date(result.subscription.expiryDate).getTime() > new Date().getTime();
+              if(typeof result.subscription === 'string')
+                subscriptionStatus =  new Date(JSON.parse(result.subscription).expiryDate).getTime() > new Date().getTime();
+              else
+                subscriptionStatus =  new Date(result.subscription.expiryDate).getTime() > new Date().getTime();
           }
         });
     }
