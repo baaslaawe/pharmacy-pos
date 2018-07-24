@@ -28,7 +28,7 @@ class ExpensesModel extends DbConfig
     /**
      * @var array
      */
-    protected $_columns = ['id', 'name', 'dt'];
+    protected $_columns = ['id', 'name', 'type', 'dt'];
 
     /**
      * Init the DB
@@ -39,13 +39,14 @@ class ExpensesModel extends DbConfig
     }
 
     /**
-     * @param $name
+     * @param $name string
+     * @param $type string
      * @return bool|string Returns false on an unexpected failure, returns -1 if a unique constraint in the database fails, or the new rows id if the insert is successful
      */
-    public function create($name)
+    public function create($name, $type)
     {
-        $sql          = "INSERT INTO expenses (`name`, `dt`) VALUES (:name, now());";
-        $placeholders = [":name"=>$name];
+        $sql          = "INSERT INTO expenses (`name`, `type`, `dt`) VALUES (:name, :type, now());";
+        $placeholders = [":name"=>$name, ":type"=>$type];
 
         return $this->insert($sql, $placeholders);
     }
@@ -87,13 +88,14 @@ class ExpensesModel extends DbConfig
     /**
      * @param $id
      * @param $name
+     * @param $type
      * @return bool|int Returns false on an unexpected failure or number of affected rows
      */
-    public function edit($id, $name)
+    public function edit($id, $name, $type)
     {
 
-        $sql = "UPDATE expenses SET name=:name WHERE id=:id;";
-        $placeholders = [":id"=>$id, ":name"=>$name];
+        $sql = "UPDATE expenses SET name=:name, type=:type WHERE id=:id;";
+        $placeholders = [":id"=>$id, ":name"=>$name, ":type"=>$type];
 
         return $this->update($sql, $placeholders);
     }
