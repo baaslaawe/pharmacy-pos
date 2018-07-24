@@ -5,11 +5,13 @@
     </h1>
     <select id="reptype" onchange="generateReport();" style="vertical-align: middle; margin-right: 20px; margin-bottom: 5px;">
         <option value="stats/general">Summary</option>
+        <option value="stats/accounting">Mini-Accounting</option>
         <option value="stats/takings">Cash Count</option>
         <option value="stats/itemselling">Item Sales</option>
         <option value="stats/categoryselling">Category Sales</option>
         <option value="stats/supplyselling">Supplier Sales</option>
         <option value="stats/expenses">Expenses</option>
+        <option value="stats/bills">Bills</option>
         <option value="stats/stock">Current Stock</option>
         <option value="stats/order">Purchase Order</option>
         <option value="stats/expired">Expired Items</option>
@@ -57,11 +59,19 @@
         WPOS.util.showLoader();
         var type = $("#reptype").val();
         // load the data
-        repdata = WPOS.sendJsonData(type, JSON.stringify({"stime":stime, "etime":etime, "type":$("#reptranstype").val()}));
+        var rtype = $("#reptranstype").val();
+        if(type === 'stats/expenses')
+            rtype= 'expense';
+        if(type === 'stats/bills')
+            rtype= 'bill';
+        repdata = WPOS.sendJsonData(type, JSON.stringify({"stime":stime, "etime":etime, "type":rtype}));
         // populate the report using the correct function
         switch (type){
             case "stats/general":
                 populateSummary();
+                break;
+            case "stats/accounting":
+                populateAccounting();
                 break;
             case "stats/takings":
                 populateTakings("Cash Count", "Method");
@@ -95,6 +105,9 @@
                 break;
             case "stats/users":
                 populateTakings("User Cash", "User Name");
+                break;
+            case "stats/bills":
+                populateBills("Bills");
                 break;
             case "stats/expenses":
                 populateExpenses("Expenses");
@@ -140,6 +153,19 @@
 
         $("#reportcontain").html(html);
     }
+    function populateAccounting(){
+        var html = getReportHeader("Mini-Accounting");
+        var value = repdata.stockvalue + repdata.revenue - repdata.bills - repdata.expenses;
+        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td></td><td>#</td><td>Total</td></tr></thead><tbody>";
+        html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refs+'\');">Stock value</a></td><td>'+repdata.stocktotal+'</td><td>'+WPOS.util.currencyFormat(repdata.stockvalue)+'</td></tr>'                                                                                                                                                               ;
+        html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refs+'\');">Revenue</a></td><td>'+repdata.stocktotal+'</td><td>'+WPOS.util.currencyFormat(repdata.revenue)+'</td></tr>';
+        html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.billsrefs+'\');">Bills</a></td><td>'+repdata.billsnum+'</td><td>'+WPOS.util.currencyFormat(repdata.bills)+'</td></tr>';
+        html += '<tr><td><a onclick="WPOS.transactions.openExpensesList(\''+repdata.expensesrefs+'\');">Expenses</a></td><td>'+repdata.expensesnum+'</td><td>'+WPOS.util.currencyFormat(repdata.expenses)+'</td></tr>';
+        html += '<tr><td><a onclick="WPOS.transactions.openExpensesList(\''+repdata.expensesrefs+'\');">Business value</a></td><td>  </td><td>'+WPOS.util.currencyFormat(value)+'</td></tr>';
+        html += "</tbody></table>";
+
+        $("#reportcontain").html(html);
+    }
 
     function populateTakings(repname, colname){
         var html = getReportHeader(repname);
@@ -170,6 +196,20 @@
     }
 
     function populateExpenses(title){
+        var html = getReportHeader(title);
+        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td># </td><td>Total</td></tr></thead><tbody>";
+        var rowdata;
+        for (var i in repdata){
+            rowdata = repdata[i];
+            html += '<tr><td><a onclick="WPOS.transactions.openExpensesList(\''+rowdata.refs+'\');">'+rowdata.name+'</a></td><td>'+rowdata.enum+'</td><td>'+WPOS.util.currencyFormat(rowdata.total)+'</td></tr>';
+        }
+
+        html += "</tbody></table>";
+
+        $("#reportcontain").html(html);
+    }
+
+    function populateBills(title){
         var html = getReportHeader(title);
         html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td># </td><td>Total</td></tr></thead><tbody>";
         var rowdata;

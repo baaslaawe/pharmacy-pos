@@ -195,7 +195,7 @@ class WposAdminStats {
             $stats->totaltakings = round($stats->totalpayments, 2);
             $stats->cost = round($sales[0]['ctotal'], 2);
             $stats->profit = round($stats->saletotal -$stats->invoicebalance - $stats->refundtotal - $stats->cost, 2);
-            $stats->netprofit = round($stats->profit - $stats->expenses, 2);
+            $stats->netprofit = round($stats->profit - $stats->expenses - $stats->bills, 2);
             $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
         }
 
@@ -222,6 +222,153 @@ class WposAdminStats {
         }
         $stats->refs = implode(',', $stats->refs);
 
+        $result['data'] = $stats;
+
+        return $result;
+    }
+
+    /**
+     * Get overview accounting from the current range
+     * @param $result
+     * @return mixed
+     */
+    public function getOverviewAccounting($result){
+        $stats = new stdClass();
+        $stats->stockvalue = 0; // set defaults
+        $stats->revenue = 0;
+        $stats->bills = 0;
+        $stats->expenses = 0;
+        $stats->businessvalue = 0;
+
+        $stockMdl = new StockModel();
+        $stocks = $stockMdl->get(null, null, true);
+        $stats->stocktotal = sizeof($stocks);
+        for($s=0;$s<sizeof($stocks);$s++){
+            $stock = $stocks[$s];
+            $stats->stockvalue += round($stock['stockvalue'], 2);
+        }
+
+        $salesMdl = new TransactionsModel();
+        $voidMdl = new SaleVoidsModel();
+        $paymentsMdl = new SalePaymentsModel();
+        $expMdl = new ExpensesModel();
+        // check if params set, if not set defaults
+        $stime = isset($this->data->stime)?$this->data->stime:(strtotime('-1 week')*1000);
+        $etime = isset($this->data->etime)?$this->data->etime:(time()*1000);
+
+        // get expenses
+        if (($expenses = $expMdl->get(null, $stime, $etime, false, 'expense'))!==false){
+            $stats->expensesrefs = $expenses[0]['refs'];
+            $stats->expenses = $expenses[0]['total'];
+            $stats->expensesnum = $expenses[0]['enum'];
+        } else {
+            $result['error']= $expMdl->errorInfo;
+        }
+        // get bills
+        if (($bills = $expMdl->get(null, $stime, $etime, false, 'bill'))!==false){
+            $stats->billsrefs = $bills[0]['refs'];
+            $stats->bills = $bills[0]['total'];
+            $stats->billsnum = $bills[0]['enum'];
+        } else {
+            $result['error']= $expMdl->errorInfo;
+        }
+
+        if($this->data->type == null){
+            // get non voided sales
+            if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, null))!==false){
+                $stats->salerefs = $sales[0]['refs'];
+                $stats->saletotal = $sales[0]['stotal'];
+                $stats->saletotalcost = $sales[0]['ctotal'];
+                $stats->salenum = $sales[0]['snum'];
+            } else {
+                $result['error']= $salesMdl->errorInfo;
+            }
+        }
+
+        if($this->data->type == 'sale') {
+            if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, 'sale'))!==false){
+                $stats->salerefs = $sales[0]['refs'];
+                $stats->saletotal = $sales[0]['stotal'];
+                $stats->saletotalcost = $sales[0]['ctotal'];
+                $stats->salenum = $sales[0]['snum'];
+            } else {
+                $result['error']= $salesMdl->errorInfo;
+            }
+        }
+
+        if($this->data->type == 'invoice') {
+            // get non voided invoices
+            if (($invoices = $salesMdl->getTotals($stime, $etime, 3, false, false, 'invoice'))!==false){
+                $stats->invoicerefs = $invoices[0]['refs'];
+                $stats->invoicetotal = $invoices[0]['stotal'];
+                $stats->invoicecost = $invoices[0]['ctotal'];
+                $stats->invoicenum = $invoices[0]['snum'];
+            } else {
+                $result['error']= $salesMdl->errorInfo;
+            }
+        }
+
+        // Get all payments(sales and invoices) made within that time window
+        // aggregates all payment methods and the total
+        $totals = $paymentsMdl->getDaily($stime, $etime);
+        for($i=0;$i<sizeof($totals);$i++){
+            $stats->totalpayments += $totals[$i]['amount'];
+        }
+
+        //Get void and refund payments
+        $voidPay = $voidMdl->getDayVoids($stime, $etime);
+        for($i=0;$i<sizeof($voidPay);$i++){
+            $stats->totalpayments -= $voidPay[$i]['amount'];
+        }
+
+        //Get invoices revenue i.e amount paid from invoices today
+        $saleMdl = new SalesModel();
+        if (($invoicesBal = $saleMdl->getInvoices($stime, $etime, null, false, false, false))!==false){
+            for($i=0;$i<sizeof($invoicesBal);$i++){
+                $stats->invoicebalance += $invoicesBal[$i]['balance'];
+            }
+        } else {
+            $result['error']= $saleMdl->errorInfo;
+        }
+
+        // get voided sales
+        $voids = $salesMdl->getTotals($stime, $etime, 3, true, false, $this->data->type);
+        $stats->voidrefs = $voids[0]['refs'];
+        $stats->voidtotal = $voids[0]['stotal'];
+        $stats->voidnum = $voids[0]['snum'];
+
+        // get refunds
+        $refund = $voidMdl->getTotals($stime, $etime, false, false, $this->data->type);
+        $stats->refundrefs = $refund[0]['refs'];
+        $stats->refundtotal = $refund[0]['stotal'];
+        $stats->refundnum = $refund[0]['snum'];
+
+        // calc total takings
+        $stats->refs = [];
+        if($this->data->type == null) {
+            $stats->totaltakings = round($stats->totalpayments, 2);
+            $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
+        }
+
+        if($this->data->type == 'sale') {
+            $stats->totaltakings = round($stats->saletotal - $stats->refundtotal, 2);
+            $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
+        }
+
+        if($this->data->type == 'invoice') {
+            $total = $stats->invoicetotal == 0? 1: $stats->invoicetotal;
+            $stats->totaltakings = round($stats->invoicetotal- $stats->refundtotal, 2);
+            $temprefs = $stats->invoicerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
+        }
+
+        $temprefs = explode(',', $temprefs);
+        foreach ($temprefs as $value){
+            if (!in_array($value, $stats->refs));
+            $stats->refs[] = $value;
+        }
+        $stats->refs = implode(',', $stats->refs);
+
+        $stats->revenue = $stats->totaltakings;
         $result['data'] = $stats;
 
         return $result;

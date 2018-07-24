@@ -607,6 +607,10 @@ function routeApiCall($action, $data, $result) {
             $statsMdl = new WposAdminStats($data);
             $result = $statsMdl->getOverviewStats($result);
             break;
+        case "stats/accounting": // general accounting stats
+            $statsMdl = new WposAdminStats($data);
+            $result = $statsMdl->getOverviewAccounting($result);
+            break;
         case "stats/takings": // account takings stats, categorized by payment method
             $statsMdl = new WposAdminStats($data);
             $result = $statsMdl->getCountTakingsStats($result);
@@ -659,6 +663,10 @@ function routeApiCall($action, $data, $result) {
             $jsondata = new WposAdminExpenses($data);
             $result = $jsondata->getExpenses($result);
             break;
+        case "stats/bills":
+                    $jsondata = new WposAdminExpenses($data);
+                    $result = $jsondata->getExpenses($result);
+                    break;
 
         // GRAPH
         case "graph/general": // like the general stats, but in graph form/time.

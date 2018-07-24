@@ -119,7 +119,7 @@ class WposAdminExpenses
         if(isset($this->data->refs)){
             $expenses = $this->expItemMdl->getByRef($this->data->refs);
         } else if(isset($this->data->stime)) {
-            $expenses = $this->expMdl->get(null, $this->data->stime, $this->data->etime, true);
+            $expenses = $this->expMdl->get(null, $this->data->stime, $this->data->etime, true, $this->data->type);
         }else {
             $expenses = $this->expMdl->get();
         }

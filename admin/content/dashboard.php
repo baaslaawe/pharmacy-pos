@@ -138,6 +138,16 @@
                     <div class="infobox-content">Revenue</div>
                 </div>
             </div>
+            <div class="infobox infobox-orange infobox-bills">
+                <div class="infobox-icon">
+                    <i class="icon-forward"></i>
+                </div>
+                <div class="infobox-data">
+                    <span id="billsnum" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Bills</div>
+                </div>
+                <div id="bills" class="stat stat-important">-</div>
+            </div>
             <div class="infobox infobox-orange infobox-expenses">
                 <div class="infobox-icon">
                     <i class="icon-forward"></i>
@@ -426,6 +436,8 @@
         $("#takings").text(WPOS.util.currencyFormat((parseFloat(totals.totalpayments) - parseFloat(totals.refundtotal)), true));
         $("#expenses").text(WPOS.util.currencyFormat(totals.expenses, true));
         $("#expensesnum").text(totals.expensesnum);
+        $("#bills").text(WPOS.util.currencyFormat(totals.bills, true));
+        $("#billsnum").text(totals.billsnum);
         $("#cost").text(WPOS.util.currencyFormat(parseFloat(sales.cost) + parseFloat(invoices.invoicecost), true));
         $("#actualcash").text(WPOS.util.currencyFormat(totals.totalcash-totals.expenses, true));
         // $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
@@ -436,6 +448,7 @@
         $(".infobox-voids").on('click', function(){ WPOS.transactions.openTransactionList(totals.voidrefs); });
         $(".infobox-takings").on('click', function(){ WPOS.transactions.openTransactionList(totals.refs); });
         $(".infobox-expenses").on('click', function(){ WPOS.transactions.openExpensesList(totals.expensesrefs); });
+        $(".infobox-bills").on('click', function(){ WPOS.transactions.openExpensesList(totals.billsrefs); });
         return true;
     }
     function loadPopularItems(items){
