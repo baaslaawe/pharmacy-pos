@@ -208,11 +208,15 @@ class SalesModel extends TransactionsModel
      * @param bool $includeorders
      * @return array|bool Returns false on failure or an array with sales or totals on success
      */
-    public function getInvoices($stime, $etime, $deviceids=null, $status=null, $statparity= true, $includeorders=true){
+    public function getInvoices($stime, $etime, $deviceids=null, $status=null, $statparity= null, $includeorders=true){
 
         $sql = 'SELECT * FROM sales WHERE (processdt>= :stime AND processdt<= :etime)';
         $placeholders = [":stime"=>$stime, ":etime"=>$etime];
 
+        if ($status !== null) {
+            $sql .= ' AND status'.($statparity?'=':'!=').' :status';
+            $placeholders[':status'] = $status;
+        }
         // just get invoice transactions
         $sql .= " AND type='invoice'";
 

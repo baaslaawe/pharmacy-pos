@@ -168,7 +168,7 @@ class WposAdminStats {
 
         //Get invoices revenue i.e amount paid from invoices today
         $saleMdl = new SalesModel();
-        if (($invoicesBal = $saleMdl->getInvoices($stime, $etime, null, false, false, false))!==false){
+        if (($invoicesBal = $saleMdl->getInvoices($stime, $etime, null, 3, false, false))!==false){
             for($i=0;$i<sizeof($invoicesBal);$i++){
                 $stats->invoicebalance += $invoicesBal[$i]['balance'];
             }
@@ -195,7 +195,7 @@ class WposAdminStats {
             $stats->totaltakings = round($stats->totalpayments, 2);
             $stats->cost = round($sales[0]['ctotal'], 2);
             $stats->profit = round($stats->saletotal -$stats->invoicebalance - $stats->refundtotal - $stats->cost, 2);
-            $stats->netprofit = round($stats->profit - $stats->expenses - $stats->bills, 2);
+            $stats->netprofit = round($stats->profit - $stats->expenses, 2);
             $temprefs = $stats->salerefs.($stats->voidrefs!=null?(','.$stats->voidrefs):'').($stats->refundrefs!=null?(','.$stats->refundrefs):'');
         }
 
