@@ -729,8 +729,8 @@ function WPOSTransactions() {
         if (answer) {
             // show loader
             WPOS.util.showLoader();
-            var reason = $("#voidreason").val();
-            var result = WPOS.sendJsonData("sales/adminvoid", JSON.stringify({"id": curid, "reason": reason}));
+            var refobj = getVoidObject(transactions[curref], false);
+            var result = WPOS.sendJsonData("sales/void", JSON.stringify(refobj));
             if (result !== false) {
                 transactions[curref] = result;
                 reloadTransactionTables();
@@ -832,6 +832,51 @@ function WPOSTransactions() {
     };
 
     // functions for processing json data
+    function getVoidObject(ref, refund){
+        var refundobj;
+        var date = new Date().getTime();
+        // get data from the trans object, it holds offline + remotely loaded transactions
+        refundobj = ref;
+        // add refund/void shared data
+        var shareddata = {"userid": WPOS.loggeduser.id, "deviceid": 0, "locationid": 0, "processdt": date};
+        // add specific data
+        if (refund){
+            // if refund data is not defined, create an array
+            if (refundobj.refunddata == null){
+                refundobj.refunddata = [];
+            }
+            // add refund specific values to shared data
+            shareddata.reason = $("#refundreason").val();
+            var items = [];
+            // get returned items
+            var numreturned;
+            $("#refunditems").children("tr").each(function(index, item){
+                numreturned = $(item).find('.refundqty').val();
+                if (numreturned>0){
+                    var ref = $(item).find('.refunditemref').val();
+                    if (ref!=0){
+                        items.push({"ref": ref, "numreturned": numreturned});
+                    } else {
+                        items.push({"ref": $(item).find('.refunditemid').val(), "numreturned": numreturned});
+                    }
+                }
+            });
+            var refamtinput = $("#refundamount");
+            shareddata.items = items;
+            shareddata.method = $("#refundmethod").val();
+            shareddata.amount = parseFloat(refamtinput.val()).toFixed(2);
+            if (refamtinput.data('paydata'))
+                shareddata.paydata = refamtinput.data('paydata');
+            // add to refund array
+            refundobj.refunddata.push(shareddata);
+        } else {
+            refundobj.voiddata = shareddata;
+            refundobj.voiddata.reason = $("#voidreason").val();
+        }
+
+        return refundobj;
+    }
+
     function getStatusHtml(status) {
         var stathtml;
         switch (status) {

@@ -90,7 +90,6 @@ class WposAdminStats {
             $stats->expenses = $expenses[0]['total'];
             $stats->expensesnum = $expenses[0]['enum'];
         } else {
-            var_dump('Error in igetting expenses');
             $result['error']= $expMdl->errorInfo;
         }
 
@@ -119,13 +118,12 @@ class WposAdminStats {
 
         if($this->data->type == 'invoice') {
             // get non voided invoices
-            if (($invoices = $salesMdl->getTotals($stime, $etime, null, false, false, 'invoice'))!==false){
+            if (($invoices = $salesMdl->getTotals($stime, $etime, 3, false, false, 'invoice'))!==false){
                 $stats->invoicerefs = $invoices[0]['refs'];
                 $stats->invoicetotal = $invoices[0]['stotal'];
                 $stats->invoicecost = $invoices[0]['ctotal'];
                 $stats->invoicenum = $invoices[0]['snum'];
             } else {
-                var_dump('1Error in igetting invoices');
                 $result['error']= $salesMdl->errorInfo;
             }
         }
@@ -168,11 +166,11 @@ class WposAdminStats {
                 $stats->invoicebalance += $invoicesBal[$i]['balance'];
             }
         } else {
-            var_dump('2Error in igetting invoices');
             $result['error']= $saleMdl->errorInfo;
         }
 
         // get voided sales
+//        var_dump($this->data->type);
         $voids = $salesMdl->getTotals($stime, $etime, 3, true, false, $this->data->type);
         $stats->voidrefs = $voids[0]['refs'];
         $stats->voidtotal = $voids[0]['stotal'];

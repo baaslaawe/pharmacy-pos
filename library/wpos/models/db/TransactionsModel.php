@@ -170,7 +170,7 @@ class TransactionsModel extends DbConfig
      * @param null $ttype
      * @return array|bool Returns false on failure or an array with sales or totals on success
      */
-    public function getTotals($stime, $etime, $status=null, $statparity=true, $includeorders=false, $ttype=null){
+    public function getTotals($stime, $etime, $status=null, $statparity=null, $includeorders=false, $ttype=null){
 
         $placeholders = [":stime"=>$stime, ":etime"=>$etime];
         $sql = "SELECT *, COALESCE(SUM(total), 0) as stotal, COALESCE(SUM(cost), 0) as ctotal, COUNT(id) as snum, COALESCE(GROUP_CONCAT(ref SEPARATOR ','),'') as refs FROM sales WHERE (processdt>= :stime AND processdt<= :etime)";

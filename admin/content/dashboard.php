@@ -795,7 +795,7 @@
         var edate = sdate;
         edate.setHours(23); edate.setMinutes(59); edate.setSeconds(59);
         etime = edate.getTime();
-        var req = {"stats/itemselling":{"stime":tmonth[0], "etime":tmonth[1]}, "stats/general":{"stime":stime, "etime":etime, "type": 'sale'}, "graph/general":{"stime":gvals[0], "etime":gvals[1], "interval":86400000}, "pos/subscription":{}};
+        var req = {"stats/itemselling":{"stime":tmonth[0], "etime":tmonth[1]}, "stats/general":{"stime":stime, "etime":etime, "type": 'all'}, "graph/general":{"stime":gvals[0], "etime":gvals[1], "interval":86400000}, "pos/subscription":{}};
         req[pvals[0]] = {"stime":pvals[1], "etime":pvals[2], "totals":true};
         var data = WPOS.sendJsonData("multi", JSON.stringify(req));
         var sales = WPOS.sendJsonData('multi', JSON.stringify({"stats/general":{"stime":stime, "etime":etime, "type": 'sale'}}));
@@ -815,7 +815,8 @@
     }
 
     jQuery(function($) {
-        $("#repstime").datepicker({dateFormat:"dd/mm/yy", maxDate: new Date(etime),
+        var today = getTodayTimeVals();
+        $("#repstime").datepicker({dateFormat:"dd/mm/yy", maxDate: new Date(today[1]),
             onSelect: function(text, inst){
                 var date = $("#repstime").datepicker("getDate");
                 date.setHours(0); date.setMinutes(0); date.setSeconds(0);
@@ -823,8 +824,7 @@
                 initDashboard();
             }
         });
-
-        $("#repstime").datepicker('setDate', new Date(stime));
+        $("#repstime").datepicker('setDate', new Date(today[0]));
         initDashboard()
     });
 
