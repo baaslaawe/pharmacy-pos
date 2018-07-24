@@ -130,6 +130,7 @@
         html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refundrefs+'\');">Refunds</a></td><td>'+repdata.refundnum+'</td><td>'+WPOS.util.currencyFormat(repdata.refundtotal)+'</td></tr>';
         html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.voidrefs+'\');">Voids</a></td><td>'+repdata.voidnum+'</td><td>'+WPOS.util.currencyFormat(repdata.voidtotal)+'</td></tr>';
         all ? html += '<tr><td><a onclick="WPOS.transactions.openExpensesList(\''+repdata.expensesrefs+'\');">Expenses</a></td><td>'+repdata.expensesnum+'</td><td>'+WPOS.util.currencyFormat(repdata.expenses)+'</td></tr>': '';
+        all ? html += '<tr><td><a onclick="WPOS.transactions.openExpensesList(\''+repdata.billsrefs+'\');">Bills</a></td><td>'+repdata.billsnum+'</td><td>'+WPOS.util.currencyFormat(repdata.bills)+'</td></tr>': '';
         all ? html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refs+'\');">Revenue(Total money collected)</a></td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.totaltakings)+'</td></tr>': '';
         invoice ? html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.invoicerefs+'\');">Paid Invoices</a></td><td>'+repdata.invoicenum+'</td><td>'+WPOS.util.currencyFormat(parseFloat(repdata.invoicetotal)- parseFloat(repdata.invoicebalance))+'</td></tr>': '';
         html += '<tr><td>Cost</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.cost)+'</td></tr>';

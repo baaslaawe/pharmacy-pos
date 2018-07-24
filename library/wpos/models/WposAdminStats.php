@@ -84,11 +84,18 @@ class WposAdminStats {
         $etime = isset($this->data->etime)?$this->data->etime:(time()*1000);
 
         // get expenses
-        if (($expenses = $expMdl->get(null, $stime, $etime))!==false){
-
+        if (($expenses = $expMdl->get(null, $stime, $etime, false, 'expense'))!==false){
             $stats->expensesrefs = $expenses[0]['refs'];
             $stats->expenses = $expenses[0]['total'];
             $stats->expensesnum = $expenses[0]['enum'];
+        } else {
+            $result['error']= $expMdl->errorInfo;
+        }
+        // get bills
+        if (($bills = $expMdl->get(null, $stime, $etime, false, 'bill'))!==false){
+            $stats->billsrefs = $bills[0]['refs'];
+            $stats->bills = $bills[0]['total'];
+            $stats->billsnum = $bills[0]['enum'];
         } else {
             $result['error']= $expMdl->errorInfo;
         }
