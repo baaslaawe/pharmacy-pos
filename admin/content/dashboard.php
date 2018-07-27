@@ -439,7 +439,7 @@
         $("#bills").text(WPOS.util.currencyFormat(totals.bills, true));
         $("#billsnum").text(totals.billsnum);
         $("#cost").text(WPOS.util.currencyFormat(parseFloat(sales.cost) + parseFloat(invoices.invoicecost), true));
-        $("#actualcash").text(WPOS.util.currencyFormat(totals.totalcash-totals.expenses, true));
+        $("#actualcash").text(WPOS.util.currencyFormat(totals.totalcash-totals.expenses - totals.bills, true));
         // $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
         // Set onclicks
         $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(sales.salerefs); });
