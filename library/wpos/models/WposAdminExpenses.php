@@ -71,12 +71,12 @@ class WposAdminExpenses
      */
     public function addExpense($result)
     {
-        $jsonval = new JsonValidate($this->data, '{"name":""}');
+        $jsonval = new JsonValidate($this->data, '{"name":"", "type": ""}');
         if (($errors = $jsonval->validate()) !== true) {
             $result['error'] = $errors;
             return $result;
         }
-        $qresult = $this->expMdl->create($this->data->name);
+        $qresult = $this->expMdl->create($this->data->name, $this->data->type);
         if ($qresult === false) {
             $result['error'] = "Could not add the expense: ".$this->expMdl->errorInfo;
         } else {
@@ -119,7 +119,7 @@ class WposAdminExpenses
         if(isset($this->data->refs)){
             $expenses = $this->expItemMdl->getByRef($this->data->refs);
         } else if(isset($this->data->stime)) {
-            $expenses = $this->expMdl->get(null, $this->data->stime, $this->data->etime, true);
+            $expenses = $this->expMdl->get(null, $this->data->stime, $this->data->etime, true, $this->data->type);
         }else {
             $expenses = $this->expMdl->get();
         }
@@ -168,7 +168,7 @@ class WposAdminExpenses
             $result['error'] = $errors;
             return $result;
         }
-        $qresult = $this->expMdl->edit($this->data->id, $this->data->name);
+        $qresult = $this->expMdl->edit($this->data->id, $this->data->name, $this->data->type);
         if ($qresult === false) {
             $result['error'] = "Could not edit the expense: ".$this->expMdl->errorInfo;
         } else {

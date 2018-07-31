@@ -250,13 +250,13 @@ class WposAdminStock {
                     return $result;
                 }
                 // create history record for imported stock
-                if ($this->histMdl->create($id, $stockObj->locationid, 'Stock Imported', $stockObj->amount)===false){
+                if ($this->histMdl->create($id, $stockObj->locationid, 'Stock Imported', $item->amount)===false){
                     $result['error'] = "Could not create stock history record".$this->histMdl->errorInfo;
                     return $result;
                 }
             }
             // Success; log data
-            Logger::write("Stock Added", "STOCK", json_encode($stockObj));
+            Logger::write("Stock Added", "STOCK", json_encode($item));
 
             $stockObj->id = $id;
             $result['data'][$id] = $stockObj;
@@ -379,11 +379,16 @@ class WposAdminStock {
         // Add new stock to current stock
         if (isset($this->data->newstock)) {
             $this->data->stocklevel += $this->data->newstock;
+            $qty = $this->data->newstock;
             unset($this->data->newstock);
+            $message = 'Stock added';
+        } else {
+            $qty = $this->data->stocklevel;
+            $message = 'Stock edited from '. $this->data->previousstocklevel . ' to '.$qty;
         }
 
         // create history record for added stock
-        if ($this->createStockHistory($this->data->id, $this->data->locationid, 'Stock Add', $this->data->stocklevel)===false){
+        if ($this->createStockHistory($this->data->id, $this->data->locationid, $message, $qty)===false){
             $result['error'] = "Could not create stock history record";
             return $result;
         }
@@ -392,7 +397,7 @@ class WposAdminStock {
         }
 
         // Success; log data
-        Logger::write("Stock added", "STOCK", json_encode($this->data));
+        Logger::write($message, "STOCK", json_encode($this->data));
 
         return $result;
     }

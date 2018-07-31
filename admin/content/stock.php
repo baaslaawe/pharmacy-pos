@@ -59,6 +59,7 @@
             <input type="hidden" id="setstockid" />
             <input type="hidden" id="setstockinventoryid" />
             <input type="hidden" id="setstocklocid" />
+            <input type="hidden" id="setstockpreviouslevel" />
         </tr>
       <tr>
         <td style="text-align: right;"><label>Name:</label></td>
@@ -510,6 +511,7 @@
         $("#setstockinventoryid").val(item.stockinventoryid);
         $("#setstocklocid").val(item.locationid);
         $("#setstockqty").val(item.stocklevel);
+        $("#setstockpreviouslevel").val(item.stocklevel);
         $("#setstockcost").val(item.cost);
         $("#setstockprice").val(item.price);
         $("#setstockwprice").val(item.wprice);
@@ -589,6 +591,7 @@
             item.stockinventoryid = $("#setstockinventoryid").val();
             item.locationid = $("#setstocklocid").val();
             item.stocklevel = $("#setstockqty").val();
+            item.previousstocklevel = $("#setstockpreviouslevel").val();
             item.cost = $("#setstockcost").val();
             item.price = $("#setstockprice").val();
             item.wprice = $("#setstockwprice").val();
@@ -681,22 +684,42 @@
         }
 
         if (Object.keys(data).length === 0) {
-          data[0] = {
-            code: "M00001",
-            name: "Flu-gone 200ml",
-            description: "Syrup",
-            locationid: config.deviceconfig.locationid,
-            cost: 100,
-            price: 150,
-            wprice: 130,
-            stocklevel: 25,
-            reorderpoint: 10,
-            supplier: 'Freb',
-            inventoryNo: "INV0001",
-            expiryDate: "30/12/2050",
-            taxname: "VAT",
-            category: "Medicine"
-          }
+            data[0] = {
+                code: "M00001",
+                name: "Cooking oil 2kg (Example item)",
+                description: "Liquid",
+                locationid: config.deviceconfig.locationid,
+                cost: 300,
+                price: 350,
+                wprice: 350,
+                supplier: "Pwani Oils",
+                taxname: "VAT",
+                category: "Groceries"
+            }
+            data[1] = {
+                code: "M00002",
+                name: "Bic Pen Blue(Example item)",
+                description: "Packet",
+                locationid: config.deviceconfig.locationid,
+                cost: 100,
+                price: 150,
+                wprice: 150,
+                supplier: "Haico Brands",
+                taxname: "VAT",
+                category: "Stationaries"
+            }
+            data[2] = {
+                code: "M00003",
+                name: "Polo T-shirt White (Example item)",
+                description: "Box",
+                locationid: config.deviceconfig.locationid,
+                cost: 1500,
+                price: 2000,
+                wprice: 2000,
+                supplier: "Polo",
+                taxname: "VAT",
+                category: "Cloths"
+            }
         }
 
         var csv = WPOS.data2CSV(

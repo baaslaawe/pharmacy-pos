@@ -10,8 +10,6 @@
         <p class="pull-right">Subscription Status : <span id="status"></span></p>
     </h1>
 </div><!-- /.page-header -->
-    <div class="row">
-    <div class="col-xs-12">
 <div class="row">
     <div class="space-6"></div>
 
@@ -22,94 +20,212 @@
                 <i class="icon-dollar"></i>
                 Today's Takings
             </h4>
+            <div style="display: inline-block; vertical-align:middle; margin-right: 20px;">
+                <label>Date: <input type="text" style="width: 85px;" id="repstime" onclick="$(this).blur();" /></label>
+            </div>
         </div>
         <div class="widget-body" style="padding-top: 10px; text-align: center;">
-            <div class="infobox infobox-green infobox-sales">
-                <div class="infobox-icon">
-                    <i class="icon-shopping-cart"></i>
-                </div>
-                <div class="infobox-data">
-                    <span id="salenum" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Sales</div>
-                </div>
-                <div id="saletotal" class="stat stat-success">-</div>
+          <div class="infobox infobox-green infobox-sales">
+              <div class="infobox-icon">
+                  <i class="icon-shopping-cart"></i>
+              </div>
+
+              <div class="infobox-data">
+                  <span id="salenum" class="infobox-data-number">-</span>
+                  <div class="infobox-content">POS Sales</div>
+              </div>
+              <div id="saletotal" class="stat stat-success">-</div>
+          </div>
+          <div class="infobox infobox-green infobox-invoices">
+            <div class="infobox-icon">
+              <span class="octicon octicon-clippy"></span>
+            </div>
+            <div class="infobox-data">
+              <span id="invoicenum" class="infobox-data-number">-</span>
+              <div class="infobox-content">Invoices</div>
+            </div>
+            <div id="invoicetotal" class="stat stat-success">-</div>
+          </div>
+
+          <div class="infobox infobox-red">
+            <div class="infobox-icon">
+              <span class="octicon octicon-diff"></span>
             </div>
 
-            <div class="infobox infobox-orange infobox-refunds">
-                <div class="infobox-icon">
-                    <i class="glyphicon glyphicon-repeat"></i>
-                </div>
+            <div class="infobox-data">
+              <div id="invoicesbalance" class="stat stat-success">-</div>
+              <div class="infobox-content">Invoices Balance</div>
+            </div>
+          </div>
 
-                <div class="infobox-data">
-                    <span id="refundnum" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Refunds</div>
-                </div>
-
-                <div id="refundtotal" class="stat stat-important">-</div>
-            </div><br/>
-
+          <div class="infobox infobox-green">
+            <div class="infobox-icon">
+              <span class="octicon octicon-checklist"></span>
+            </div>
+            <div class="infobox-data">
+              <div id="invoicespaid" class="stat stat-success">-</div>
+              <div class="infobox-content">Invoices Paid</div>
+            </div>
+          </div>
+          <div class="infobox infobox-orange infobox-refunds">
+              <div class="infobox-icon">
+                  <i class="glyphicon glyphicon-repeat"></i>
+              </div>
+              <div class="infobox-data">
+                  <span id="refundnum" class="infobox-data-number">-</span>
+                  <div class="infobox-content">Refunds</div>
+              </div>
+              <div id="refundtotal" class="stat stat-important">-</div>
+          </div>
+          <div class="infobox infobox-red infobox-voids">
+              <div class="infobox-icon">
+                  <i class="icon-ban-circle"></i>
+              </div>
+              <div class="infobox-data">
+                  <span id="voidnum" class="infobox-data-number">-</span>
+                  <div class="infobox-content">Voids</div>
+              </div>
+              <div id="voidtotal" class="stat stat-important">-</div>
+          </div>
             <div class="infobox infobox-red infobox-voids">
                 <div class="infobox-icon">
                     <i class="icon-ban-circle"></i>
                 </div>
-
                 <div class="infobox-data">
-                    <span id="voidnum" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Voids</div>
+                    <span id="cash" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Total Cash</div>
                 </div>
-                <div id="voidtotal" class="stat stat-important">-</div>
             </div>
 
+            <div class="infobox infobox-green infobox-mpesa">
+                <div class="infobox-icon">
+                    <span class="octicon octicon-device-mobile"></span>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="mpesa" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Total Mpesa</div>
+                </div>
+            </div>
+
+            <div class="infobox infobox-blue infobox-bank">
+                <div class="infobox-icon">
+                    <span class="octicon octicon-credit-card"></span>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="bank" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Total Bank</div>
+                </div>
+            </div>
+
+            <div class="infobox infobox-red infobox-credit">
+                <div class="infobox-icon">
+                   <span class="octicon octicon-issue-opened"></span>
+                </div>
+
+                <div class="infobox-data">
+                    <span id="credit" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Total Credit</div>
+                </div>
+            </div>
             <div class="infobox infobox-blue2 infobox-takings">
                 <div class="infobox-icon">
                     <i class="icon-briefcase"></i>
                 </div>
-
                 <div class="infobox-data">
                     <span id="takings" class="infobox-data-number">-</span>
                     <div class="infobox-content">Revenue</div>
                 </div>
             </div>
-
+            <div class="infobox infobox-orange infobox-bills">
+                <div class="infobox-icon">
+                    <i class="icon-forward"></i>
+                </div>
+                <div class="infobox-data">
+                    <span id="billsnum" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Bills</div>
+                </div>
+                <div id="bills" class="stat stat-important">-</div>
+            </div>
             <div class="infobox infobox-orange infobox-expenses">
                 <div class="infobox-icon">
                     <i class="icon-forward"></i>
                 </div>
-
                 <div class="infobox-data">
                     <span id="expensesnum" class="infobox-data-number">-</span>
                     <div class="infobox-content">Expenses</div>
                 </div>
-
                 <div id="expenses" class="stat stat-important">-</div>
             </div>
-
             <div class="infobox infobox-orange infobox-cost">
                 <div class="infobox-icon">
                     <i class="icon-dollar"></i>
                 </div>
-
                 <div class="infobox-data">
                     <span id="cost" class="infobox-data-number">-</span>
                     <div class="infobox-content">Cost</div>
                 </div>
             </div>
-
-            <div class="infobox infobox-green infobox-profit">
+            <div class="infobox infobox-green infobox-actual-cash">
                 <div class="infobox-icon">
                     <i class="icon-bitcoin"></i>
                 </div>
-
                 <div class="infobox-data">
-                    <span id="profit" class="infobox-data-number">-</span>
-                    <div class="infobox-content">Gross Profit</div>
+                    <span id="actualcash" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Actual cash</div>
                 </div>
             </div>
+    </div>
+</div>
+</div>
 
-            <div class="infobox infobox-green infobox-profit">
-                <div class="infobox-icon">
-                    <i class="icon-trophy"></i>
-                </div>
+<div class="vspace-sm"></div>
+
+<div class="col-sm-7">
+    <div class="widget-box transparent">
+        <div class="widget-header widget-header-flat">
+            <h4 class="lighter">
+                <i class="icon-signal"></i>
+                Sale Graph
+            </h4>
+            <div class="widget-toolbar no-border">
+                <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                    <span id="grange">This Week</span>
+                    <i class="icon-angle-down icon-on-right bigger-110"></i>
+                </button>
+
+                <ul id="grangevalues" class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
+                    <li onclick="setGraph($(this));" class="active" >
+                        <a class="blue">
+                            <i class="icon-caret-right bigger-110">&nbsp;</i>
+                            <span class="grangeval">This Week</span>
+                        </a>
+                    </li>
+
+                    <li onclick="setGraph($(this));">
+                        <a>
+                            <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                            <span class="grangeval">Last Week</span>
+                        </a>
+                    </li>
+
+                    <li onclick="setGraph($(this));">
+                        <a>
+                            <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                            <span class="grangeval">This Month</span>
+                        </a>
+                    </li>
+
+                    <li onclick="setGraph($(this));">
+                        <a>
+                            <i class="icon-caret-right bigger-110 invisible">&nbsp;</i>
+                            <span class="grangeval">Last Month</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
                 <div class="infobox-data">
                     <span id="gprofit" class="infobox-data-number">-</span>
@@ -350,39 +466,45 @@
 
     var placeholder = $('#piechart-placeholder').css({'width':'90%' , 'min-height':'150px'});
     var piedata = [];
+    var etime;
+    var stime;
 
-    function loadTodayStats(totals){
+
+    function loadTodayStats(totals, sales, invoices){
         if (!totals){
             return false;
         }
         // populate the fields
-        $("#salenum").text(totals.salenum);
-        $("#saletotal").text(WPOS.util.currencyFormat(totals.saletotal));
-        // $("#invoicenum").text(totals.invoicenum);
-        // $("#invoicetotal").text(WPOS.util.currencyFormat(totals.invoicetotal));
-        // $("#invoicesbalance").text(WPOS.util.currencyFormat(totals.invoicebalance));
-        // $("#invoicespaid").text(WPOS.util.currencyFormat(totals.invoicetotal-totals.invoicebalance));
+        $("#salenum").text(sales.salenum);
+        $("#saletotal").text(WPOS.util.currencyFormat(sales.saletotal));
+        $("#invoicenum").text(invoices.invoicenum);
+        $("#invoicetotal").text(WPOS.util.currencyFormat(invoices.invoicetotal));
+        $("#invoicesbalance").text(WPOS.util.currencyFormat(invoices.invoicebalance));
+        $("#invoicespaid").text(WPOS.util.currencyFormat(parseFloat(invoices.invoicetotal) - parseFloat(invoices.invoicebalance)));
         $("#refundnum").text(totals.refundnum);
         $("#refundtotal").text(WPOS.util.currencyFormat(totals.refundtotal));
         $("#voidnum").text(totals.voidnum);
         $("#voidtotal").text(WPOS.util.currencyFormat(totals.voidtotal));
-        // $("#cash").text(WPOS.util.currencyFormat(totals.totalcash));
-        // $("#mpesa").text(WPOS.util.currencyFormat(totals.totalmpesa));
-        // $("#credit").text(WPOS.util.currencyFormat(totals.totalcredit));
-        // $("#bank").text(WPOS.util.currencyFormat(totals.totalbank));
-        $("#takings").text(WPOS.util.currencyFormat(totals.totaltakings, true));
+        $("#cash").text(WPOS.util.currencyFormat(totals.totalcash));
+        $("#mpesa").text(WPOS.util.currencyFormat(totals.totalmpesa));
+        $("#credit").text(WPOS.util.currencyFormat(totals.totalcredit));
+        $("#bank").text(WPOS.util.currencyFormat(totals.totalbank));
+        $("#takings").text(WPOS.util.currencyFormat((parseFloat(totals.totalpayments) - parseFloat(totals.refundtotal)), true));
         $("#expenses").text(WPOS.util.currencyFormat(totals.expenses, true));
         $("#expensesnum").text(totals.expensesnum);
-        $("#cost").text(WPOS.util.currencyFormat(totals.cost, true));
-        $("#profit").text(WPOS.util.currencyFormat(totals.profit, true));
-        $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
+        $("#bills").text(WPOS.util.currencyFormat(totals.bills, true));
+        $("#billsnum").text(totals.billsnum);
+        $("#cost").text(WPOS.util.currencyFormat(parseFloat(sales.cost) + parseFloat(invoices.invoicecost), true));
+        $("#actualcash").text(WPOS.util.currencyFormat(totals.totalcash-totals.expenses - totals.bills, true));
+        // $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
         // Set onclicks
-        $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(totals.salerefs); });
-        $(".infobox-invoices").on('click', function(){ WPOS.transactions.openTransactionList(totals.invoicerefs); });
+        $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(sales.salerefs); });
+        $(".infobox-invoices").on('click', function(){ WPOS.transactions.openTransactionList(invoices.invoicerefs); });
         $(".infobox-refunds").on('click', function(){ WPOS.transactions.openTransactionList(totals.refundrefs); });
         $(".infobox-voids").on('click', function(){ WPOS.transactions.openTransactionList(totals.voidrefs); });
         $(".infobox-takings").on('click', function(){ WPOS.transactions.openTransactionList(totals.refs); });
         $(".infobox-expenses").on('click', function(){ WPOS.transactions.openExpensesList(totals.expensesrefs); });
+        $(".infobox-bills").on('click', function(){ WPOS.transactions.openExpensesList(totals.billsrefs); });
         return true;
     }
     function loadPopularItems(items){
@@ -686,9 +808,8 @@
       }
       isExpired ? $("#status").html('<span style="vertical-align: middle;margin-right: 5px;" class="label label-success arrowed">Activated</span> Expires on: <small>'+ new Date(data.expiryDate).toDateString() + '</small>'): $("#status").html('<span style="vertical-align: middle;" class="label label-danger arrowed">Expired</span>');
     }
-    
-    jQuery(function($) {
 
+    function initDashboard() {
         // Chart hover Tooltip
         var $tooltip = $("<div class='tooltip top in'><div class='tooltip-inner'></div></div>").hide().appendTo('body');
         var previousPoint = null;
@@ -737,11 +858,19 @@
         var ttoday = getTodayTimeVals();
         var pvals = getPieValues();
         var gvals = getTimeVals($("#grange").text());
-        var req = {"stats/itemselling":{"stime":tmonth[0], "etime":tmonth[1]}, "stats/general":{"stime":ttoday[0], "etime":ttoday[1]}, "graph/general":{"stime":gvals[0], "etime":gvals[1], "interval":86400000}, "pos/subscription":{}};
+        var sdate = $("#repstime").datepicker("getDate");
+        sdate.setHours(0); sdate.setMinutes(0); sdate.setSeconds(0);
+        var stime = sdate.getTime();
+        var edate = sdate;
+        edate.setHours(23); edate.setMinutes(59); edate.setSeconds(59);
+        etime = edate.getTime();
+        var req = {"stats/itemselling":{"stime":tmonth[0], "etime":tmonth[1]}, "stats/general":{"stime":stime, "etime":etime, "type": 'all'}, "graph/general":{"stime":gvals[0], "etime":gvals[1], "interval":86400000}, "pos/subscription":{}};
         req[pvals[0]] = {"stime":pvals[1], "etime":pvals[2], "totals":true};
         var data = WPOS.sendJsonData("multi", JSON.stringify(req));
-        // Load todays stats
-        loadTodayStats(data['stats/general']);
+        var sales = WPOS.sendJsonData('multi', JSON.stringify({"stats/general":{"stime":stime, "etime":etime, "type": 'sale'}}));
+        var invoices = WPOS.sendJsonData('multi', JSON.stringify({"stats/general":{"stime":stime, "etime":etime, "type": 'invoice'}}));
+        // Load today's stats
+        loadTodayStats(data['stats/general'], sales['stats/general'], invoices['stats/general']);
         // load graph
         drawGraph(data['graph/general']);
         // initialize the initial pie chart
@@ -752,6 +881,20 @@
         loadSubscriptionStatus(data['pos/subscription']);
         // hide loader
         WPOS.util.hideLoader();
+    }
+
+    jQuery(function($) {
+        var today = getTodayTimeVals();
+        $("#repstime").datepicker({dateFormat:"dd/mm/yy", maxDate: new Date(today[1]),
+            onSelect: function(text, inst){
+                var date = $("#repstime").datepicker("getDate");
+                date.setHours(0); date.setMinutes(0); date.setSeconds(0);
+                stime = date.getTime();
+                initDashboard();
+            }
+        });
+        $("#repstime").datepicker('setDate', new Date(today[0]));
+        initDashboard()
     });
 
 </script>

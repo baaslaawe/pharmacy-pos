@@ -1,31 +1,31 @@
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>
-        Invoice #{{sale_ref}}
-    </title>
-    <style type="text/css">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>
+    Invoice #{{sale_ref}}
+  </title>
+  <style type="text/css">
 
-        body {
-            font-family: Verdana, Geneva, sans-serif;
-            margin-left: 35px;
-            margin-right: 45px;
-        }
+    body {
+      font-family: Verdana, Geneva, sans-serif;
+      margin-left: 35px;
+      margin-right: 45px;
+    }
 
-        th {
-            border: 1px solid #666666;
-            background-color: #D3D3D3;
-        }
+    th {
+      border: 1px solid #666666;
+      background-color: #D3D3D3;
+    }
 
-        h2 {
-            margin-bottom: 0;
-        }
+    h2 {
+      margin-bottom: 0;
+    }
 
-        p.notop {
-            margin-top: 0;
-        }
+    p.notop {
+      margin-top: 0;
+    }
 
-    </style>
+  </style>
 </head>
 <body>
 <table width="100%">
@@ -96,9 +96,34 @@
         <td colspan="2" style="text-align: right; padding-right: 15px;"><b>Amount Due: </b></td>
         <td style="text-align: center;">{{invoice_balance}}</td>
     </tr>
+  {{/sale_discount}}
+  <tr>
+    <td colspan="4" align="right">
+      Grand Total:
+    </td>
+    <td align="right">
+      {{#currency}}{{sale_total}}{{/currency}}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" align="right">
+      Amount Paid:
+    </td>
+    <td align="right">
+      {{#currency}}{{invoice_paid}}{{/currency}}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" align="right">
+      Amount Due:
+    </td>
+    <td align="right">
+      {{#currency}}{{invoice_balance}}{{/currency}}
+    </td>
+  </tr>
 </table>
 <div style="margin-top: 20px; text-align: center;">
-    {{payment_instructions}}
+  {{payment_instructions}}
 </div>
 </body>
 </html>

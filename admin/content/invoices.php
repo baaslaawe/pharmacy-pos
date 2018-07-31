@@ -5,6 +5,7 @@
     </h1>
     <button class="btn btn-primary btn-sm pull-right" onclick="showInvoiceForm();"><i class="icon-plus-sign align-top bigger-125"></i>Add</button>
     <button class="btn btn-success btn-sm pull-right" style="margin-right: 8px;" onclick="exportCurrentInvoices();"><i class="icon-cloud-download align-top bigger-125"></i>Export CSV</button>
+    <button class="btn btn-success btn-sm pull-right" style="margin-right: 8px;" onclick="exportInvoicesDebts();"><i class="icon-print align-top bigger-125"></i>Print Debtors</button>
     <!-- <div class="pull-right refsearchbox">
         <label for="refsearch">Ref:</label>&nbsp;<input id="refsearch" type="text" style="height: 35px;" onkeypress="if(event.keyCode == 13){doSearch();}"/>
         <button class="btn btn-primary btn-sm" style="vertical-align: top;" onclick="doSearch();"><i class="icon-search align-top bigger-125"></i>Search</button>
@@ -296,6 +297,49 @@
         );
 
         WPOS.initSave("invoices-"+WPOS.util.getDateFromTimestamp(stime)+"-"+WPOS.util.getDateFromTimestamp(etime), csv);
+    }
+
+    function exportInvoicesDebts(){
+        var invoices = WPOS.transactions.getTransactions();
+        var customers = WPOS.customers.getCustomers();
+
+        var data = {};
+        var refs = datatable.api().rows('.selected').data().map(function(row){ return row.ref }).join(',').split(',');
+
+        if (refs && refs.length > 0 && refs[0]!='') {
+            for (var i = 0; i < refs.length; i++) {
+                var ref = refs[i];
+                if (invoices.hasOwnProperty(ref))
+                    data[ref] = invoices[ref];
+            }
+        } else {
+            var tempinvoices = [];
+            for (var key in invoices) {
+                var status = getTransactionStatus(invoices[key]);
+                if (status !== 1 && status !== 2 && status !== -3)
+                    tempinvoices.push(invoices[key]);
+            }
+            data = tempinvoices;
+        }
+
+        var invoice, paid;
+        var debtors = [];
+        for(var i in data) {
+            invoice = data[i];
+            paid = 0;
+            for(var p in invoice.payments){
+                paid += parseInt(invoice.payments[p]['amount']);
+            }
+            debtors.push({
+                customer: customers[invoice.custid]['name'],
+                paid: paid,
+                balance: invoice.balance,
+                total: invoice.total,
+                date: invoice.dt
+            });
+        }
+
+        WPOS.print.printDebtors(debtors);
     }
 
     $(function() {

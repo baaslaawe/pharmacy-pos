@@ -374,17 +374,18 @@ class WposPosSale {
         // check for void record and insert
         $result = $this->insertVoidRecords($hasrefund, $hasvoid, $result);
 
+
         if ($result["error"] == "OK"){
-        // update database with new json data and void indicator
-        if ($this->salesMdl->edit(null, $this->ref, json_encode($this->jsonobj), $status) !== false) {
-            if (!$newtran){
-                $result['data'] = $this->jsonobj; // only need to update if an old transaction
-                // broadcast to other devices
-                $this->broadcastSale($this->deviceid, true); // add flag indicating updated sale (for admin dashboard)
+            // update database with new json data and void indicator
+            if ($this->salesMdl->edit(null, $this->ref, json_encode($this->jsonobj), $status) !== false) {
+                if (!$newtran){
+                    $result['data'] = $this->jsonobj; // only need to update if an old transaction
+                    // broadcast to other devices
+                    $this->broadcastSale($this->deviceid, true); // add flag indicating updated sale (for admin dashboard)
+                }
+            } else {
+                $result["error"] = $this->salesMdl->errorInfo;
             }
-        } else {
-            $result["error"] = $this->salesMdl->errorInfo;
-        }
         }
         return $result;
     }

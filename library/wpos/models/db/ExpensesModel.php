@@ -28,7 +28,7 @@ class ExpensesModel extends DbConfig
     /**
      * @var array
      */
-    protected $_columns = ['id', 'name', 'dt'];
+    protected $_columns = ['id', 'name', 'type', 'dt'];
 
     /**
      * Init the DB
@@ -39,13 +39,14 @@ class ExpensesModel extends DbConfig
     }
 
     /**
-     * @param $name
+     * @param $name string
+     * @param $type string
      * @return bool|string Returns false on an unexpected failure, returns -1 if a unique constraint in the database fails, or the new rows id if the insert is successful
      */
-    public function create($name)
+    public function create($name, $type)
     {
-        $sql          = "INSERT INTO expenses (`name`, `dt`) VALUES (:name, now());";
-        $placeholders = [":name"=>$name];
+        $sql          = "INSERT INTO expenses (`name`, `type`, `dt`) VALUES (:name, :type, now());";
+        $placeholders = [":name"=>$name, ":type"=>$type];
 
         return $this->insert($sql, $placeholders);
     }
@@ -55,9 +56,10 @@ class ExpensesModel extends DbConfig
      * @param null $stime
      * @param null $etime
      * @param bool $report
+     * @param bool $type
      * @return array|bool Returns false on an unexpected failure or an array of selected rows
      */
-    public function get($Id = null, $stime = null, $etime = null, $report= false) {
+    public function get($Id = null, $stime = null, $etime = null, $report= false, $type=null) {
         $sql = "SELECT e.*, COUNT(i.id) as enum, COALESCE(SUM(i.amount), 0) as total, COALESCE(GROUP_CONCAT(ref SEPARATOR ','),'') as refs FROM expenses as e LEFT OUTER JOIN expenses_items as i ON e.id=i.expenseid";
         $placeholders = [];
         if ($Id !== null) {
@@ -78,6 +80,13 @@ class ExpensesModel extends DbConfig
             $placeholders[':etime'] = $etime;
         }
 
+        if ($type !== null) {
+            if (empty($placeholders)) {
+                $sql .= ' WHERE';
+            }
+            $sql .= ' AND e.type = :type';
+            $placeholders[':type'] = $type;
+        }
         if ($report || $Id !== null || ($stime == null && $etime == null)) {
             $sql.=" GROUP BY e.id";
         }
@@ -87,13 +96,14 @@ class ExpensesModel extends DbConfig
     /**
      * @param $id
      * @param $name
+     * @param $type
      * @return bool|int Returns false on an unexpected failure or number of affected rows
      */
-    public function edit($id, $name)
+    public function edit($id, $name, $type)
     {
 
-        $sql = "UPDATE expenses SET name=:name WHERE id=:id;";
-        $placeholders = [":id"=>$id, ":name"=>$name];
+        $sql = "UPDATE expenses SET name=:name, type=:type WHERE id=:id;";
+        $placeholders = [":id"=>$id, ":name"=>$name, ":type"=>$type];
 
         return $this->update($sql, $placeholders);
     }

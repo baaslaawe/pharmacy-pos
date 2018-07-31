@@ -14,7 +14,7 @@
             <div class="col-xs-12">
 
                 <div class="table-header">
-                    Manage your business expenses
+                    Manage your business liabilities
                 </div>
 
                 <table id="expensestable" class="table table-striped table-bordered table-hover dt-responsive" style="width: 100%;">
@@ -27,8 +27,9 @@
                             </label>
                         </th>
                         <th data-priority="4">ID</th>
-                        <th data-priority="2">Name</th>
-                        <th data-priority="3">Total</th>
+                        <th data-priority="2">Liability</th>
+                        <th data-priority="3">Type</th>
+                        <th data-priority="5">Total</th>
                         <th data-priority="1" class="noexport">Actions</th>
                     </tr>
                     </thead>
@@ -47,16 +48,35 @@
                 <input id="expenseid" type="hidden"/>
             </td>
         </tr>
+        <tr>
+            <td>
+                <label for="liabilityType">Type: </label>
+            </td>
+            <td>
+                <select class="form-control" name="liabilityType" id="liabilityType"></select>
+            </td>
+        </tr>
     </table>
 </div>
 <div id="addexpensesdialog" class="hide">
     <table>
         <tr>
-            <td style="text-align: right;">
-                <label>Name:&nbsp;</label>
+            <td>
+                <label for="newexpensename">Name:&nbsp;</label>
             </td>
             <td>
-                <input id="newexpensename" class="form-control" type="text"/><br/>
+                <input id="newexpensename" class="form-control" type="text">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="newliabilityType">Type: </label>
+            </td>
+            <td>
+                <select class="form-control" name="liabilityType" id="newliabilityType">
+                    <option value="expense">Expense</option>
+                    <option value="bill">Bill</option>
+                </select>
             </td>
         </tr>
     </table>
@@ -174,16 +194,17 @@
         datatable = $('#expensestable').dataTable({
             "bProcessing": true,
             "aaData": suparray,
-            "aaSorting": [[ 2, "asc" ]],
+            "aaSorting": [[ 3, "asc" ]],
             "aoColumns": [
                 { mData:null, sDefaultContent:'<div style="text-align: center"><label><input class="ace dt-select-cb" type="checkbox"><span class="lbl"></span></label><div>', bSortable: false, sClass:"noexport" },
                 { "mData":"id" },
                 { "mData":"name" },
-                { "mData": "total"},
+                { "mData": function (data, type, val) {return data.type.toUpperCase()} },                { "mData": "total"},
                 { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="blue" onclick="openaddexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-plus bigger-130"></i></a><a class="green" onclick="openexpensehistorydialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-time bigger-130"></i></a><a class="red" onclick="removeExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
             ],
             "columns": [
                 {},
+                {type: "numeric"},
                 {type: "numeric"},
                 {type: "string"},
                 {type: "numeric"},
@@ -229,7 +250,7 @@
             width: 'auto',
             modal: true,
             autoOpen: false,
-            title: "Add Expense",
+            title: "Add liability",
             title_html: true,
             buttons: [
                 {
@@ -258,7 +279,7 @@
             width: 'auto',
             modal: true,
             autoOpen: false,
-            title: "Edit Expense",
+            title: "Edit liability",
             title_html: true,
             buttons: [
                 {
@@ -287,7 +308,7 @@
             width: 'auto',
             modal: true,
             autoOpen: false,
-            title: "Add an expense",
+            title: "Add a liability",
             title_html: true,
             buttons: [
                 {
@@ -317,7 +338,7 @@
             maxWidth: '900px',
             modal: true,
             autoOpen: false,
-            title: "Expenses History",
+            title: "History",
             title_html: true,
             buttons: [
                 {
@@ -338,7 +359,7 @@
             width: 'auto',
             modal: true,
             autoOpen: false,
-            title: "Edit expense item",
+            title: "Edit item",
             title_html: true,
             buttons: [
                 {
@@ -438,11 +459,23 @@
         });
         initialized = true;
     }
+    function selectLiabilityType(type) {
+        var liabilityType = $("#liabilityType");
+        liabilityType.html('');
+        if (type === 'expense') {
+            liabilityType.append('<option selected value="expense">Expense</option>');
+            liabilityType.append('<option  value="bill">Bill</option>');
+        } else {
+            liabilityType.append('<option  value="expense">Expense</option>');
+            liabilityType.append('<option selected value="bill">Bill</option>');
+        }
+    }
     // updating records
     function openeditexpensedialog(id){
         var item = expenses[id];
         $("#expenseid").val(item.id);
         $("#expensename").val(item.name);
+        selectLiabilityType(item.type);
         $("#editexpensedialog").dialog("open");
     }
     // add specific expenses
@@ -540,6 +573,7 @@
             // adding a new category
             var name_field = $("#newexpensename");
             item.name = name_field.val();
+            item.type = $("#newliabilityType").val();
             result = WPOS.sendJsonData("expenses/add", JSON.stringify(item));
             if (result!==false){
                 expenses[result.id] = result;
@@ -551,6 +585,7 @@
             // updating an item
             item.id = $("#expenseid").val();
             item.name = $("#expensename").val();
+            item.type = $("#liabilityType").val();
             result = WPOS.sendJsonData("expenses/edit", JSON.stringify(item));
             if (result!==false){
                 expenses[result.id] = result;

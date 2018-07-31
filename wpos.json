@@ -1,6 +1,6 @@
 {
-  "name": "Pharmacy POS",
-  "short_name": "pharmacy pos",
+  "name": "Biashara Retail POS",
+  "short_name": "biashara pos",
   "start_url": "http://localhost",
   "display": "standalone",
   "background_color": "#237a1b",

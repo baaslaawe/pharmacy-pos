@@ -301,7 +301,7 @@ function WPOSTransactions() {
                 }
             }
             $(itemtable).append('<tr><td>' + items[i].qty + '</td><td>' + items[i].name + modStr + '</td><td>' + WPOS.util.currencyFormat(items[i].unit) + '</td><td>' + taxStr + '</td><td>' + WPOS.util.currencyFormat(items[i].price) + '</td>' +
-                '<td><div class="action-buttons itembuttons" style="text-align: right;"><a onclick="WPOS.transactions.openInvoiceItemDialog(' + i + ');" class="green"><i class="icon-pencil bigger-130"></i></a><a onclick="WPOS.transactions.deleteInvoiceItem(' + items[i].id + ')" class="red"><i class="icon-trash bigger-130"></i></a></div></td></tr>');
+                '<td><div class="action-buttons itembuttons" style="text-align: right;"><a onclick="WPOS.transactions.deleteInvoiceItem(' + items[i].id + ')" class="red"><i class="icon-trash bigger-130"></i></a></div></td></tr>');
         }
     }
 
@@ -438,10 +438,19 @@ function WPOSTransactions() {
         $("#voidform").dialog('open');
     };
 
+    function getItem(id) {
+        var items = WPOS.getJsonData("stock/get");
+        for(var i in items){
+            if (items[i]['id'] === id)
+                return items[i];
+        }
+        }
+
     this.openInvoiceItemDialog = function(index){
         var itemdialog = $('#transitemdialog');
         if (index !== false) {
             var item = transactions[curref].items[index];
+            var sitem = getItem(item.sitemid);
             $('#transitemid').val(item.id);
             $('#transitemsitemid').val(item.sitemid);
             $('#transitemname').val(item.name);
@@ -451,6 +460,7 @@ function WPOSTransactions() {
             $('#transitemcost').val(item.cost);
             $('#transitemunit').val(item.unit);
             $('#transitemtaxid').val(item.taxid);
+            $('#transitemstocklevel').val(sitem.stocklevel);
             $('#transitemprice').text(WPOS.util.currencyFormat(item.price));
             itemdialog.dialog('option', 'title', 'Edit Item');
         } else {
@@ -719,8 +729,8 @@ function WPOSTransactions() {
         if (answer) {
             // show loader
             WPOS.util.showLoader();
-            var reason = $("#voidreason").val();
-            var result = WPOS.sendJsonData("sales/adminvoid", JSON.stringify({"id": curid, "reason": reason}));
+            var refobj = getVoidObject(transactions[curref], false);
+            var result = WPOS.sendJsonData("sales/void", JSON.stringify(refobj));
             if (result !== false) {
                 transactions[curref] = result;
                 reloadTransactionTables();
@@ -822,6 +832,51 @@ function WPOSTransactions() {
     };
 
     // functions for processing json data
+    function getVoidObject(ref, refund){
+        var refundobj;
+        var date = new Date().getTime();
+        // get data from the trans object, it holds offline + remotely loaded transactions
+        refundobj = ref;
+        // add refund/void shared data
+        var shareddata = {"userid": WPOS.loggeduser.id, "deviceid": 0, "locationid": 0, "processdt": date};
+        // add specific data
+        if (refund){
+            // if refund data is not defined, create an array
+            if (refundobj.refunddata == null){
+                refundobj.refunddata = [];
+            }
+            // add refund specific values to shared data
+            shareddata.reason = $("#refundreason").val();
+            var items = [];
+            // get returned items
+            var numreturned;
+            $("#refunditems").children("tr").each(function(index, item){
+                numreturned = $(item).find('.refundqty').val();
+                if (numreturned>0){
+                    var ref = $(item).find('.refunditemref').val();
+                    if (ref!=0){
+                        items.push({"ref": ref, "numreturned": numreturned});
+                    } else {
+                        items.push({"ref": $(item).find('.refunditemid').val(), "numreturned": numreturned});
+                    }
+                }
+            });
+            var refamtinput = $("#refundamount");
+            shareddata.items = items;
+            shareddata.method = $("#refundmethod").val();
+            shareddata.amount = parseFloat(refamtinput.val()).toFixed(2);
+            if (refamtinput.data('paydata'))
+                shareddata.paydata = refamtinput.data('paydata');
+            // add to refund array
+            refundobj.refunddata.push(shareddata);
+        } else {
+            refundobj.voiddata = shareddata;
+            refundobj.voiddata.reason = $("#voidreason").val();
+        }
+
+        return refundobj;
+    }
+
     function getStatusHtml(status) {
         var stathtml;
         switch (status) {

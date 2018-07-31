@@ -16,11 +16,12 @@ RUN apt update -y && \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd
 
+RUN apt install -y git
+
 WORKDIR /var/www/html
 
 COPY . /var/www/html
 
-RUN apt install -y git
 
 COPY apache-config.conf /etc/apache2/sites-enabled/000-default.conf
 COPY mariadb/dbconfig.json library/wpos/.dbconfig.json
