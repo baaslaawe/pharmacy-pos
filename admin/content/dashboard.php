@@ -842,3 +842,31 @@
     });
 
 </script>
+neral'], sales['stats/general'], invoices['stats/general']);
+        // load graph
+        drawGraph(data['graph/general']);
+        // initialize the initial pie chart
+        generatePieChart(data[pvals[0]]);
+        // load popular items
+        loadPopularItems(data['stats/itemselling']);
+        // load susbscription status
+        loadSubscriptionStatus(data['pos/subscription']);
+        // hide loader
+        WPOS.util.hideLoader();
+    }
+
+    jQuery(function($) {
+        var today = getTodayTimeVals();
+        $("#repstime").datepicker({dateFormat:"dd/mm/yy", maxDate: new Date(today[1]),
+            onSelect: function(text, inst){
+                var date = $("#repstime").datepicker("getDate");
+                date.setHours(0); date.setMinutes(0); date.setSeconds(0);
+                stime = date.getTime();
+                initDashboard();
+            }
+        });
+        $("#repstime").datepicker('setDate', new Date(today[0]));
+        initDashboard()
+    });
+
+</script>
