@@ -721,13 +721,13 @@ function WPOS() {
                     }
                     // start websocket connection
                     startSocket();
-                    setStatusBar(1, "WPOS is Online", "The POS is running in online mode.\nThe feed server is connected and receiving realtime updates.", 0);
+                    setStatusBar(1, "Feed server is Online", "The POS is running in online mode.\nThe feed server is connected and receiving realtime updates.", 0);
                     initDataSuccess(loginloader);
                     var offline_num = WPOS.sales.getOfflineSalesNum();
                     if (offline_num>0){
                         $("#backup_btn").show();
                         // check for offline sales on login
-                        setTimeout('if (WPOS.sales.uploadOfflineRecords()){ WPOS.setStatusBar(1, "WPOS is online"); }', 2000);
+                        setTimeout('if (WPOS.sales.uploadOfflineRecords()){ WPOS.setStatusBar(1, "Feed server is online"); }', 2000);
                     } else {
                         $("#backup_btn").hide();
                     }
@@ -746,7 +746,7 @@ function WPOS() {
         swal({
             type: 'error',
             title: 'Oops...',
-            text: 'Your internet connection is not active and Biashara Retail POS has started in offline mode.\nSome features are not available in offline mode but you can always make sales and alter transactions that are locally available. \nWhen a connection becomes available the POS will process your transactions on the server.'
+            text: 'Your internet connection is not active and Pharmacy Plus POS has started in offline mode.\nSome features are not available in offline mode but you can always make sales and alter transactions that are locally available. \nWhen a connection becomes available the POS will process your transactions on the server.'
           });
           
           
@@ -756,7 +756,7 @@ function WPOS() {
     function initDataSuccess(loginloader){
         if (loginloader){
             setLoadingBar(100, "Massaging the data...");
-            $("title").text("Biashara Retail POS");
+            $("title").text("Pharmacy Plus POS");
             WPOS.initPlugins();
             populateDeviceInfo();
             setTimeout(hideLogin, 500);
@@ -1059,7 +1059,7 @@ function WPOS() {
         if (canDoOffline() === true) {
             // set js indicator: important
             online = false;
-            setStatusBar(3, "WPOS is Offline", "The POS is offine and will store sale data locally until a connection becomes available.", 0);
+            setStatusBar(3, "Feed server is Offline", "The POS is offine and will store sale data locally until a connection becomes available.", 0);
             // start online check routine
             checktimer = setInterval(doOnlineCheck, 60000);
             if (WPOS.sales.getOfflineSalesNum()>0)
@@ -1094,7 +1094,7 @@ function WPOS() {
             // load fresh data
             initData(false);
             // initData();
-            setStatusBar(1, "WPOS is Online", "The POS is running in online mode.\nThe feed server is connected and receiving realtime updates.", 0);
+            setStatusBar(1, "Feed server is Online", "The POS is running in online mode.\nThe feed server is connected and receiving realtime updates.", 0);
         }
     }
 
@@ -1942,7 +1942,7 @@ function WPOS() {
     function onSocketConnect(){
         socketon = true;
         if (WPOS.isOnline() && defaultStatus.type != 1){
-            setStatusBar(1, "WPOS is Online", "The POS is running in online mode.\nThe feed server is connected and receiving realtime updates.", 0);
+            setStatusBar(1, "Feed server is Online", "The POS is running in online mode.\nThe feed server is connected and receiving realtime updates.", 0);
         }
     }
 
