@@ -963,7 +963,8 @@ function WPOSPrint(kitchenMode) {
         cmd += (ltr ? esc_a_l : esc_a_r);
         // Date for today in bold followed by new line
         var today = new Date();
-        var date = today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
+        var month = today.getMonth() + 1;
+        var date = today.getDate() + '/' + month + '/' + today.getFullYear();
         cmd += esc_a_c + esc_bold_on + getEscTableRow(formatLabel(translateLabel("Date #"), true, 1), date, false, false, false) + font_reset;
         cmd += '\n';
 
