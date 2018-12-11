@@ -383,7 +383,7 @@ function WPOSPrint(kitchenMode) {
         var printer = getPrintSetting('reports', 'printer');
         switch (getPrintSetting('reports', 'method')) {
             case "br":
-                browserPrintHtml($("#reportcontain").html(), 'PharmacyPOS Report', 600, 800);
+                browserPrintHtml($("#reportcontain").html(), 'Que POS Report', 600, 800);
                 break;
             case "qz":
                 alert("QZ-Print integration is no longer available, switch to the new webprint applet");
@@ -464,7 +464,7 @@ function WPOSPrint(kitchenMode) {
         var method = getPrintSetting(printer, 'method');
         switch (method) {
             case "br":
-                browserPrintHtml("<pre style='text-align: center; background-color: white;'>" + text + "</pre>", 'Pharmacy POS Receipt', 310, 600);
+                browserPrintHtml("<pre style='text-align: center; background-color: white;'>" + text + "</pre>", 'Que POS Receipt', 310, 600);
                 return true;
             case "qz":
                 alert("QZ-Print integration is no longer available, switch to the new webprint applet");
@@ -492,7 +492,7 @@ function WPOSPrint(kitchenMode) {
         var method = getPrintSetting('receipts', 'method');
         switch (method) {
             case "br":
-                browserPrintHtml(getHtmlReceipt(record, false), 'Pharmacy POS Receipt', 610, 500);
+                browserPrintHtml(getHtmlReceipt(record, false), 'Que POS Receipt', 610, 500);
                 return true;
             case "qz":
                 alert("QZ-Print integration is no longer available, switch to the new webprint applet");
@@ -518,7 +518,7 @@ function WPOSPrint(kitchenMode) {
     var method = getPrintSetting('receipts', 'method');
     switch (method) {
       case "br":
-          browserPrintHtml(getHtmlInvoice(record, false, true), 'Pharmacy POS Invoice', 600, 800);
+          browserPrintHtml(getHtmlInvoice(record, false, true), 'Que POS Invoice', 600, 800);
         return true;
       case "qz":
         alert("QZ-Print integration is no longer available, switch to the new webprint applet");

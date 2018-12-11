@@ -1,8 +1,14 @@
-# Pharmacy Plus POS
+# QuePhram POS
 ## An intuitive &amp; modern web based POS system
-![logo](https://raw.githubusercontent.com/nyugoh/pharmacy-pos/develop/assets/images/pos-screenshot.png)
 
-For more information visit our [website](http://magnumdigitalke.com/our-digital-services/pharmacypos/)
+#### Cashier Dashboard
+![Screenshot](assets/images/CashierScreenshot.png)
+
+***
+
+#### Admin Dashboard
+![Screenshot](assets/images/AdminDashboardScreenshot.png)
+
 
 ***
 
@@ -12,7 +18,7 @@ For more information visit our [website](http://magnumdigitalke.com/our-digital-
 - Xampp for windows
 - Node.js
 - Git for Windows
-- Pharmacy POS App folder
+- Que POS App folder
 - Webprint - allows you to easily print from the browser. Download and install the webprint [here](https://www.ej-technologies.com/download/install4j/files).
 
 ### NOTE:
@@ -60,13 +66,13 @@ For more information visit our [website](http://magnumdigitalke.com/our-digital-
 ## Installation on a Linux environment
 ### Server Prerequisites
 
-Pharmacy Plus POS requires:
+Requires:
 
 1. A Lamp server with PHP version>=5.4, PHP cURL & GD extensions and Apache version>=2.4.7 with modules rewrite, proxy_http and proxy_wstunnel.
 
     - You can enable the modules by typing the following in your terminal
 
-    ```
+    ```sh
         sudo a2enmod proxy_http proxy_wstunnel rewrite
         sudo apt-get install php5-curl php5-gd
         sudo service apache2 restart
@@ -75,7 +81,7 @@ Pharmacy Plus POS requires:
     - The following virtual host snippet in your apache config, replace %*% with your values and modify to your needs.
 
 
-    ```
+    ```sh
         <VirtualHost *:443>
              DocumentRoot %/your_install_dir%
              ServerName %your.server.fqdn%
@@ -119,7 +125,7 @@ Pharmacy Plus POS requires:
 
     For a Debian distro:
 
-    ```
+    ```sh
         sudo apt-get update
         sudo apt-get install nodejs && apt-get install npm
         cd %/your_install_dir%/api

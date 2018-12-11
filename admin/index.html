@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title >Pharmacy+ POS - Administration</title>
+		<title>Que POS - Administration</title>
         <meta name="copyright" content="Copyright (c) 2014 WallaceIT <micwallace@gmx.com> <https://www.gnu.org/licenses/lgpl.html>" />
         <meta name="description" content="overview &amp; stats" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -70,7 +70,7 @@
 				try{ace.settings.check('navbar' , 'fixed')}catch(e){}
 			</script>
             <div style="vertical-align: middle;margin-top:10px;">
-                <h3 style="margin-left:30px; display: inline;">Pharmacy POS Admin Dashboard </h3>
+                <h3 style="margin-left:30px; display: inline;">Que POS Admin</h3>
             </div>
 		</div>
 
@@ -339,7 +339,7 @@
         <div id="loginmodal" class="login-layout">
             <div class="login-page">
                 <div class="form text-center">
-                    <img style="height: 35px; margin-top: -5px; margin-bottom: 10px;" src="/assets/images/biashara-pos-logo.png">
+                    <img style="margin-top: -5px; margin-bottom: 10px;" src="/assets/images/QuePOSLogo.png">
                     <div id="login-banner" class="alert alert-block alert-success" style="display:none;">
                         <i class="icon icon-lock green" style="margin-right: 3px;"></i>
                         <span id="login-banner-txt"></span>
@@ -347,7 +347,7 @@
                     <form class="login-form">
                       <input class="form-control"id="loguser" type="text" placeholder="Admin"/>
                       <input class="form-control"id="logpass" onkeypress="if(event.keyCode == 13){WPOS.login();}" type="password"  placeholder="Password"/>
-                      <button id="loginbutton" onClick="WPOS.userLogin();">login</button>
+                      <button id="loginbutton" onClick="WPOS.userLogin();">login <i style="margin-left: 10px;" class="icon icon-lock"></i></button>
                     </form>
                     <div id="loadingdiv" style="height: 225px;">
                         <h3 id="loadingbartxt">Initializing</h3>
