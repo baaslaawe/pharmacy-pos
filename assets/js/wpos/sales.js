@@ -1178,10 +1178,13 @@ function WPOSSales() {
             '<option value="deposit" '+(method=='deposit'?'selected':'')+'>Deposit</option>' +
             exmethod+ '</select>' +
             '<div class="cashvals" '+(method!='cash'?'style="display: none"':'width:150px;')+'>'+
-            '<div style="padding:40px font-weight:bold"><h3>Tendered:<h3></div><input onChange="WPOS.sales.updatePaymentChange($(this).parent());" class="paytender form-control" style="width:80px;display:inline;" type="text" value="'+(method!='cash'?0.00:(tender!=null?tender:value))+'" />' +
+            '<div style="font-weight:bold"><h3>Tendered:<h3></div><input onChange="WPOS.sales.updatePaymentChange($(this).parent());" class="paytender form-control" style="width:80px;display:inline;" type="text" value="'+(method!='cash'?0.00:(tender!=null?tender:value))+'" />' +
              '<div style="margin:5px 0px;"><h3><strong>Change:</strong></h3></div> <input class="paychange form-control" style="width:80px ;display:inline;" type="text" value="'+(method!='cash'?0.00:(change!=null?change:0.00))+'" readonly />' +
-             '</div></td>' +
-            '<td>'+'<input onChange="WPOS.sales.updatePaymentSums();" class="payamount numpad form-control" style="width:80px;display:inline;" type="text" value="'+value+'" autocomplete="off"/> '+curAfter+'</td>' +
+            '</div>'+
+            '<div class="mpesa" '+(method!='mpesa'?'style="display: none"':'width:150px;')+'>'+
+            '<div style="font-weight:bold"><h3>M-Pesa Code:<h3></div><input class="mpesa-code form-control" style="display:inline;" type="text" value="" />' +
+            '</div></td>' +
+            '<td>'+'<input type="hidden" class="method" value="'+method+'"/>'+'<input onChange="WPOS.sales.updatePaymentSums();" class="payamount numpad form-control" style="width:80px;display:inline;" type="text" value="'+value+'" autocomplete="off"/> '+curAfter+'</td>' +
             '<td><button class="btn btn-xs btn-danger" onclick="WPOS.sales.removePayment($(this));">X</button></td></tr>';
 
         $("#paymentstable").append(payrow);
@@ -1390,12 +1393,6 @@ function WPOSSales() {
             return;
         }
         if (!validatePayments()){
-            swal({
-                type: 'error',
-                title: 'Oops...',
-                text: 'Only cash-out payments may have a negative amount'
-              });
-              
             salebtn.prop("disabled", false);
             return;
         }
@@ -1414,8 +1411,24 @@ function WPOSSales() {
         $("#paymentstable").children("tr").each(function (index, element) {
             // Make sure payments are positive amounts, except cashout
             if (parseFloat($(element).find(".payamount").val())<0){
-                if ($(element).find(".payamount").val()=='cash' && !$(element).data('paydata').hasOwnProperty('cashOut'))
+                if ($(element).find(".payamount").val()=='cash' && !$(element).data('paydata').hasOwnProperty('cashOut')) {
                     valid = false;
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Only cash-out payments may have a negative amount'
+                    });
+                }
+            }
+            if ($(element).find(".method").val() === 'mpesa'){
+                if (!$(element).find(".mpesa-code").val()){
+                    valid = false;
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Please add the M-pesa transaction code before continuing'
+                    });
+                }
             }
         });
         return valid;
@@ -1687,10 +1700,13 @@ function WPOSSales() {
         var payments = [];
         $("#paymentstable").children("tr").each(function (index, element) {
             var payment = {"method": $(element).find(".paymethod option:selected").val(), "amount": parseFloat($(element).find(".payamount").val()).toFixed(2) };
-            if (payment.method == 'cash'){
+            if (payment.method === 'cash'){
                 payment.tender = parseFloat($(element).find(".paytender").val()).toFixed(2);
                 payment.change = parseFloat($(element).find(".paychange").val()).toFixed(2);
 
+            }
+            if (payment.method === 'mpesa') {
+                payment.transactionCode = $(element).find('.mpesa-code').val();
             }
             if ($(element).data('paydata'))
                 payment.paydata = $(element).data('paydata');

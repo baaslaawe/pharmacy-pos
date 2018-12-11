@@ -326,6 +326,10 @@ function WPOSTransactions() {
                     method = "cashout ("+WPOS.util.currencyFormat((-amount).toFixed(2))+")";
                 }
             }
+            // transaction code
+            if(payments[i].hasOwnProperty('transactionCode')) {
+                method = method + ' - ' + payments[i].transactionCode;
+            }
             $(paytable).append('<tr><td>' + WPOS.util.capFirstLetter(method) + '</td><td>' + WPOS.util.currencyFormat(amount) + '</td><td>' + WPOS.util.getShortDate(payments[i].processdt) + '</td><td>' + paydetailsbtn +
                 '<div class="action-buttons paybuttons" style="text-align: right;"><a onclick="WPOS.transactions.openInvoicePaymentDialog(' + i + ')" class="green"><i class="icon-pencil bigger-130"></i></a><a onclick="WPOS.transactions.deleteInvoicePayment(' + payments[i].id + ')" class="red"><i class="icon-trash bigger-130"></i></a></div></td></tr>');
         }
