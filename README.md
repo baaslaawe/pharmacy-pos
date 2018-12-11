@@ -18,7 +18,7 @@
 - Xampp for windows
 - Node.js
 - Git for Windows
-- QuePharm App folder
+- Que POS App folder
 - Webprint - allows you to easily print from the browser. Download and install the webprint [here](https://www.ej-technologies.com/download/install4j/files).
 
 ### NOTE:

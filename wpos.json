@@ -1,6 +1,6 @@
 {
-  "name": "QuePharm",
-  "short_name": "QuePharm",
+  "name": "QuePOS",
+  "short_name": "QuePOS",
   "start_url": "http://localhost",
   "display": "standalone",
   "background_color": "#237a1b",

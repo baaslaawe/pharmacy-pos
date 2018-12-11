@@ -131,7 +131,7 @@ class WposSocketControl {
         $configName = 'git config --global user.name "nyugoh"';
         $configEMail = 'git config --global user.email "nyugoh@gmail.com"';
         if ($this->isWindows) {
-            $handle = popen('START "QuePharm System Update" git pull origin master','r');
+            $handle = popen('START "Que POS System Update" git pull origin master','r');
             $type = gettype($handle);
             if ($type == 'NULL')
                 $result["error"] = "Git is not configured.";

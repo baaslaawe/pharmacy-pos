@@ -625,7 +625,7 @@ function WPOS() {
         swal({
             type: 'error',
             title: 'Oops...',
-            text: 'Your internet connection is not active and QuePharm has started in offline mode.\nSome features are not available in offline mode but you can always make sales and alter transactions that are locally available. \nWhen a connection becomes available the POS will process your transactions on the server.'
+            text: 'Your internet connection is not active and Que POS has started in offline mode.\nSome features are not available in offline mode but you can always make sales and alter transactions that are locally available. \nWhen a connection becomes available the POS will process your transactions on the server.'
           });
           
           
@@ -635,7 +635,7 @@ function WPOS() {
     function initDataSuccess(loginloader){
         if (loginloader){
             setLoadingBar(100, "Messaging the data...");
-            $("title").text("QuePharm | Your stock companion");
+            $("title").text("Que POS | Your stock companion");
             WPOS.initPlugins();
             populateDeviceInfo();
             setTimeout(hideLogin, 500);
