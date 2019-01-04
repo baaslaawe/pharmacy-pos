@@ -1,6 +1,6 @@
 {
-  "name": "Pharmacy POS",
-  "short_name": "pharmacy pos",
+  "name": "QuePOS",
+  "short_name": "QuePOS",
   "start_url": "http://localhost",
   "display": "standalone",
   "background_color": "#237a1b",

@@ -1,4 +1,4 @@
-<!-- Pharmacy POS: Copyright (c) 2018 Magnum Digital <joenyugoh@gmail.com> <https://www.gnu.org/licenses/lgpl.html> -->
+<!-- QuePharm: Copyright (c) 2018 Magnum Digital <joenyugoh@gmail.com> <https://www.gnu.org/licenses/lgpl.html> -->
 <div class="page-header">
     <h1 style="margin-right: 20px; display: inline-block;">
         Expenses

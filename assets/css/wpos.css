@@ -154,6 +154,13 @@ body {
 #wrapper .navbar {
   background: #20b1cb;
 }
+#brand-name {
+    display: inline;
+    margin: 15px;
+    position: relative;
+    top: 5px;
+    left: 20px;
+}
 .ui-tabs-panel {
     position: relative;
     min-height: calc(100vh - 45px);

@@ -90,8 +90,11 @@ function WPOSTransactions() {
         '<div class="cashvals" '+(method!='cash'?'style="display: none"':'width:150px;')+'>' +
         '<div style="margin:5px 0px;">Tendered:</div> <input onChange="WPOS.sales.updatePaymentChange($(this).parent());" class="paytender numpad form-control" style="width:80px;display:inline;" type="text" value="'+(method!='cash'?0.00:(tender!=null?tender:value))+'" />' +
         '<div style="margin:5px 0px;">Change:</div> <input class="paychange form-control" style="width:80px;display:inline;" type="text" value="'+(method!='cash'?0.00:(change!=null?change:0.00))+'" readonly />' +
+        '</div>'+
+        '<div class="mpesa" '+(method!=='mpesa'?'style="display: none"':'width:150px;')+'>'+
+        '<div style="font-weight:bold"><h3>M-Pesa Code:<h3></div><input class="mpesa-code form-control" style="display:inline;" type="text" value=""/>' +
         '</div></td>' +
-        '<td>'+curBefore+'<input onChange="WPOS.sales.updatePaymentSums();" class="payamount numpad form-control" style="width:80px;display:inline;" type="text" value="'+value+'" autocomplete="off"/> '+curAfter+'</td>' +
+        '<td>'+curBefore+'<input type="hidden" class="method" value="'+method+'"/><input onChange="WPOS.sales.updatePaymentSums();" class="payamount numpad form-control" style="width:80px;display:inline;" type="text" value="'+value+'" autocomplete="off"/> '+curAfter+'</td>' +
         '<td><button class="btn btn-xs btn-danger" onclick="WPOS.sales.removePayment($(this));">X</button></td></tr>';
 
       creditpaymentdialog.append(payrow);
@@ -124,12 +127,6 @@ function WPOSTransactions() {
         var salebtn = $("#endcreditbtn");
         salebtn.prop("disabled", true);
         if (!validatePayments()){
-          swal({
-            type: 'error',
-            title: 'Oops...',
-            text: 'Only cash-out payments may have a negative amount'
-          });
-          
           salebtn.prop("disabled", false);
           return;
         }
@@ -141,10 +138,26 @@ function WPOSTransactions() {
         var valid = true;
         creditpaymentdialog.children("tr").each(function (index, element) {
           // Make sure payments are positive amounts, except cashout
-          if (parseFloat($(element).find(".payamount").val())<0){
-            if ($(element).find(".payamount").val()=='cash' && !$(element).data('paydata').hasOwnProperty('cashOut'))
-              valid = false;
-          }
+            if (parseFloat($(element).find(".payamount").val())<0){
+                if ($(element).find(".payamount").val()=='cash' && !$(element).data('paydata').hasOwnProperty('cashOut')) {
+                    valid = false;
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Only cash-out payments may have a negative amount'
+                    });
+                }
+            }
+            if ($(element).find(".method").val() === 'mpesa'){
+                if (!$(element).find(".mpesa-code").val()){
+                    valid = false;
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Please add the M-pesa transaction code before continuing'
+                    });
+                }
+            }
         });
         return valid;
     }
@@ -162,6 +175,9 @@ function WPOSTransactions() {
             }
             if ($(element).data('paydata')){
               payment.paydata = $(element).data('paydata');
+            }
+            if (payment.method === 'mpesa') {
+                payment.transactionCode = $(element).find('.mpesa-code').val();
             }
             payments.push(payment);
         });
@@ -456,9 +472,13 @@ function WPOSTransactions() {
                     method = "cashout ("+WPOS.util.currencyFormat((-amount).toFixed(2))+")";
                 }
             }
+            // transaction code
+            if(payments[i].hasOwnProperty('transactionCode')) {
+                method = method + ' - ' + payments[i].transactionCode;
+            }
             // Add complete payments button
             if (payments[i].method === 'credit') {
-            paydetailsbtn = '<button class="btn btn-primary" onclick="WPOS.trans.showPaymentDialog(\''+ref+'\');">Add Payment</button>';
+                paydetailsbtn = '<button class="btn btn-primary" onclick="WPOS.trans.showPaymentDialog(\''+ref+'\');">Add Payment</button>';
             }
             $(paytable).append('<tr><td>'+WPOS.util.capFirstLetter(method)+'</td><td>'+WPOS.util.currencyFormat(amount)+'</td><td style="text-align: right;">'+paydetailsbtn+'</td></tr>');
         }

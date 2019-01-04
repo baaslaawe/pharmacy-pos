@@ -121,9 +121,13 @@ class StoredItemsModel extends DbConfig
      * @return bool|int Returns false on an unexpected failure or the number of rows affected by the update operation
      */
     public function edit($id, $data){
-
-        $sql = "UPDATE stored_items SET data= :data, categoryid= :categoryid, name= :name, taxid= :taxid, reorderPoint= :reorderPoint, stockType= :stockType, isDaa= :isDaa WHERE id= :id;";
-        $placeholders = [":id"=>$id, ":data"=>json_encode($data), ":categoryid"=>$data->categoryid, ":name"=>$data->name, ":taxid"=>$data->taxid, ":reorderPoint"=>$data->reorderPoint, ":stockType"=>$data->stockType, ":isDaa"=>$data->isDaa];
+        $json = json_encode($data);
+        $sql = "UPDATE stored_items SET data= :data, categoryid= :categoryid, name= :name, taxid= :taxid, reorderPoint= :reorderPoint, stockType= :stockType WHERE id= :id;";
+        if(is_array($data)){
+            $placeholders = [":id"=>$id, ":data"=>$json, ":categoryid"=>$data['categoryid'], ":name"=>$data['name'], ":taxid"=>$data['taxid'], ":reorderPoint"=>$data['reorderPoint'], ":stockType"=>$data['stockType']];
+        } else {
+            $placeholders = [":id"=>$id, ":data"=>$json, ":categoryid"=>$data->categoryid, ":name"=>$data->name, ":taxid"=>$data->taxid, ":reorderPoint"=>$data->reorderPoint, ":stockType"=>$data->stockType];
+        }
 
         return $this->update($sql, $placeholders);
     }
