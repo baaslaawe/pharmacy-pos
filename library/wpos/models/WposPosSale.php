@@ -254,8 +254,6 @@ class WposPosSale {
         }
         // set flag to update existing order record.
         $orderid = (sizeof($sale)>0?$sale[0]['id']:0);
-        // process customer data and get id
-        $this->processCustomer();
         // set email receipt flag
         $this->emailrec = isset($this->jsonobj->emailrec);
         unset($this->jsonobj->emailrec); // unset, we don't need to store this in the database
@@ -308,6 +306,8 @@ class WposPosSale {
             // commit new data, this saved item/payment ids into main json
             $this->salesMdl->edit(null, $this->ref, json_encode($this->jsonobj));
         }
+        // process customer data and get id
+        $this->processCustomer();
         // broadcast to other devices
         if ($this->nobroadcast==false){
             $this->broadcastSale($this->jsonobj->devid);
@@ -615,7 +615,23 @@ class WposPosSale {
                 $stockItemsMdl = new StockItemsModel();
                 $stockItemsMdl->decrementStockLevel($item->sitemid, $item->qty, true);
             }
+            if ($item->hasDAA == "1") {
+                if (!$this->insertDAAInformation($res))
+                    return false;
+            }
             $this->jsonobj->items[$key]->id = $res;
+        }
+        return true;
+    }
+
+    private $daaErr = "";
+
+    private function insertDAAInformation($saleitemid)
+    {
+        $daaMdl = new DAAPatientsModel();
+        if (!$res=$daaMdl->create($this->id, $saleitemid, $this->jsonobj->custdata->id)) {
+            $this->daaErr = $daaMdl->errorInfo;
+            return false;
         }
         return true;
     }
@@ -667,8 +683,7 @@ class WposPosSale {
         // is updated data available
         if ($this->custdata != null) {
             // if customer record (id) exists
-            if ($this->jsonobj->custid > 0) {
-
+            if ($this->jsonobj->custid == '0' && $this->jsonobj->custdata != null) {
                 if (WposAdminCustomers::updateCustomerData($this->custdata)===true){
                     unset($this->jsonobj->custdata); // unset customer data; we don't need to send this back
                     return true;

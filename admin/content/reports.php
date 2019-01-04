@@ -11,6 +11,7 @@
         <option value="stats/supplyselling">Supplier Sales</option>
         <option value="stats/expenses">Expenses</option>
         <option value="stats/stock">Current Stock</option>
+        <option value="stats/daapatients">DAA List</option>
         <option value="stats/order">Purchase Order</option>
         <option value="stats/expired">Expired Items</option>
         <option value="stats/devices">Device Cash</option>
@@ -77,6 +78,9 @@
                 break;
             case "stats/stock":
                 populateStock();
+                break;
+            case "stats/daapatients":
+                populateDAA();
                 break;
             case "stats/order":
                 populateOrder();
@@ -298,6 +302,17 @@
         $("#reportcontain").html(html);
     }
 
+    function populateDAA(){
+        var html = getCurrentReportHeader("DAA List");
+        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Customer </td><td>Drug</td><td>Quantity</td></tr></thead><tbody>";
+        for (var i in repdata){
+            rowdata = repdata[i];
+            html += "<tr><td>"+rowdata.customer+"</td><td>"+rowdata.drug+"</td><td>"+rowdata.qty+"</td></tr>"
+        }
+        html += "</tbody></table>";
+
+        $("#reportcontain").html(html);
+    }
     function populateOrder(){
         var html = getCurrentReportHeader("Purchase Order");
         html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td>Stock Qty</td><td>Reorder Point</td></tr></thead><tbody>";

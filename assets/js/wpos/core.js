@@ -145,6 +145,17 @@ function WPOS() {
     this.initKeypad = function(){
         setKeypad(false);
     };
+
+    this.updateCustTable = function(id, data){
+        updateCustTable(id, data);
+        // Fill patients dialog for DAA drugs
+        var patients = WPOS.getCustTable();
+        $('select#patientid.select2-offscreen').find('option').remove().end();
+        for (var p in patients){
+            $("select#patientid").append('<option data-value="'+p+'" value="'+p+'">'+patients[p].name+'</option>');
+        }
+        $("#patientid").select2();
+    };
     function setKeypad(setcheckbox){
         if (getLocalConfig().keypad == true ){
             WPOS.util.initKeypad();
@@ -1695,16 +1706,13 @@ function WPOS() {
         }
     }
 
-    this.updateCustTable = function(id, data){
-        updateCustTable(id, data);
-    };
 
     // adds a record to the current table
-    function updateCustTable(data) {
+    function updateCustTable(id, data) {
         if (typeof data === 'object'){
             custtable[data.id] = data;
             // add/update index
-            custindex[data.email] = data.id;
+            // custindex[data.email] = data.id;
         } else {
             delete custtable[data];
             for (var i in custindex){
@@ -2005,6 +2013,81 @@ $(function () {
             $(this).css("maxWidth", "370px");
         }
     });
+
+    $("#patientInfoDialog" ).removeClass('hide').dialog({
+        resizable: false,
+        maxWidth: 800,
+        width: 'auto',
+        modal: true,
+        autoOpen: false,
+        title: "Add Patient",
+        title_html: true,
+
+        buttons: [
+            {
+                html: "<i class='icon-edit bigger-110'></i>&nbsp; Save",
+                "class" : "btn btn-success btn-xs",
+                click: function() {
+                    // addInvoice();
+                    $( this ).dialog( "close" );
+                    swal({
+                        type: 'info',
+                        title: 'Patient added..!!',
+                        text: 'You have added '+ WPOS.getCustTable()[parseInt($('#patientid').val())].name
+                    });
+                }
+            },
+            {
+                html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
+                "class" : "btn btn-xs",
+                click: function() {
+                    $( this ).dialog( "close" );
+                }
+            }
+        ],
+        create: function( event, ui ) {
+            // Set maxWidth
+            $(this).css("maxWidth", "800px");
+        }
+    });
+
+    $( "#addcustdialog" ).removeClass('hide').dialog({
+        resizable: false,
+        width: 'auto',
+        modal: true,
+        autoOpen: false,
+        title: "New Patient",
+        title_html: true,
+        buttons: [
+            {
+                html: "<i class='icon-save bigger-110'></i>&nbsp; Save",
+                "class" : "btn btn-success btn-xs",
+                click: function() {
+                    WPOS.sales.saveCustomer();
+                }
+            }
+            ,
+            {
+                html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
+                "class" : "btn btn-xs",
+                click: function() {
+                    $( this ).dialog( "close" );
+                }
+            }
+        ],
+        create: function( event, ui ) {
+            // Set maxWidth
+            $(this).css("maxWidth", "400px");
+        }
+    });
+
+    // Fill patients dialog for DAA drugs
+    var patients = WPOS.getCustTable();
+    $('select#patientid.select2-offscreen').find('option').remove().end();
+    for (var p in patients){
+        $("select#patientid").append('<option data-value="'+p+'" value="'+p+'">'+patients[p].name+'</option>');
+    }
+    $("#patientid").select2();
     // item box
     var ibox = $("#ibox");
     var iboxhandle = $("#iboxhandle");
