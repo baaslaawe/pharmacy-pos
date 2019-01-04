@@ -1312,6 +1312,7 @@
     </div>
 </div>
 <div id="patientInfoDialog" class="hide" style="padding-left: 20px; padding-right: 20px;">
+    <h4><b>Notice::</b> This sale contains a DAA drug, record the patient name to proceed</h4>
     <form id="">
         <table>
             <tr>
@@ -1320,10 +1321,12 @@
             </tr>
         </table>
     </form>
+    <p>or</p>
     <table>
         <tr style="margin-top: 20px;">
-            <td>Or add new a customer</td>
+            <td>Add new a customer: </td>
             <td>
+                <input type="hidden" id="patientname">
                 <button class="btn btn-primary" style="margin-top:20px;" onclick="$('#addcustdialog').dialog('open')">Add</button>
             </td>
         </tr>

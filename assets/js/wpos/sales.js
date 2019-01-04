@@ -974,7 +974,10 @@ function WPOSSales() {
                 mod = itemdata.hasOwnProperty('mod') ? itemdata.mod.total : 0;
                 tempprice = parseFloat("0.00");
                 newItem = $(element).find(".newItem").val();
-                hasDaa =  $(element).find(".isDaa").val() !== "false" ;
+                if(!hasDaa){
+                    if($(element).find(".isDaa").val() === 'true')
+                        hasDaa = true;
+                }
                 if (name === "" || unit <= 0 || totalStockLevel <=0)
                   $(element).find(".newItem").val("true");
                 else
@@ -1064,8 +1067,9 @@ function WPOSSales() {
         customer.country = $("#newcustcountry").val();
         result = WPOS.sendJsonData("customers/add", JSON.stringify(customer));
         if (result !== false) {
-            console.log(result)
-            WPOS.updateCustTable(result);
+            WPOS.updateCustTable(result.id, result);
+            $('#patientid').val(''+result.id);
+            $('#patientname').val(result.name);
             $("#addcustdialog").dialog("close");
         }
         // hide loader
@@ -1409,6 +1413,16 @@ function WPOSSales() {
             salebtn.prop("disabled", false);
             return;
         }
+
+        if (WPOS.sales.hasDaaDrug && $('#patientid').val() === null){
+            swal({
+                type: 'error',
+                title: 'Add a patient',
+                text: 'This sale has a DAA drug, add a patient then proceed.'
+            });
+            salebtn.prop("disabled", false);
+            return;
+        }
         ProcessSaleTransaction();
         salebtn.prop("disabled", false);
     };
@@ -1429,6 +1443,17 @@ function WPOSSales() {
             }
         });
         return valid;
+    }
+
+    function hasDaa(){
+        var hasDaa = false;
+        $("#paymentstable").children("tr").each(function (index, element) {
+            if(!hasDaa){
+                if($(element).find(".isDaa").val() === 'true')
+                    hasDaa = true;
+            }
+        });
+        return hasDaa;
     }
 
     function ProcessSaleTransaction(){
@@ -1569,6 +1594,7 @@ function WPOSSales() {
           totalStockLevel = parseFloat($(element).find(".totalStockLevel").val());
           stockLevel = parseFloat($(element).find(".totalItems").val());
           otherItemsId = $(element).find(".otherRelatedItemsId").val();
+
           newItem = $(element).find(".newItem").val();
           if (newItem === "true") {
             // add tax information into the tax totals array
@@ -1640,6 +1666,7 @@ function WPOSSales() {
                 "reorderpoint": item.reorderPoint,
                 "qty": qty,
                 "name": item.name,
+                "hasDAA": item.isDaa,
                 "unit": unit,
                 "taxid": taxruleid,
                 "tax": taxdata,
@@ -1722,7 +1749,6 @@ function WPOSSales() {
         salesobj.cost = parseFloat(totalcost).toFixed(2);
         salesobj.subtotal = cursubtotal.toFixed(2);
         salesobj.total = parseFloat(curgrandtotal).toFixed(2);
-        salesobj.hasDaaDrug = hasDaaDrug;
         salesobj.numitems = numitems;
         salesobj.processdt = date;
         salesobj.items = items;
@@ -1738,6 +1764,10 @@ function WPOSSales() {
         if (updatecust){
             salesobj.custdata = getCustomerObject();
             updatecust = false; // reset flag
+        }
+
+        if(WPOS.sales.hasDaaDrug){
+            salesobj.custdata = WPOS.getCustTable()[parseInt($('#patientid').val())];
         }
 
         // if customer wants the receipt send, set the flag

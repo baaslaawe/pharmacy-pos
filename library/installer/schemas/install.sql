@@ -111,6 +111,20 @@ CREATE TABLE IF NOT EXISTS `customer_contacts` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `daa_patients`
+--
+
+CREATE TABLE IF NOT EXISTS `daa_patients` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `saleid` int(11) NOT NULL,
+  `saleitemid` varchar(12) NOT NULL,
+  `customerid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 DEFAULT COLLATE utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `devices`
 --
 

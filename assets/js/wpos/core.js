@@ -148,6 +148,13 @@ function WPOS() {
 
     this.updateCustTable = function(id, data){
         updateCustTable(id, data);
+        // Fill patients dialog for DAA drugs
+        var patients = WPOS.getCustTable();
+        $('select#patientid.select2-offscreen').find('option').remove().end();
+        for (var p in patients){
+            $("select#patientid").append('<option data-value="'+p+'" value="'+p+'">'+patients[p].name+'</option>');
+        }
+        $("#patientid").select2();
     };
     function setKeypad(setcheckbox){
         if (getLocalConfig().keypad == true ){
@@ -1701,11 +1708,11 @@ function WPOS() {
 
 
     // adds a record to the current table
-    function updateCustTable(data) {
+    function updateCustTable(id, data) {
         if (typeof data === 'object'){
             custtable[data.id] = data;
             // add/update index
-            custindex[data.email] = data.id;
+            // custindex[data.email] = data.id;
         } else {
             delete custtable[data];
             for (var i in custindex){
@@ -2022,6 +2029,12 @@ $(function () {
                 "class" : "btn btn-success btn-xs",
                 click: function() {
                     // addInvoice();
+                    $( this ).dialog( "close" );
+                    swal({
+                        type: 'info',
+                        title: 'Patient added..!!',
+                        text: 'You have added '+ WPOS.getCustTable()[parseInt($('#patientid').val())].name
+                    });
                 }
             },
             {
@@ -2043,7 +2056,7 @@ $(function () {
         width: 'auto',
         modal: true,
         autoOpen: false,
-        title: "New Customer",
+        title: "New Patient",
         title_html: true,
         buttons: [
             {
@@ -2068,6 +2081,7 @@ $(function () {
         }
     });
 
+    // Fill patients dialog for DAA drugs
     var patients = WPOS.getCustTable();
     $('select#patientid.select2-offscreen').find('option').remove().end();
     for (var p in patients){
