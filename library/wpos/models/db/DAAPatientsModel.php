@@ -51,38 +51,10 @@ class DAAPatientsModel extends DbConfig
      *
      * @return array|bool Returns false on an unexpected failure or the rows found by the statement. Returns an empty array when nothing is found
      */
-    public function get($limit = 0, $offset = 0, $saleid=null, $saleitemid=null)
+    public function get($stime, $etime)
     {
-        $sql = 'SELECT * FROM daa_patients';
-        $placeholders = [];
-
-        if ($saleid !== null) {
-            if (empty($placeholders)) {
-                $sql .= ' WHERE';
-            } else {
-                $sql .= ' AND';
-            }
-            $sql .= ' saleid = :saleid';
-            $placeholders[':saleid'] = $saleid;
-        }
-        if ($saleitemid !== null) {
-            if (empty($placeholders)) {
-                $sql .= ' WHERE';
-            } else {
-                $sql .= ' AND';
-            }
-            $sql .= ' saleitemid = :saleitemid';
-            $placeholders[':saleitemid'] = $saleitemid;
-        }
-        if ($limit !== 0 && is_int($limit)) {
-            $sql .= ' LIMIT :limit';
-            $placeholders[':limit'] = $limit;
-        }
-        if ($offset !== 0 && is_int($offset)) {
-            $sql .= ' OFFSET :offset';
-            $placeholders[':offset'] = $offset;
-        }
-
+        $sql = 'SELECT p.id, c.name as customer, d.name as drug, d.qty as qty FROM daa_patients as p LEFT JOIN sale_items as d on p.saleitemid=d.id LEFT JOIN customers as c on c.id=p.customerid LEFT JOIN sales as s on d.saleid=s.id WHERE (s.processdt>= :stime AND s.processdt<= :etime) ';
+        $placeholders = [":stime"=>$stime, ":etime"=>$etime];
         return $this->select($sql, $placeholders);
     }
 

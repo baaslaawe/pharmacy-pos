@@ -627,6 +627,10 @@ function routeApiCall($action, $data, $result) {
             $statsMdl = new WposAdminStats($data);
             $result = $statsMdl->getStockLevels($result);
             break;
+        case "stats/daapatients": // current stock levels
+            $statsMdl = new WposAdminStats($data);
+            $result = $statsMdl->getDAAList($result);
+            break;
         case "stats/order": // show items to make restock
             $statsMdl = new WposAdminStats($data);
             $result = $statsMdl->getReorderPoints($result);
