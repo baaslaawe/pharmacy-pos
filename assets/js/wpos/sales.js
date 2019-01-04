@@ -1065,7 +1065,7 @@ function WPOSSales() {
               
         }
     };
-    
+
     this.saveCustomer = function() {
         // show loader
         WPOS.util.showLoader();
