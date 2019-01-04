@@ -348,9 +348,22 @@
 
         $("#reportcontain").html(html);
     }
+
     function populateDAA(){
         var html = getCurrentReportHeader("DAA List");
         html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Customer </td><td>Drug</td><td>Quantity</td></tr></thead><tbody>";
+        for (var i in repdata){
+            rowdata = repdata[i];
+            html += "<tr><td>"+rowdata.customer+"</td><td>"+rowdata.drug+"</td><td>"+rowdata.qty+"</td></tr>"
+        }
+        html += "</tbody></table>";
+
+        $("#reportcontain").html(html);
+    }
+
+    function populateOrder(){
+        var html = getCurrentReportHeader("Purchase Order");
+        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td>Stock Qty</td><td>Reorder Point</td></tr></thead><tbody>";
         for (var i in repdata){
             rowdata = repdata[i];
             html += "<tr><td>"+rowdata.customer+"</td><td>"+rowdata.drug+"</td><td>"+rowdata.qty+"</td></tr>"

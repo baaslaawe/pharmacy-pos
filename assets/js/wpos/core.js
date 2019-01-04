@@ -1847,9 +1847,6 @@ function WPOS() {
         }
     }
 
-    this.updateCustTable = function(id, data){
-        updateCustTable(id, data);
-    };
 
     // adds a record to the current table
     function updateCustTable(id, data) {
@@ -2159,6 +2156,7 @@ $(function () {
             $(this).css("maxWidth", "370px");
         }
     });
+
     $("#patientInfoDialog" ).removeClass('hide').dialog({
         resizable: false,
         maxWidth: 800,

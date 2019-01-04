@@ -29,7 +29,7 @@ class StoredItemsModel extends DbConfig
     /**
      * @var array available columns
      */
-    protected $_columns = ['id' ,'data', 'categoryid', 'name', 'taxid', 'reorderPoint'];
+    protected $_columns = ['id' ,'data', 'categoryid', 'name', 'taxid', 'stockType', 'isDaa', 'reorderPoint'];
 
     /**
      * Init DB
@@ -45,10 +45,10 @@ class StoredItemsModel extends DbConfig
      */
     public function create($data)
     {
-        $dataObj = json_encode(['name'=>$data->name, 'description'=>$data->description, 'categoryid'=>$data->categoryid, 'taxid'=>$data->taxid, 'reorderPoint'=>$data->reorderPoint, 'stockType'=>$data->stockType]);
+        $dataObj = json_encode(['name'=>$data->name, 'description'=>$data->description, 'categoryid'=>$data->categoryid, 'taxid'=>$data->taxid, 'reorderPoint'=>$data->reorderPoint, 'stockType'=>$data->stockType, 'isDaa'=>$data->isDaa]);
 
-        $sql          = "INSERT INTO stored_items (`data`, `categoryid`, `name`, `description`, `taxid`, `reorderPoint`, `stockType`) VALUES (:data, :categoryid, :name, :description, :taxid, :reorderPoint, :stockType);";
-        $placeholders = [":data"=>$dataObj, ":categoryid"=>$data->categoryid, ":name"=>$data->name, ":description"=>$data->description, ":taxid"=>$data->taxid, ":reorderPoint"=>$data->reorderPoint, ":stockType"=>$data->stockType];
+        $sql          = "INSERT INTO stored_items (`data`, `categoryid`, `name`, `description`, `taxid`, `reorderPoint`, `stockType`, `isDaa`) VALUES (:data, :categoryid, :name, :description, :taxid, :reorderPoint, :stockType, :isDaa);";
+        $placeholders = [":data"=>$dataObj, ":categoryid"=>$data->categoryid, ":name"=>$data->name, ":description"=>$data->description, ":taxid"=>$data->taxid, ":reorderPoint"=>$data->reorderPoint, ":stockType"=>$data->stockType, ":isDaa"=>$data->isDaa];
 
         return $this->insert($sql, $placeholders);
     }
