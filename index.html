@@ -1314,6 +1314,67 @@
         </div>
     </div>
 </div>
+<div id="patientInfoDialog" class="hide" style="padding-left: 20px; padding-right: 20px;">
+    <h4><b>Notice::</b> This sale contains a DAA drug, record the patient name to proceed</h4>
+    <form id="">
+        <table>
+            <tr>
+                <td><label class="fixedlabel">Select a customer: </label></td>
+                <td><select style="width: 180px;" id="patientid"></select></td>
+            </tr>
+        </table>
+    </form>
+    <p>or</p>
+    <table>
+        <tr style="margin-top: 20px;">
+            <td>Add new a customer: </td>
+            <td>
+                <input type="hidden" id="patientname">
+                <button class="btn btn-primary" style="margin-top:20px;" onclick="$('#addcustdialog').dialog('open')">Add</button>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="addcustdialog" class="hide">
+    <table>
+        <tr>
+            <td style="text-align: right;"><label>Name: (<span class="text-danger">Required</span>)&nbsp;</label></td>
+            <td><input class="form-control" id="newcustname" type="text"/></td>
+        </tr>
+        <tr>
+            <td style="text-align: right;"><label>Email:&nbsp;</label></td>
+            <td><input class="form-control" id="newcustemail" placeholder="Email..." type="text"/></td>
+        </tr>
+        <tr style="display: none;">
+            <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
+            <td><input class="form-control" id="newcustphone" placeholder="Phone number..." type="hidden"/></td>
+        </tr>
+        <tr>
+            <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
+            <td><input class="form-control" id="newcustmobile" placeholder="Phone number..." type="text"/></td>
+        </tr>
+        <tr>
+            <td style="text-align: right;"><label>Address:&nbsp;</label></td>
+            <td><input class="form-control" id="newcustaddress" type="text"/></td>
+        </tr>
+        <tr style="display: none;">
+            <td style="text-align: right;"><label>Suburb:&nbsp;</label></td>
+            <td><input class="form-control" id="newcustsuburb" type="text"/></td>
+        </tr>
+        <tr style="display: none;">
+            <td style="text-align: right;"><label>Postcode:&nbsp;</label></td>
+            <td><input class="form-control" id="newcustpostcode" value="0002030" type="text"/></td>
+        </tr>
+        <tr style="display: none;">
+            <td style="text-align: right;"><label>State:&nbsp;</label></td>
+            <td><input class="form-control" id="newcuststate" type="text"/></td>
+        </tr>
+        <tr style="display: none;">
+            <td style="text-align: right;"><label>Country:&nbsp;</label></td>
+            <td><input class="form-control" id="newcustcountry" type="text"/></td>
+        </tr>
+    </table>
+</div>
 <div id="resetdialog" class="hide" title="Reset Request">
     The server has requested restart. This is usually to install an update.<br/>
     The terminal will restart in <span id="resettimeval">10</span> seconds.<br/><br/>
