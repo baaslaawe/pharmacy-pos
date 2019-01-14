@@ -173,7 +173,7 @@
                 { "mData":"name" },
                 { "mData":"description" },
                 { "mData":function(data){return (data.stockType === '1' ?'Inventory':'Non-Inventory'); } },
-                { "mData":function(data){return (data.isDaa?'DAA':'Non-DAA'); } },
+                { "mData":function(data){return (data.isDaa===false || data.isDaa === '0' || data.isDaa === undefined ?'Non-DAA':'DAA'); } },
                 { "mData":function(data,type,val){return (categories.hasOwnProperty(data.categoryid)?categories[data.categoryid].name:'None'); } },
                 { "mData":"taxname"},
                 { "mData":"reorderPoint"},

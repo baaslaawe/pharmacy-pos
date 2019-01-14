@@ -163,6 +163,7 @@ class WposAdminStock {
                 // Add item as an Inventory Item
                 if ((isset($options->add_items) && $options->add_items===true)){
                     EventStream::sendStreamData(['status'=>"Adding Item..."]);
+                    $item->isDaa = '0';
                     $id = $storedItemsMdl->create($item);
                     if (!is_numeric($id)){
                         $result['error'] = "Could not add new item " . $item->name . " on line ".$count." of the CSV: ".$storedItemsMdl->errorInfo;
@@ -172,7 +173,6 @@ class WposAdminStock {
                 }
             }
             $storedItem = $storedItemsMdl->get($id);
-            var_dump($storedItem[0]);
             if ($storedItem !== false || $storedItem === null) {
                 $storedItem[0]['reorderPoint'] = $item->reorderPoint;
                 $sitem = $storedItem[0];
