@@ -632,6 +632,7 @@
         var tempstock;
         for (var key in stock){
             tempstock = stock[key];
+            tempstock.taxid = tempstock.taxid == null ? 1: tempstock.taxid;
             tempstock.taxname = WPOS.getTaxTable().rules[tempstock.taxid].name;
             if (tempstock.stockType === '1')
               stockarray.push(tempstock);
