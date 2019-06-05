@@ -13,7 +13,7 @@ var http = require('http');
 var app = http.createServer(wshandler);
 var fs = require('fs');
 var config = null;
-var configpath = __dirname+'/../docs/.config.json';
+var configpath = __dirname + '/../docs/.config.json';
 
 if (fs.existsSync(configpath))
     config = JSON.parse(fs.readFileSync(configpath, 'utf8'));
@@ -57,7 +57,7 @@ io.sockets.on('connection', function (socket) {
     // check for hashkey (for php authentication)
     if (!authed) {
         if (socket.handshake.query.hasOwnProperty('hashkey')) {
-            if ((hashkey == socket.handshake.query.hashkey) && (socket.request.connection.remoteAddress=="127.0.0.1")) {
+            if ((hashkey == socket.handshake.query.hashkey) && (socket.request.connection.remoteAddress == "127.0.0.1")) {
                 authed = true;
                 console.log("Authorised by hashkey: " + socket.handshake.query.hashkey);
             }
@@ -95,12 +95,12 @@ io.sockets.on('connection', function (socket) {
     socket.on('session', function (data) {
         // check for hashkey
         if (hashkey == data.hashkey) {
-            if (data.remove==false){
+            if (data.remove == false) {
                 sessions[data.data] = true;
                 console.log("Added PHP session: " + data.data);
             } else {
-                if (sessions.hasOwnProperty(data.data)){
-                    delete(sessions[data.data]);
+                if (sessions.hasOwnProperty(data.data)) {
+                    delete (sessions[data.data]);
                     console.log("Removed PHP session: " + data.data);
                 }
             }
@@ -126,11 +126,14 @@ io.sockets.on('connection', function (socket) {
         devices[request.deviceid].username = request.username;
         // remove device on disconnect
         socket.on('disconnect', function () {
-            delete(devices[request.deviceid]);
+            delete (devices[request.deviceid]);
             if (request.deviceid != 0) {
                 if (devices.hasOwnProperty(0)) {
                     // send updated device list to admin dash
-                    io.sockets.connected[devices[0].socketid].emit('updates', {a: "devices", data: JSON.stringify(devices)});
+                    io.sockets.connected[devices[0].socketid].emit('updates', {
+                        a: "devices",
+                        data: JSON.stringify(devices)
+                    });
                 }
             }
         });

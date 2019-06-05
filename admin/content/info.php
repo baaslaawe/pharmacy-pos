@@ -16,7 +16,7 @@
             </div>
             <div class="widget-body" style="padding-top: 10px;">
                 <div class="row">
-                    <div class="col-xs-2">Version: </div>
+                    <div class="col-xs-2">Version:</div>
                     <div id="app_version" class="col-xs-10"></div>
                     <div class="space-30"></div>
                 </div>
@@ -28,8 +28,11 @@
             </div>
             <div class="widget-body" style="padding-top: 10px;">
                 <p>Please refer here for information on support & development:</p>
-                <p><span class="glyphicon glyphicon-globe"></span> &nbsp;&nbsp;<a href="http://magnumdigitalke.com" target="_blank">http://magnumdigitalke.com</a></p>
-                <p><span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp; <span>support@magnumdigitalke.com</span></p>
+                <p><span class="glyphicon glyphicon-globe"></span> &nbsp;&nbsp;<a href="http://magnumdigitalke.com"
+                                                                                  target="_blank">http://magnumdigitalke.com</a>
+                </p>
+                <p><span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;
+                    <span>support@magnumdigitalke.com</span></p>
             </div>
         </div>
     </div>
@@ -40,14 +43,16 @@
             </div>
             <div class="widget-body" style="padding-top: 10px;">
                 <div class="row">
-                    <iframe frameborder="0" style="width: 100%; height: 100%; min-height: 600px; max-width: 600px; margin: 0 auto; position: relative;" height="100%" width="100%" src="https://www.gnu.org/licenses/lgpl-3.0.txt"></iframe>
+                    <iframe frameborder="0"
+                            style="width: 100%; height: 100%; min-height: 600px; max-width: 600px; margin: 0 auto; position: relative;"
+                            height="100%" width="100%" src="https://www.gnu.org/licenses/lgpl-3.0.txt"></iframe>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-    $(function(){
+    $(function () {
         $("#app_version").text(WPOS.getConfigTable().general.version);
         WPOS.util.hideLoader();
     });

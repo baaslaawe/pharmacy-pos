@@ -1,4 +1,5 @@
 <?php
+
 /**
  * StoredItemsModel is part of Wallace Point of Sale system (WPOS) API
  *
@@ -17,7 +18,6 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 24/05/14 4:24 PM
@@ -44,8 +44,8 @@ class SuppliersModel extends DbConfig
      */
     public function create($name)
     {
-        $sql          = "INSERT INTO stored_suppliers (`name`, `dt`) VALUES (:name, now());";
-        $placeholders = [":name"=>$name];
+        $sql = "INSERT INTO stored_suppliers (`name`, `dt`) VALUES (:name, now());";
+        $placeholders = [":name" => $name];
 
         return $this->insert($sql, $placeholders);
     }
@@ -54,7 +54,8 @@ class SuppliersModel extends DbConfig
      * @param null $Id
      * @return array|bool Returns false on an unexpected failure or an array of selected rows
      */
-    public function get($Id = null) {
+    public function get($Id = null)
+    {
         $sql = 'SELECT s.*, COUNT(i.id) as numitems FROM stored_suppliers as s LEFT OUTER JOIN stock_inventory as i ON s.id=i.supplierid';
         $placeholders = [];
         if ($Id !== null) {
@@ -64,7 +65,7 @@ class SuppliersModel extends DbConfig
             $sql .= ' s.id =:id';
             $placeholders[':id'] = $Id;
         }
-        $sql.=" GROUP BY s.id";
+        $sql .= " GROUP BY s.id";
 
         return $this->select($sql, $placeholders);
     }
@@ -78,7 +79,7 @@ class SuppliersModel extends DbConfig
     {
 
         $sql = "UPDATE stored_suppliers SET name= :name WHERE id= :id;";
-        $placeholders = [":id"=>$id, ":name"=>$name];
+        $placeholders = [":id" => $id, ":name" => $name];
 
         return $this->update($sql, $placeholders);
     }
@@ -91,7 +92,7 @@ class SuppliersModel extends DbConfig
     {
         $placeholders = [];
         $sql = "DELETE FROM stored_suppliers WHERE";
-        if (is_numeric($id)){
+        if (is_numeric($id)) {
             $sql .= " `id`=:id;";
             $placeholders[":id"] = $id;
         } else if (is_array($id)) {

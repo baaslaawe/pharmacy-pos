@@ -24,8 +24,10 @@
                         <option value="7889231500">3 Months</option>
                         <option value="31556926000">Year</option>
                     </select>
-                    <label>Range: <input type="text" style="width: 85px;" id="graphstime" onclick="$(this).blur();" /></label>
-                    <label>to <input type="text" style="width: 85px;" id="graphetime" onclick="$(this).blur();" /></label>
+                    <label>Range: <input type="text" style="width: 85px;" id="graphstime"
+                                         onclick="$(this).blur();"/></label>
+                    <label>to <input type="text" style="width: 85px;" id="graphetime"
+                                     onclick="$(this).blur();"/></label>
                 </div>
             </div>
 
@@ -41,70 +43,70 @@
     </div>
     <div class="col-sm-6">
         <div class="widget-box transparent">
-        <div class="widget-header widget-header-flat">
-            <h4 class="lighter">
-                <i class="icon-signal"></i>
-                Add data sets:
-            </h4>
-        </div>
-        <div class="widget-body" style="text-align: center; padding-top: 10px;">
-            <select id="datasetselect">
-                <option value="method">Payment Methods</option>
-                <option value="device">Device Takings</option>
-                <option value="location">Location Takings</option>
-            </select>
-            <button onclick="userLoadDataSet();" class="btn btn-sm btn-primary">Add</button>
-        </div>
+            <div class="widget-header widget-header-flat">
+                <h4 class="lighter">
+                    <i class="icon-signal"></i>
+                    Add data sets:
+                </h4>
+            </div>
+            <div class="widget-body" style="text-align: center; padding-top: 10px;">
+                <select id="datasetselect">
+                    <option value="method">Payment Methods</option>
+                    <option value="device">Device Takings</option>
+                    <option value="location">Location Takings</option>
+                </select>
+                <button onclick="userLoadDataSet();" class="btn btn-sm btn-primary">Add</button>
+            </div>
         </div>
     </div>
     <div class="col-sm-6">
         <div class="widget-box transparent">
-        <div class="widget-header widget-header-flat">
-            <h4 class="lighter">
-                <i class="icon-signal"></i>
-                Data Sets:
-            </h4>
-        </div>
-        <div class="widget-body">
+            <div class="widget-header widget-header-flat">
+                <h4 class="lighter">
+                    <i class="icon-signal"></i>
+                    Data Sets:
+                </h4>
+            </div>
+            <div class="widget-body">
 
-            <ol id="datasets" class="ddlist" style="margin-left: 0; padding-left: 0;">
-                <li class="dd-item">
-                    <div class="dd2-content">Sales Total
-                        <button style="float: right; margin-top: -3px;" onclick="removeUIData('sales', $(this));"
-                                class="btn btn-xs btn-danger">Remove
-                        </button>
-                    </div>
-                </li>
-                <li class="dd-item">
-                    <div class="dd2-content">Refund Total
-                        <button style="float: right; margin-top: -3px;" onclick="removeUIData('refunds', $(this));"
-                                class="btn btn-xs btn-danger">Remove
-                        </button>
-                    </div>
-                </li>
-                <li class="dd-item">
-                    <div class="dd2-content">Revenue
-                        <button style="float: right; margin-top: -3px;" onclick="removeUIData('takings', $(this));"
-                                class="btn btn-xs btn-danger">Remove
-                        </button>
-                    </div>
-                </li>
-                <li class="dd-item">
-                    <div class="dd2-content">Cost
-                        <button style="float: right; margin-top: -3px;" onclick="removeUIData('cost', $(this));"
-                                class="btn btn-xs btn-danger">Remove
-                        </button>
-                    </div>
-                </li>
-                <li class="dd-item">
-                    <div class="dd2-content">Profit
-                        <button style="float: right; margin-top: -3px;" onclick="removeUIData('profit', $(this));"
-                                class="btn btn-xs btn-danger">Remove
-                        </button>
-                    </div>
-                </li>
-            </ol>
-        </div>
+                <ol id="datasets" class="ddlist" style="margin-left: 0; padding-left: 0;">
+                    <li class="dd-item">
+                        <div class="dd2-content">Sales Total
+                            <button style="float: right; margin-top: -3px;" onclick="removeUIData('sales', $(this));"
+                                    class="btn btn-xs btn-danger">Remove
+                            </button>
+                        </div>
+                    </li>
+                    <li class="dd-item">
+                        <div class="dd2-content">Refund Total
+                            <button style="float: right; margin-top: -3px;" onclick="removeUIData('refunds', $(this));"
+                                    class="btn btn-xs btn-danger">Remove
+                            </button>
+                        </div>
+                    </li>
+                    <li class="dd-item">
+                        <div class="dd2-content">Revenue
+                            <button style="float: right; margin-top: -3px;" onclick="removeUIData('takings', $(this));"
+                                    class="btn btn-xs btn-danger">Remove
+                            </button>
+                        </div>
+                    </li>
+                    <li class="dd-item">
+                        <div class="dd2-content">Cost
+                            <button style="float: right; margin-top: -3px;" onclick="removeUIData('cost', $(this));"
+                                    class="btn btn-xs btn-danger">Remove
+                            </button>
+                        </div>
+                    </li>
+                    <li class="dd-item">
+                        <div class="dd2-content">Profit
+                            <button style="float: right; margin-top: -3px;" onclick="removeUIData('profit', $(this));"
+                                    class="btn btn-xs btn-danger">Remove
+                            </button>
+                        </div>
+                    </li>
+                </ol>
+            </div>
         </div>
     </div>
 </div>
@@ -113,9 +115,11 @@
     var stime;
     var data;
     var dataobj;
+
     // Graph functions
     function loadDefaultData() {
-        var sales = [], refunds = [], takings = [], cost = [], profit = [], netprofit = [], salerefs = [], refundrefs = [], takingrefs = [], expenses = [], expensesrefs = [];
+        var sales = [], refunds = [], takings = [], cost = [], profit = [], netprofit = [], salerefs = [],
+            refundrefs = [], takingrefs = [], expenses = [], expensesrefs = [];
         // get range
         var jdata = getData('graph/general');
         var tempdate;
@@ -123,23 +127,25 @@
         var interval = parseInt($("#graphinterval").val());
         // create the data object
         var sorted = [];
-        for(var pointa in jdata){
+        for (var pointa in jdata) {
             sorted.push(pointa);
         }
-        sorted.sort(function(a, b){return a - b});
-        for (var s=0;s<sorted.length;s++) {
+        sorted.sort(function (a, b) {
+            return a - b
+        });
+        for (var s = 0; s < sorted.length; s++) {
             i = sorted[s];
             salerefs.push(jdata[i].salerefs);
-            sales.push([ t, jdata[i].saletotal]);
+            sales.push([t, jdata[i].saletotal]);
             refundrefs.push(jdata[i].refundrefs);
-            refunds.push([ t, jdata[i].refundtotal]);
+            refunds.push([t, jdata[i].refundtotal]);
             takingrefs.push(jdata[i].refs);
-            takings.push([ t, jdata[i].totaltakings]);
-            cost.push([ t, jdata[i].cost]);
-            profit.push([ t, jdata[i].profit]);
-            netprofit.push([ t, jdata[i].netprofit]);
-            expenses.push([ t, jdata[i].expenses]);
-            expensesrefs.push([ t, jdata[i].expensesrefs]);
+            takings.push([t, jdata[i].totaltakings]);
+            cost.push([t, jdata[i].cost]);
+            profit.push([t, jdata[i].profit]);
+            netprofit.push([t, jdata[i].netprofit]);
+            expenses.push([t, jdata[i].expenses]);
+            expensesrefs.push([t, jdata[i].expensesrefs]);
             t = t + interval;
         }
         // for (var i in jdata) {
@@ -161,26 +167,41 @@
         //     profit.push([ t, jdata[i].profit]);
         //     t = t + interval;
         // }
-        dataobj = {grossprofit:{ label: "Gross profit", refs: takingrefs, data: profit, color: "#29AB87" }, netprofit:{ label: "Net profit", refs: takingrefs, data: netprofit, color: "#29AB87" }, expense: { label: "Expenses", refs: expensesrefs, data: expenses, color: "#29AB15" }, cost:{ label: "Cost", refs: takingrefs, data: cost, color: "#EA3C53" }, "sales": { label: "Sales", refs: salerefs, data: sales, color: "#9ABC32" }, "refunds": { label: "Refunds", refs: refundrefs, data: refunds, color: "#EDC240" }, "takings": { label: "Takings", refs: takingrefs, data: takings, color: "#3983C2" }};
+        dataobj = {
+            grossprofit: {label: "Gross profit", refs: takingrefs, data: profit, color: "#29AB87"},
+            netprofit: {label: "Net profit", refs: takingrefs, data: netprofit, color: "#29AB87"},
+            expense: {label: "Expenses", refs: expensesrefs, data: expenses, color: "#29AB15"},
+            cost: {label: "Cost", refs: takingrefs, data: cost, color: "#EA3C53"},
+            "sales": {label: "Sales", refs: salerefs, data: sales, color: "#9ABC32"},
+            "refunds": {label: "Refunds", refs: refundrefs, data: refunds, color: "#EDC240"},
+            "takings": {label: "Takings", refs: takingrefs, data: takings, color: "#3983C2"}
+        };
         drawChart();
     }
 
-    function getData(action){
+    function getData(action) {
         // fetch the data
-        return WPOS.sendJsonData(action, JSON.stringify({"stime": stime, "etime": etime, "interval": $("#graphinterval").val()}));
+        return WPOS.sendJsonData(action, JSON.stringify({
+            "stime": stime,
+            "etime": etime,
+            "interval": $("#graphinterval").val()
+        }));
     }
 
-    function userLoadDataSet(){
+    function userLoadDataSet() {
         var action, label;
-        switch ($("#datasetselect").val()){
+        switch ($("#datasetselect").val()) {
             case "method":
-                action = "graph/takings"; label = " Takings";
+                action = "graph/takings";
+                label = " Takings";
                 break;
             case "device":
-                action = "graph/devices"; label = " Takings";
+                action = "graph/devices";
+                label = " Takings";
                 break;
             case "location":
-                action = "graph/locations"; label = " Takings";
+                action = "graph/locations";
+                label = " Takings";
                 break;
         }
         // hide loader
@@ -191,7 +212,7 @@
         WPOS.util.hideLoader();
     }
 
-    function loadDataSet(action, label, property){
+    function loadDataSet(action, label, property) {
         var dataseries = {};
 
         // get range
@@ -203,11 +224,13 @@
         var interval = parseInt($("#graphinterval").val());
         // create the data object
         var sorted = [];
-        for(var point in jdata){
+        for (var point in jdata) {
             sorted.push(point);
         }
-        sorted.sort(function(a, b){return a - b});
-        for (var s=0;s<sorted.length;s++) {
+        sorted.sort(function (a, b) {
+            return a - b
+        });
+        for (var s = 0; s < sorted.length; s++) {
             i = sorted[s];
             tempdate = new Date();
             tempdate.setTime(t);
@@ -217,19 +240,19 @@
             tempdate = tempdate.getTime();
             // loop through each data series and add the requested property as y value
             tempx = jdata[i];
-            for (var series in tempx){
+            for (var series in tempx) {
                 // check for name and add to the labels index
-                if (!labels.hasOwnProperty(series)){
-                    if (tempx[series].hasOwnProperty('name')){
+                if (!labels.hasOwnProperty(series)) {
+                    if (tempx[series].hasOwnProperty('name')) {
                         labels[series] = tempx[series].name;
                     }
                 }
-                if (!dataseries.hasOwnProperty(series)){
-                   dataseries[series] = [];
-                   refs[series] = [];
+                if (!dataseries.hasOwnProperty(series)) {
+                    dataseries[series] = [];
+                    refs[series] = [];
                 }
                 refs[series].push(tempx[series]['refs']);
-                dataseries[series].push([ t, tempx[series][property] ]);
+                dataseries[series].push([t, tempx[series][property]]);
             }
             t = t + interval;
         }
@@ -258,21 +281,21 @@
         //     }
         // }
         // loop through dataseries and add labels, null values & add to UI List
-        for (var i in dataseries){
-            var serlabel = (labels.hasOwnProperty(i)?labels[i]:i);
-            addUIRow(serlabel, serlabel+" "+label);
-            dataobj[serlabel] = {label:serlabel+" "+label, refs: refs[i], data: dataseries[i]};
+        for (var i in dataseries) {
+            var serlabel = (labels.hasOwnProperty(i) ? labels[i] : i);
+            addUIRow(serlabel, serlabel + " " + label);
+            dataobj[serlabel] = {label: serlabel + " " + label, refs: refs[i], data: dataseries[i]};
         }
         // replot graph
         drawChart();
     }
 
-    function setGraphInterval(){
+    function setGraphInterval() {
         var interval = $("#graphinterval").val();
         // we want at least 4 plots on the graph and no more than 10 when changing the graph
         var timediff = etime - stime;
-        if ((timediff < (interval * 4)) || (timediff > interval * 10)){
-            stime = etime - interval * (interval==86400000 ? 7 : 4)+1;
+        if ((timediff < (interval * 4)) || (timediff > interval * 10)) {
+            stime = etime - interval * (interval == 86400000 ? 7 : 4) + 1;
             var sdate = new Date(stime);
             //sdate.setHours(0); sdate.setMinutes(0); sdate.setSeconds(0);
             $("#graphstime").datepicker('setDate', sdate);
@@ -307,8 +330,8 @@
             hoverable: true,
             shadowSize: 0,
             series: {
-                lines: { show: true },
-                points: { show: true }
+                lines: {show: true},
+                points: {show: true}
             },
             xaxis: {
                 mode: "time",
@@ -320,7 +343,7 @@
                 ticks: 10
             },
             grid: {
-                backgroundColor: { colors: [ "#fff", "#fff" ] },
+                backgroundColor: {colors: ["#fff", "#fff"]},
                 borderWidth: 1,
                 borderColor: '#555',
                 hoverable: true,
@@ -329,11 +352,11 @@
         });
     }
 
-    function addUIRow(key, label){
+    function addUIRow(key, label) {
         key = key.replace("'", "\\'");
         $("#datasets").append('<li class="dd-item">' +
             '<div class="dd2-content">' + label +
-            '<button style="float: right; margin-top: -3px;" onclick="removeUIData(\''+key+'\', $(this));" class="btn btn-xs btn-danger">Remove</button>' +
+            '<button style="float: right; margin-top: -3px;" onclick="removeUIData(\'' + key + '\', $(this));" class="btn btn-xs btn-danger">Remove</button>' +
             '</div></li>');
     }
 
@@ -341,7 +364,7 @@
         // remove the UI data row
         $(element).parent().parent().remove();
         // remove data and redraw the chart
-        delete(dataobj[propname]);
+        delete (dataobj[propname]);
         drawChart();
     }
 
@@ -357,19 +380,21 @@
                     $tooltip.show().children(0).text(tip);
                 }
                 var left, right;
-                if ((pos.pageX + 10 + $tooltip.width())>window.innerWidth){
-                    left = ""; right = 0;
+                if ((pos.pageX + 10 + $tooltip.width()) > window.innerWidth) {
+                    left = "";
+                    right = 0;
                 } else {
-                    right = ""; left = pos.pageX + 10;
+                    right = "";
+                    left = pos.pageX + 10;
                 }
-                $tooltip.css({top:pos.pageY + 10, left: left, right: right});
+                $tooltip.css({top: pos.pageY + 10, left: left, right: right});
             } else {
                 $tooltip.hide();
                 previousPoint = null;
             }
         };
-        var clickgraph = function(event, pos, item){
-            if (item.series['refs'].length==0) return;
+        var clickgraph = function (event, pos, item) {
+            if (item.series['refs'].length == 0) return;
             var refs = item.series['refs'][item.dataIndex];
             if (refs == "") return;
             WPOS.transactions.openTransactionList(refs);
@@ -380,24 +405,34 @@
         chart.css({'width': '100%', 'height': '320px'});
         // init date pickers
         etime = new Date();
-        etime.setHours(23); etime.setMinutes(59); etime.setSeconds(59);
+        etime.setHours(23);
+        etime.setMinutes(59);
+        etime.setSeconds(59);
         etime = etime.getTime();
         stime = new Date();
-        stime.setHours(0); stime.setMinutes(0); stime.setSeconds(0);
+        stime.setHours(0);
+        stime.setMinutes(0);
+        stime.setSeconds(0);
         stime = (stime.getTime() - 604800000); // a week ago
 
-        $("#graphstime").datepicker({dateFormat:"dd/mm/yy", maxDate: new Date(etime),
-            onSelect: function(text, inst){
+        $("#graphstime").datepicker({
+            dateFormat: "dd/mm/yy", maxDate: new Date(etime),
+            onSelect: function (text, inst) {
                 var date = $("#graphstime").datepicker("getDate");
-                date.setHours(0); date.setMinutes(0); date.setSeconds(0);
+                date.setHours(0);
+                date.setMinutes(0);
+                date.setSeconds(0);
                 stime = date.getTime();
                 setGraphRange();
             }
         });
-        $("#graphetime").datepicker({dateFormat:"dd/mm/yy", maxDate: new Date(etime),
-            onSelect: function(text, inst){
+        $("#graphetime").datepicker({
+            dateFormat: "dd/mm/yy", maxDate: new Date(etime),
+            onSelect: function (text, inst) {
                 var date = $("#graphetime").datepicker("getDate");
-                date.setHours(23); date.setMinutes(59); date.setSeconds(59);
+                date.setHours(23);
+                date.setMinutes(59);
+                date.setSeconds(59);
                 etime = date.getTime();
                 setGraphRange();
             }

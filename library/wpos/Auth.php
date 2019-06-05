@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Auth is part of Wallace Point of Sale system (WPOS) API
  *
@@ -22,15 +23,16 @@
  * @author     Michael B Wallace <micwallace@gmx.com>, Adam Jacquier-Parr <aljparr0@gmail.com>
  * @since      Class created 11/24/13 12:01 PM
  */
-class Auth{
+class Auth
+{
 
     /**
      * @var array API calls that are restricted to admin users
      */
     private $resApiCalls = ['file/upload', 'logs/read', 'logs/list', 'db/backup', 'node/start', 'node/stop',
-                            'node/restart', 'node/status', 'settings/pos/set', 'settings/general/set', 'settings/pos/get', 'settings/general/get', 'settings/invoice/get', 'settings/invoice/get',
-                            'users/get', 'users/add', 'users/edit', 'users/delete', 'user/disable', 'devices/add', 'devices/edit', 'devices/delete', 'device/disable',
-                            'location/add', 'location/edit', 'location/delete', 'location/disable', 'devices/setup'];
+        'node/restart', 'node/status', 'settings/pos/set', 'settings/general/set', 'settings/pos/get', 'settings/general/get', 'settings/invoice/get', 'settings/invoice/get',
+        'users/get', 'users/add', 'users/edit', 'users/delete', 'user/disable', 'devices/add', 'devices/edit', 'devices/delete', 'device/disable',
+        'location/add', 'location/edit', 'location/delete', 'location/disable', 'devices/setup'];
 
     /**
      * @var AuthModel
@@ -46,22 +48,18 @@ class Auth{
     /**
      * Start session if not already started
      */
-    public function __construct(){
+    public function __construct()
+    {
         if (session_id() == '') {
             session_start();
-        }
-    }
-
-    private function initAuthModel(){
-        if ($this->authMdl==null){
-            $this->authMdl = new AuthModel();
         }
     }
 
     /**
      * @return null current user UUID
      */
-    public function getUUID(){
+    public function getUUID()
+    {
         if (isset($_SESSION['uuid'])) {
             return $_SESSION['uuid'];
         }
@@ -72,11 +70,12 @@ class Auth{
     /**
      * @return array|null array of user data or null on failure
      */
-    public function getUser(){
+    public function getUser()
+    {
         if (isset($_SESSION['userId'])) {
-            $user = ["id"=>$_SESSION['userId'], "username"=>$_SESSION['username'], "isadmin"=>$_SESSION['isadmin'], "sections"=>$_SESSION['permissions']['sections']];
+            $user = ["id" => $_SESSION['userId'], "username" => $_SESSION['username'], "isadmin" => $_SESSION['isadmin'], "sections" => $_SESSION['permissions']['sections']];
             // add auth tokens if set
-            if ($this->authTokens!==null){
+            if ($this->authTokens !== null) {
                 $user = array_merge($user, $this->authTokens);
             }
             return $user;
@@ -87,7 +86,8 @@ class Auth{
     /**
      * @return null user id or null on failure
      */
-    public function getUserId(){
+    public function getUserId()
+    {
         if (isset($_SESSION['userId'])) {
             return $_SESSION['userId'];
         }
@@ -98,7 +98,8 @@ class Auth{
     /**
      * @return null username or null on failure
      */
-    public function getUsername(){
+    public function getUsername()
+    {
         if (isset($_SESSION['username'])) {
             return $_SESSION['username'];
         }
@@ -109,20 +110,10 @@ class Auth{
     /**
      * @return bool
      */
-    public function isLoggedIn(){
+    public function isLoggedIn()
+    {
         if (isset($_SESSION['username'])) {
             return true;
-        }
-        return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAdmin(){
-        if (isset($_SESSION['isadmin'])) {
-            if ($_SESSION['isadmin']==1)
-                return true;
         }
         return false;
     }
@@ -131,9 +122,10 @@ class Auth{
      * @param bool $sectiononly
      * @return null
      */
-    public function getPermissions($sectiononly=true){
+    public function getPermissions($sectiononly = true)
+    {
         if (isset($_SESSION['permissions'])) {
-            if ($sectiononly){
+            if ($sectiononly) {
                 return $_SESSION['permissions']['sections'];
             } else {
                 return $_SESSION['permissions'];
@@ -147,20 +139,33 @@ class Auth{
      * @param $apiAction
      * @return bool
      */
-    public function isUserAllowed($apiAction){
+    public function isUserAllowed($apiAction)
+    {
         // if admin just return true
-        if ($this->isAdmin()){
+        if ($this->isAdmin()) {
             return true;
         }
         // check if it's an admin only api call
-        if (array_search($apiAction, $this->resApiCalls)!==false){
+        if (array_search($apiAction, $this->resApiCalls) !== false) {
             // disallow user
             return false;
         }
         // check in users permissions
-        if (array_search($apiAction, $_SESSION['permissions']['apicalls'])!==false){
+        if (array_search($apiAction, $_SESSION['permissions']['apicalls']) !== false) {
             // allow user if action defined in permisions
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        if (isset($_SESSION['isadmin'])) {
+            if ($_SESSION['isadmin'] == 1)
+                return true;
         }
         return false;
     }
@@ -172,43 +177,68 @@ class Auth{
      * @param bool $getToken When true,sets up an extended session token and auth_hash, which is returned to the client
      * @return bool|int
      */
-    public function login($username, $password, $getToken=false){
+    public function login($username, $password, $getToken = false)
+    {
         $this->initAuthModel();
         $user = $this->authMdl->login($username, $password, true);
-        if ($user==-1){
+        if ($user == -1) {
             // log data
-            Logger::write("An authentication attempt was made by ".$username." but the user has been disabled.", "AUTH", null, false);
+            Logger::write("An authentication attempt was made by " . $username . " but the user has been disabled.", "AUTH", null, false);
             return -1; // the user is disabled
         }
         if (is_array($user)) {
             // check for
             $_SESSION['username'] = $username;
-            $_SESSION['userId']   = $user['id'];
-            $_SESSION['isadmin']  = $user['admin'];
-            $_SESSION['permissions']  = json_decode($user['permissions'], true);
+            $_SESSION['userId'] = $user['id'];
+            $_SESSION['isadmin'] = $user['admin'];
+            $_SESSION['permissions'] = json_decode($user['permissions'], true);
 
-            if ($getToken!==false)
+            if ($getToken !== false)
                 $this->setNewSessionToken($user['id'], $user['hash']);
 
             // log data
-            Logger::write("Authentication successful for user:".$username, "AUTH", null, false);
+            Logger::write("Authentication successful for user:" . $username, "AUTH", null, false);
 
             // Send to node JS
             $this->authoriseWebsocket();
 
             return true;
-        } else{
+        } else {
             // log data
-            Logger::write("Authentication failed for user:".$username." from IP address: ".WposAdminUtilities::getRemoteAddress(), "AUTH", null, false);
+            Logger::write("Authentication failed for user:" . $username . " from IP address: " . WposAdminUtilities::getRemoteAddress(), "AUTH", null, false);
 
             return false;
         }
     }
 
+    private function initAuthModel()
+    {
+        if ($this->authMdl == null) {
+            $this->authMdl = new AuthModel();
+        }
+    }
+
+    /**
+     * Generate a new token and auth_hash, save the token in the database
+     * @param $id
+     * @param $password_hash
+     */
+    private function setNewSessionToken($id, $password_hash)
+    {
+        // create unique token
+        $tokens = ['token' => WposAdminUtilities::getToken()];
+        // create auth_hash
+        $tokens['auth_hash'] = hash('sha256', $password_hash . $tokens['token']);
+        // save tokens
+        $this->authMdl->setAuthToken($id, $tokens['token']);
+        $this->authTokens = $tokens;
+    }
+
     /**
      * Sends the users session_id to the node.js websocket server for client websocket authorisation.
      */
-    public function authoriseWebsocket(){
+    public function authoriseWebsocket()
+    {
         $socket = new WposSocketIO();
         return $socket->sendSessionData(session_id());
     }
@@ -219,28 +249,29 @@ class Auth{
      * @param $auth_hash
      * @return bool|int
      */
-    public function renewTokenSession($username, $auth_hash){
+    public function renewTokenSession($username, $auth_hash)
+    {
         $this->initAuthModel();
-        $user=$this->authMdl->get(null, $username, null, null, true)[0];
+        $user = $this->authMdl->get(null, $username, null, null, true)[0];
         if (is_array($user)) {
             // check disabled
-            if ($user['disabled']==1){
+            if ($user['disabled'] == 1) {
                 // log data
-                Logger::write("Session renew failed for ".$username.", the user has been disabled.", "AUTH");
+                Logger::write("Session renew failed for " . $username . ", the user has been disabled.", "AUTH");
                 return -1; // the user is disabled
             }
             // check tokens
-            $validation_hash = hash('sha256', $user['hash'].$user['token']);
-            if ($auth_hash==$validation_hash){
+            $validation_hash = hash('sha256', $user['hash'] . $user['token']);
+            if ($auth_hash == $validation_hash) {
                 // set session values
                 $_SESSION['username'] = $username;
-                $_SESSION['userId']   = $user['id'];
-                $_SESSION['isadmin']  = $user['admin'];
-                $_SESSION['permissions']  = json_decode($user['permissions'], true);
+                $_SESSION['userId'] = $user['id'];
+                $_SESSION['isadmin'] = $user['admin'];
+                $_SESSION['permissions'] = json_decode($user['permissions'], true);
                 //$this->hash = $user['hash'];
                 $this->setNewSessionToken($user['id'], $user['hash']);
                 // log data
-                Logger::write("Authentication successful for user:".$username, "AUTH");
+                Logger::write("Authentication successful for user:" . $username, "AUTH");
 
                 // Send to node JS
                 $socket = new WposSocketIO();
@@ -251,36 +282,23 @@ class Auth{
                 return true;
             } else {
                 // log data
-                Logger::write("Session renew failed for ".$username.", token mismatch.", "AUTH");
+                Logger::write("Session renew failed for " . $username . ", token mismatch.", "AUTH");
             }
-        } else{
+        } else {
             // log data
-            Logger::write("Session renew failed for ".$username.", user not found.", "AUTH");
+            Logger::write("Session renew failed for " . $username . ", user not found.", "AUTH");
         }
         return false;
     }
-
-    /**
-     * Generate a new token and auth_hash, save the token in the database
-     * @param $id
-     * @param $password_hash
-     */
-    private function setNewSessionToken($id, $password_hash){
-        // create unique token
-        $tokens = ['token'=>WposAdminUtilities::getToken()];
-        // create auth_hash
-        $tokens['auth_hash'] = hash('sha256', $password_hash.$tokens['token']);
-        // save tokens
-        $this->authMdl->setAuthToken($id, $tokens['token']);
-        $this->authTokens = $tokens;
-    }
     // Customer Authentication methods
+
     /**
      * @return array|null array of user data or null on failure
      */
-    public function getCustomer(){
+    public function getCustomer()
+    {
         if (isset($_SESSION['cust_id'])) {
-            $customer = ["id"=>$_SESSION['cust_id'], "username"=>$_SESSION['cust_username'], "name"=>$_SESSION['cust_name']];
+            $customer = ["id" => $_SESSION['cust_id'], "username" => $_SESSION['cust_username'], "name" => $_SESSION['cust_name']];
             return $customer;
         }
         return null;
@@ -289,7 +307,8 @@ class Auth{
     /**
      * @return null customer id or null on failure
      */
-    public function getCustomerId(){
+    public function getCustomerId()
+    {
         if (isset($_SESSION['cust_id'])) {
             return $_SESSION['cust_id'];
         }
@@ -299,7 +318,8 @@ class Auth{
     /**
      * @return null customer id or null on failure
      */
-    public function getCustomerUsername(){
+    public function getCustomerUsername()
+    {
         if (isset($_SESSION['cust_username'])) {
             return $_SESSION['cust_username'];
         }
@@ -309,7 +329,8 @@ class Auth{
     /**
      * @return bool
      */
-    public function isCustomerLoggedIn(){
+    public function isCustomerLoggedIn()
+    {
         if (isset($_SESSION['cust_username'])) {
             return true;
         }
@@ -319,46 +340,49 @@ class Auth{
     /**
      * @return String, customer/user/both or null on failure
      */
-    public function getUserType(){
+    public function getUserType()
+    {
         if (isset($_SESSION['userId']) && isset($_SESSION['cust_id'])) {
             return 'both';
         } else if (isset($_SESSION['userId'])) {
             return 'user';
-        } else if (isset($_SESSION['cust_id'])){
+        } else if (isset($_SESSION['cust_id'])) {
             return 'customer';
         }
         return null;
     }
+
     /**
      * Attempt a login; on success setup session vars and send to node server else log the failed attempt
      * @param $username
      * @param $password
      * @return bool|int
      */
-    public function customerLogin($username, $password){
+    public function customerLogin($username, $password)
+    {
         $custMdl = new CustomerModel();
-        $customer=$custMdl->login($username, $password, true);
-        if ($customer==-1){
+        $customer = $custMdl->login($username, $password, true);
+        if ($customer == -1) {
             // log data
-            Logger::write("An authentication attempt was made by ".$username." but the customer has been disabled.", "AUTH", null, false);
+            Logger::write("An authentication attempt was made by " . $username . " but the customer has been disabled.", "AUTH", null, false);
             return -1; // the user is disabled
         }
-        if ($customer==-2){
+        if ($customer == -2) {
             return -2; // the user is not activated
         }
         if (is_array($customer)) {
             // check for
             $_SESSION['cust_username'] = $username;
             $_SESSION['cust_name'] = $customer['name'];
-            $_SESSION['cust_id']   = $customer['id'];
+            $_SESSION['cust_id'] = $customer['id'];
             $_SESSION['cust_hash'] = $customer['pass'];;
             // log data
-            Logger::write("Authentication successful for customer:".$username, "AUTH", null, false);
+            Logger::write("Authentication successful for customer:" . $username, "AUTH", null, false);
 
             return true;
-        } else{
+        } else {
             // log data
-            Logger::write("Authentication failed for customer:".$username." from IP address: ".WposAdminUtilities::getRemoteAddress(), "AUTH", null, false);
+            Logger::write("Authentication failed for customer:" . $username . " from IP address: " . WposAdminUtilities::getRemoteAddress(), "AUTH", null, false);
 
             return false;
         }
@@ -368,7 +392,8 @@ class Auth{
      * Destroy the current session and notify the node server
      * @return bool
      */
-    public function logout(){
+    public function logout()
+    {
         // Send to node JS
         $socket = new WposSocketIO();
         $socket->sendSessionData(session_id(), true);

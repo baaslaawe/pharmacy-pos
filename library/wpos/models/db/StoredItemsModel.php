@@ -17,7 +17,6 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 11/23/13 10:36 PM
@@ -29,7 +28,7 @@ class StoredItemsModel extends DbConfig
     /**
      * @var array available columns
      */
-    protected $_columns = ['id' ,'data', 'categoryid', 'name', 'taxid', 'stockType', 'isDaa', 'reorderPoint'];
+    protected $_columns = ['id', 'data', 'categoryid', 'name', 'taxid', 'stockType', 'isDaa', 'reorderPoint'];
 
     /**
      * Init DB
@@ -45,10 +44,10 @@ class StoredItemsModel extends DbConfig
      */
     public function create($data)
     {
-        $dataObj = json_encode(['name'=>$data->name, 'description'=>$data->description, 'categoryid'=>$data->categoryid, 'taxid'=>$data->taxid, 'reorderPoint'=>$data->reorderPoint, 'stockType'=>$data->stockType, 'isDaa'=>$data->isDaa]);
+        $dataObj = json_encode(['name' => $data->name, 'description' => $data->description, 'categoryid' => $data->categoryid, 'taxid' => $data->taxid, 'reorderPoint' => $data->reorderPoint, 'stockType' => $data->stockType, 'isDaa' => $data->isDaa]);
 
-        $sql          = "INSERT INTO stored_items (`data`, `categoryid`, `name`, `description`, `taxid`, `reorderPoint`, `stockType`, `isDaa`) VALUES (:data, :categoryid, :name, :description, :taxid, :reorderPoint, :stockType, :isDaa);";
-        $placeholders = [":data"=>$dataObj, ":categoryid"=>$data->categoryid, ":name"=>$data->name, ":description"=>$data->description, ":taxid"=>$data->taxid, ":reorderPoint"=>$data->reorderPoint, ":stockType"=>$data->stockType, ":isDaa"=>$data->isDaa];
+        $sql = "INSERT INTO stored_items (`data`, `categoryid`, `name`, `description`, `taxid`, `reorderPoint`, `stockType`, `isDaa`) VALUES (:data, :categoryid, :name, :description, :taxid, :reorderPoint, :stockType, :isDaa);";
+        $placeholders = [":data" => $dataObj, ":categoryid" => $data->categoryid, ":name" => $data->name, ":description" => $data->description, ":taxid" => $data->taxid, ":reorderPoint" => $data->reorderPoint, ":stockType" => $data->stockType, ":isDaa" => $data->isDaa];
 
         return $this->insert($sql, $placeholders);
     }
@@ -57,7 +56,8 @@ class StoredItemsModel extends DbConfig
      * @param null $Id
      * @return array|bool Returns false on an unexpected failure or an array of selected rows
      */
-    public function get($Id = null) {
+    public function get($Id = null)
+    {
         $sql = 'SELECT * FROM stored_items';
         $placeholders = [];
         if ($Id !== null) {
@@ -69,10 +69,10 @@ class StoredItemsModel extends DbConfig
         }
 
         $items = $this->select($sql, $placeholders);
-        if ($items===false)
+        if ($items === false)
             return false;
 
-        foreach($items as $key=>$item){
+        foreach ($items as $key => $item) {
             $data = json_decode($item['data'], true);
             $data['id'] = $item['id'];
             $items[$key] = $data;
@@ -82,16 +82,17 @@ class StoredItemsModel extends DbConfig
     }
 
     // TODO:: Remove this function
-    public function getIdForName($name){
+    public function getIdForName($name)
+    {
 
-        $sql          = "SELECT * FROM stored_items WHERE name=:storeditemid;";
-        $placeholders = [":storeditemid"=>$name];
+        $sql = "SELECT * FROM stored_items WHERE name=:storeditemid;";
+        $placeholders = [":storeditemid" => $name];
 
         $items = $this->select($sql, $placeholders);
-        if ($items===false)
+        if ($items === false)
             return false;
 
-        foreach($items as $key=>$item){
+        foreach ($items as $key => $item) {
             $data = json_decode($item['data'], true);
             $data['id'] = $item['id'];
             $items[$key] = $data;
@@ -104,12 +105,13 @@ class StoredItemsModel extends DbConfig
      * @param $data
      * @return array|bool Returns false on an unexpected failure or an array of selected rows
      */
-    public function getDuplicate($data) {
+    public function getDuplicate($data)
+    {
         $sql = 'SELECT * FROM stored_items WHERE `name`=:name AND `categoryid`=:categoryid';
-        $placeholders = [":name"=>$data->name, ":categoryid"=>$data->categoryid];
+        $placeholders = [":name" => $data->name, ":categoryid" => $data->categoryid];
 
         $items = $this->select($sql, $placeholders);
-        if ($items===false)
+        if ($items === false)
             return false;
         else
             return sizeof($items);
@@ -120,13 +122,14 @@ class StoredItemsModel extends DbConfig
      * @param $data
      * @return bool|int Returns false on an unexpected failure or the number of rows affected by the update operation
      */
-    public function edit($id, $data){
+    public function edit($id, $data)
+    {
         $json = json_encode($data);
         $sql = "UPDATE stored_items SET data= :data, categoryid= :categoryid, name= :name, taxid= :taxid, reorderPoint= :reorderPoint, stockType= :stockType WHERE id= :id;";
-        if(is_array($data)){
-            $placeholders = [":id"=>$id, ":data"=>$json, ":categoryid"=>$data['categoryid'], ":name"=>$data['name'], ":taxid"=>$data['taxid'], ":reorderPoint"=>$data['reorderPoint'], ":stockType"=>$data['stockType']];
+        if (is_array($data)) {
+            $placeholders = [":id" => $id, ":data" => $json, ":categoryid" => $data['categoryid'], ":name" => $data['name'], ":taxid" => $data['taxid'], ":reorderPoint" => $data['reorderPoint'], ":stockType" => $data['stockType']];
         } else {
-            $placeholders = [":id"=>$id, ":data"=>$json, ":categoryid"=>$data->categoryid, ":name"=>$data->name, ":taxid"=>$data->taxid, ":reorderPoint"=>$data->reorderPoint, ":stockType"=>$data->stockType];
+            $placeholders = [":id" => $id, ":data" => $json, ":categoryid" => $data->categoryid, ":name" => $data->name, ":taxid" => $data->taxid, ":reorderPoint" => $data->reorderPoint, ":stockType" => $data->stockType];
         }
 
         return $this->update($sql, $placeholders);
@@ -136,11 +139,12 @@ class StoredItemsModel extends DbConfig
      * @param integer|array $id
      * @return bool|int Returns false on an unexpected failure or the number of rows affected by the delete operation
      */
-    public function remove($id){
+    public function remove($id)
+    {
 
         $placeholders = [];
         $sql = "DELETE FROM stored_items WHERE ";
-        if (is_numeric($id)){
+        if (is_numeric($id)) {
             $sql .= " `id`=:id;";
             $placeholders[":id"] = $id;
         } else if (is_array($id)) {

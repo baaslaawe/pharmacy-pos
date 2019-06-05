@@ -27,14 +27,14 @@
                     <div class="form-group">
                         <div class="col-sm-2"><label>Type:</label></div>
                         <div class="col-sm-10">
-                            <input type="text" id="template_type" readonly />
+                            <input type="text" id="template_type" readonly/>
                             <small>Receipt templates are not used for text-mode ESCP receipt printing</small>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-2"><label>Name:</label></div>
                         <div class="col-sm-10">
-                            <input type="text" id="template_name" />
+                            <input type="text" id="template_name"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -50,8 +50,12 @@
         </div>
     </div>
     <div class="col-sm-12 align-center form-actions">
-        <button class="btn btn-warning" type="button" onclick="restoreTemplate();"><i class="icon-undo align-top bigger-125"></i>Restore</button>
-        <button class="btn btn-success" type="button" onclick="saveTemplate();"><i class="icon-save align-top bigger-125"></i>Save</button>
+        <button class="btn btn-warning" type="button" onclick="restoreTemplate();"><i
+                    class="icon-undo align-top bigger-125"></i>Restore
+        </button>
+        <button class="btn btn-success" type="button" onclick="saveTemplate();"><i
+                    class="icon-save align-top bigger-125"></i>Save
+        </button>
     </div>
 </div>
 <script language="javascript" src="/admin/assets/js/ace/ace.js"></script>
@@ -60,10 +64,10 @@
     var templateEditor;
     var curId = null;
 
-    function loadTemplates(){
+    function loadTemplates() {
         templates = WPOS.getJsonData("templates/get");
         var id;
-        if (curId!=null && templates.hasOwnProperty(curId)){
+        if (curId != null && templates.hasOwnProperty(curId)) {
             id = curId;
         } else {
             id = Object.keys(templates)[0];
@@ -73,15 +77,15 @@
         refreshTemplateList(id);
     }
 
-    function refreshTemplateList(selectedid){
+    function refreshTemplateList(selectedid) {
         var list = $("#template_list");
         list.html('');
-        for (var i in templates){
-            list.append('<option value="'+i+'" '+(i==selectedid?'selected="selected"':'')+'>'+templates[i].name+'</option>');
+        for (var i in templates) {
+            list.append('<option value="' + i + '" ' + (i == selectedid ? 'selected="selected"' : '') + '>' + templates[i].name + '</option>');
         }
     }
 
-    function loadTemplate(id){
+    function loadTemplate(id) {
         var template = templates[id];
         curId = id;
         $("#template_type").val(template.type);
@@ -95,30 +99,34 @@
         templateEditor.gotoLine(0, 0, true);
     }
 
-    function saveTemplate(){
-        var data = {id: $("#template_list").val(), name: $("#template_name").val(), template: templateEditor.getValue()};
+    function saveTemplate() {
+        var data = {
+            id: $("#template_list").val(),
+            name: $("#template_name").val(),
+            template: templateEditor.getValue()
+        };
         var result = WPOS.sendJsonData("templates/edit", JSON.stringify(data));
-        if (result!==false){
+        if (result !== false) {
             templates[data.id].name = data.name;
             templates[data.id].template = data.template;
             refreshTemplateList(data.id);
             // update global config
             var template = templates[data.id];
-            WPOS.updateConfig('templates~'+data.id, template);
+            WPOS.updateConfig('templates~' + data.id, template);
         }
         // hide loader
         WPOS.util.hideLoader();
     }
 
-    function restoreTemplate(){
+    function restoreTemplate() {
         var answer = confirm("Are you sure you want to restore the current template?\nThis will destroy all changes you have made.");
         if (answer) {
-            WPOS.sendJsonData('templates/restore', '{"filename":"'+templates[curId].filename+'"}');
+            WPOS.sendJsonData('templates/restore', '{"filename":"' + templates[curId].filename + '"}');
             loadTemplates();
         }
     }
 
-    $(function(){
+    $(function () {
         loadTemplates();
         // hide loader
         WPOS.util.hideLoader();

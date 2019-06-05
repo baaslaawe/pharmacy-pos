@@ -1,4 +1,5 @@
 <?php
+
 /**
  * StockHistoryModel is part of Wallace Point of Sale system (WPOS) API
  *
@@ -17,7 +18,6 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 24/05/14 4:13 PM
@@ -47,9 +47,10 @@ class StockHistoryModel extends DbConfig
      * @param int $direction
      * @return bool|string Returns false on an unexpected failure, returns -1 if a unique constraint in the database fails, or the new rows id if the insert is successful
      */
-    public function create($stockitemid, $locationid, $type, $amount, $auxid=-1, $direction=0){
-        $sql = "INSERT INTO stock_history (stockitemid, locationid, auxid, auxdir, type, amount, dt) VALUES (:stockitemid, :locationid, :auxid, :auxdir, :type, :amount, '".date("Y-m-d H:i:s")."');";
-        $placeholders = [":stockitemid"=>$stockitemid, ":locationid"=>$locationid, ":auxid"=>$auxid, ":auxdir"=>$direction, ":type"=>$type, ":amount"=>$amount];
+    public function create($stockitemid, $locationid, $type, $amount, $auxid = -1, $direction = 0)
+    {
+        $sql = "INSERT INTO stock_history (stockitemid, locationid, auxid, auxdir, type, amount, dt) VALUES (:stockitemid, :locationid, :auxid, :auxdir, :type, :amount, '" . date("Y-m-d H:i:s") . "');";
+        $placeholders = [":stockitemid" => $stockitemid, ":locationid" => $locationid, ":auxid" => $auxid, ":auxdir" => $direction, ":type" => $type, ":amount" => $amount];
 
         return $this->insert($sql, $placeholders);
     }
@@ -59,7 +60,8 @@ class StockHistoryModel extends DbConfig
      * @param bool $locationid
      * @return array|bool Returns an array of results on success, false on failure
      */
-    public function get($stockitemid = false, $locationid = false){
+    public function get($stockitemid = false, $locationid = false)
+    {
         $sql = "SELECT h.*, item.name as name, COALESCE(l.name, 'Warehouse') as location FROM stock_history as h LEFT JOIN stock_items as i ON h.stockitemid=i.id LEFT JOIN locations as l ON h.locationid=l.id LEFT JOIN stock_inventory AS inv ON i.stockinventoryid=inv.id LEFT JOIN stored_items AS item ON inv.storeditemid=item.id";
         $placeholders = [];
         if ($stockitemid !== false) {
@@ -87,12 +89,13 @@ class StockHistoryModel extends DbConfig
      * @param $itemid
      * @return bool|int Returns false on failure or the number of rows affected
      */
-    public function removeByItemId($itemid){
+    public function removeByItemId($itemid)
+    {
         if ($itemid === null) {
             return false;
         }
         $sql = "DELETE FROM stock_history WHERE itemid=:itemid;";
-        $placeholders = [":itemid"=>$itemid];
+        $placeholders = [":itemid" => $itemid];
 
         return $this->delete($sql, $placeholders);
     }
@@ -102,12 +105,13 @@ class StockHistoryModel extends DbConfig
      * @param $locationid
      * @return bool|int Returns false on failure or the number of rows affected
      */
-    public function removeByLocationId($locationid){
+    public function removeByLocationId($locationid)
+    {
         if ($locationid === null) {
             return false;
         }
-        $sql          = "DELETE FROM stock_history WHERE locationid=:locationid;";
-        $placeholders = [":locationid"=>$locationid];
+        $sql = "DELETE FROM stock_history WHERE locationid=:locationid;";
+        $placeholders = [":locationid" => $locationid];
 
         return $this->delete($sql, $placeholders);
     }

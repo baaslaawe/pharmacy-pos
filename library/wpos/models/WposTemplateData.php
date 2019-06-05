@@ -1,4 +1,5 @@
 <?php
+
 /**
  * WposTemplateData is part of Wallace Point of Sale system (WPOS) API
  *
@@ -59,33 +60,7 @@ class WposTemplateData
     public $customer = false;
 
     public $Utils;
-
-    /**
-     * Format currency for mustache template
-     * @return function
-     */
-    public function currency(){
-        return function($text, Mustache_LambdaHelper $helper){
-            return $this->Utils->currencyFormat($helper->render($text));
-        };
-    }
-
     private $taxitems;
-    private function getTaxArray($taxdata){
-        $taxArr = [];
-        if (!isset($this->taxitems))
-            $this->taxitems = WposAdminUtilities::getTaxTable()['items'];
-
-        foreach ($taxdata as $key=>$value) {
-            $tax = $this->taxitems[$key];
-            $taxObj = new stdClass();
-            $taxObj->label = $tax['name'] . ' (' . $tax['value'] . '%)';
-            $taxObj->altlabel = $tax['altname'] . ' (' . $tax['value'] . '%)';
-            $taxObj->value = $value;
-            $taxArr[] = $taxObj;
-        }
-        return $taxArr;
-    }
 
     /**
      * Decode provided JSON and extract commonly used variables
@@ -93,7 +68,8 @@ class WposTemplateData
      * @param array $config
      * @param bool $invoice
      */
-    public function WposTemplateData($data, $config=[], $invoice = false){
+    public function WposTemplateData($data, $config = [], $invoice = false)
+    {
         $this->Utils = new WposAdminUtilities();
         $this->Utils->setCurrencyFormat($config['general']->currencyformat);
 
@@ -108,7 +84,7 @@ class WposTemplateData
         $this->sale_total = $data->total;
         $this->sale_void = isset($data->voiddata);
         $this->sale_hasrefunds = isset($data->refunddata);
-        $this->show_subtotal  = (count($data->taxdata) > 0 || $data->discount > 0);
+        $this->show_subtotal = (count($data->taxdata) > 0 || $data->discount > 0);
 
         // format tax data
         $this->sale_tax = $this->getTaxArray($data->taxdata);
@@ -132,7 +108,7 @@ class WposTemplateData
                 }
             }
             $obj = new stdClass();
-            $obj->altlabel = isset($altlabels->{$method})?$altlabels->{$method}:ucfirst($method);
+            $obj->altlabel = isset($altlabels->{$method}) ? $altlabels->{$method} : ucfirst($method);
             $obj->label = ucfirst($method);
             $obj->amount = $amount;
 
@@ -153,42 +129,43 @@ class WposTemplateData
         }
 
         // invoice only fields
-        if ($invoice){
-            $this->logo_url  = ($_SERVER['HTTPS']!==""?"https://":"http://").$_SERVER['SERVER_NAME'].$config['general']->bizlogo;
-            $this->business_name  = $config['general']->bizname;
-            $this->business_address  = $config['general']->bizaddress;
-            $this->business_suburb  = $config['general']->bizsuburb;
-            $this->business_state  = $config['general']->bizstate;
-            $this->business_postcode  = $config['general']->bizpostcoe;
-            $this->business_country  = $config['general']->bizcountry;
-            $this->business_number  = $config['general']->biznumber;
+        if ($invoice) {
+            $this->logo_url = ($_SERVER['HTTPS'] !== "" ? "https://" : "http://") . $_SERVER['SERVER_NAME'] . $config['general']->bizlogo;
+            $this->business_name = $config['general']->bizname;
+            $this->business_address = $config['general']->bizaddress;
+            $this->business_suburb = $config['general']->bizsuburb;
+            $this->business_state = $config['general']->bizstate;
+            $this->business_postcode = $config['general']->bizpostcoe;
+            $this->business_country = $config['general']->bizcountry;
+            $this->business_number = $config['general']->biznumber;
             $this->invoice_duedt = $this->Utils->getDateFromTimestamp($data->duedt, $config['general']->dateformat, false);
             $this->invoice_paid = number_format((float)($data->total - $data->balance), 2, '.', ',');
             $this->invoice_balance = $data->balance;
-            if (isset($data->custid) && $data->custid>0) {
+            if (isset($data->custid) && $data->custid > 0) {
                 $custMdl = new WposAdminCustomers();
                 $this->customer = $custMdl->getCustomerData($data->custid);
             }
             $this->payment_instructions = $config['invoice']->payinst;
             // invoice needs item tax calculated
-            foreach ($this->sale_items as $key=>$value){
+            foreach ($this->sale_items as $key => $value) {
                 $value->tax->items = $this->getTaxArray($value->tax->values);
                 $this->sale_items[$key] = $value;
             }
         } else {
             // POS sale only fields
-            $this->header_line1  = $config['general']->bizname;
-            $this->header_line2  = $config['pos']->recline2;
-            $this->header_line3  = $config['pos']->recline3;
-            $this->logo_url  = ($_SERVER['HTTPS']!==""?"https://":"http://").$_SERVER['SERVER_NAME'].$config['pos']->recemaillogo;
-            $this->footer  = $config['pos']->recfooter;
-            $this->qrcode_url = $config['pos']->recqrcode!=""?($_SERVER['HTTPS']!==""?"https://":"http://").$_SERVER['SERVER_NAME']."/docs/qrcode.png":null;
+            $this->header_line1 = $config['general']->bizname;
+            $this->header_line2 = $config['pos']->recline2;
+            $this->header_line3 = $config['pos']->recline3;
+            $this->logo_url = ($_SERVER['HTTPS'] !== "" ? "https://" : "http://") . $_SERVER['SERVER_NAME'] . $config['pos']->recemaillogo;
+            $this->footer = $config['pos']->recfooter;
+            $this->qrcode_url = $config['pos']->recqrcode != "" ? ($_SERVER['HTTPS'] !== "" ? "https://" : "http://") . $_SERVER['SERVER_NAME'] . "/docs/qrcode.png" : null;
 
             // format refunds
             if (isset($data->refunddata)) {
                 $this->sale_refunds = [];
-                $lastrefindex = 0; $lastreftime = 0;
-                foreach ($data->refunddata as $key=>$refund) {
+                $lastrefindex = 0;
+                $lastreftime = 0;
+                foreach ($data->refunddata as $key => $refund) {
                     // find last refund for integrated eftpos receipt
                     if ($refund->processdt > $lastreftime) {
                         $lastrefindex = $key;
@@ -196,8 +173,8 @@ class WposTemplateData
                     $obj = new stdClass();
                     $obj->datetime = $this->Utils->getDateFromTimestamp($refund->processdt, $config['general']->dateformat);
                     $obj->numitems = count($refund->items);
-                    $obj->method =  ucfirst($refund->method);
-                    $obj->altmethod = isset($altlabels->{$refund->method})?$altlabels->{$refund->method}:ucfirst($refund->method);
+                    $obj->method = ucfirst($refund->method);
+                    $obj->altmethod = isset($altlabels->{$refund->method}) ? $altlabels->{$refund->method} : ucfirst($refund->method);
                     $obj->amount = $this->Utils->currencyFormat($refund->amount);
 
                     $this->sale_refunds[] = $obj;
@@ -208,5 +185,33 @@ class WposTemplateData
                 }
             }
         }
+    }
+
+    private function getTaxArray($taxdata)
+    {
+        $taxArr = [];
+        if (!isset($this->taxitems))
+            $this->taxitems = WposAdminUtilities::getTaxTable()['items'];
+
+        foreach ($taxdata as $key => $value) {
+            $tax = $this->taxitems[$key];
+            $taxObj = new stdClass();
+            $taxObj->label = $tax['name'] . ' (' . $tax['value'] . '%)';
+            $taxObj->altlabel = $tax['altname'] . ' (' . $tax['value'] . '%)';
+            $taxObj->value = $value;
+            $taxArr[] = $taxObj;
+        }
+        return $taxArr;
+    }
+
+    /**
+     * Format currency for mustache template
+     * @return function
+     */
+    public function currency()
+    {
+        return function ($text, Mustache_LambdaHelper $helper) {
+            return $this->Utils->currencyFormat($helper->render($text));
+        };
     }
 }

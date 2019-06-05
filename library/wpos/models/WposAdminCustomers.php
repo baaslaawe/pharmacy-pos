@@ -18,22 +18,22 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 24/12/13 2:05 PM
  */
-class WposAdminCustomers {
+class WposAdminCustomers
+{
     private $data;
 
     /**
      * Set any provided data
      * @param $data
      */
-    function __construct($data=null)
+    function __construct($data = null)
     {
         // parse the data and put it into an object
-        if ($data!==null){
+        if ($data !== null) {
             $this->data = $data;
         } else {
             $this->data = new stdClass();
@@ -41,6 +41,7 @@ class WposAdminCustomers {
     }
 
     // CUSTOMERS
+
     /**
      * Add customer
      * @param $result
@@ -54,7 +55,7 @@ class WposAdminCustomers {
             return $result;
         }
         $res = $this->addCustomerData($this->data);
-        if (is_array($res)){
+        if (is_array($res)) {
             $result['data'] = $res;
         } else {
             $result['error'] = $res;
@@ -67,13 +68,14 @@ class WposAdminCustomers {
      * @param $data
      * @return bool|string
      */
-    public static function addCustomerData($data){
+    public static function addCustomerData($data)
+    {
         $settings = WposAdminSettings::getSettingsObject('general');
         $gid = '';
-        if ($settings->gcontact==1){
+        if ($settings->gcontact == 1) {
             // add google
             $gres = GoogleIntegration::setGoogleContact($settings, $data);
-            $gid = ($gres[0]!==false?$gres[1]:'');
+            $gid = ($gres[0] !== false ? $gres[1] : '');
         }
         $custMdl = new CustomerModel();
         $qresult = $custMdl->create($data->email, $data->name, $data->phone, $data->mobile, $data->address, $data->suburb, $data->postcode, $data->state, $data->country, $gid);
@@ -93,6 +95,23 @@ class WposAdminCustomers {
     }
 
     /**
+     * Get customer data as an array
+     * @param $id
+     * @return mixed
+     */
+    public static function getCustomerData($id)
+    {
+        $custMdl = new CustomerModel();
+        $customer = $custMdl->get($id)[0];
+        $customer['contacts'] = [];
+        $contacts = $custMdl->getContacts($id);
+        foreach ($contacts as $contact) {
+            $customer['contacts'][$contact['id']] = $contact;
+        }
+        return $customer;
+    }
+
+    /**
      * Update customer
      * @param $result
      * @return mixed
@@ -105,7 +124,7 @@ class WposAdminCustomers {
             return $result;
         }
         $res = $this->updateCustomerData($this->data);
-        if (is_array($res)){
+        if (is_array($res)) {
             $result['data'] = $res;
         } else {
             $result['error'] = $res;
@@ -118,27 +137,28 @@ class WposAdminCustomers {
      * @param $data
      * @return bool|string
      */
-    public static function updateCustomerData($data){
+    public static function updateCustomerData($data)
+    {
         $settings = WposAdminSettings::getSettingsObject('general');
         $custMdl = new CustomerModel();
         $gid = null;
-        if ($settings->gcontact==1){
+        if ($settings->gcontact == 1) {
             // get google id
             $gid = $custMdl->get($data->id)[0]['googleid'];
-            if ($gid){
+            if ($gid) {
                 // edit google
                 $gres = GoogleIntegration::setGoogleContact($settings, $data, $gid);
             } else {
                 // add google
                 $gres = GoogleIntegration::setGoogleContact($settings, $data);
             }
-            if ($gres[0]==true){
+            if ($gres[0] == true) {
                 $gid = $gres[1];
             }
         }
         $qresult = $custMdl->edit($data->id, $data->email, $data->name, $data->phone, $data->mobile, $data->address, $data->suburb, $data->postcode, $data->state, $data->country, $data->notes, $gid);
         if ($qresult === false) {
-            return "Could not edit the customer: ".$custMdl->errorInfo;
+            return "Could not edit the customer: " . $custMdl->errorInfo;
         } else {
             // get full customer record
             $_data = self::getCustomerData($data->id);
@@ -176,23 +196,8 @@ class WposAdminCustomers {
         }
         return $result;
     }
-
-    /**
-     * Get customer data as an array
-     * @param $id
-     * @return mixed
-     */
-    public static function getCustomerData($id){
-        $custMdl = new CustomerModel();
-        $customer = $custMdl->get($id)[0];
-        $customer['contacts'] = [];
-        $contacts = $custMdl->getContacts($id);
-        foreach ($contacts as $contact){
-            $customer['contacts'][$contact['id']] = $contact;
-        }
-        return $customer;
-    }
     // CUSTOMER CONTACTS
+
     /**
      * Add customer
      * @param $result
@@ -208,14 +213,14 @@ class WposAdminCustomers {
         $custMdl = new CustomerModel();
         $qresult = $custMdl->createContact($this->data->customerid, $this->data->email, $this->data->name, $this->data->phone, $this->data->mobile, $this->data->position, $this->data->receivesinv);
         if ($qresult === false) {
-            $result['error'] = "Could not add the contact: ".$custMdl->errorInfo;
+            $result['error'] = "Could not add the contact: " . $custMdl->errorInfo;
         } else {
             $result['data'] = $this->getCustomerData($this->data->customerid);
             // broadcast to devices
             $WposSocketIO = new WposSocketIO();
             $WposSocketIO->sendCustomerUpdate($result['data']);
             // log data
-            Logger::write("Contact added with id:" . $this->data->id . " to customer id: ".$this->data->customerid, "CUSTOMER", json_encode($this->data));
+            Logger::write("Contact added with id:" . $this->data->id . " to customer id: " . $this->data->customerid, "CUSTOMER", json_encode($this->data));
         }
         return $result;
     }
@@ -235,7 +240,7 @@ class WposAdminCustomers {
         $custMdl = new CustomerModel();
         $qresult = $custMdl->editContact($this->data->id, $this->data->email, $this->data->name, $this->data->phone, $this->data->mobile, $this->data->position, $this->data->receivesinv);
         if ($qresult === false) {
-            $result['error'] = "Could not edit the contact: ".$custMdl->errorInfo;
+            $result['error'] = "Could not edit the contact: " . $custMdl->errorInfo;
         } else {
             $result['data'] = $this->getCustomerData($this->data->customerid);;
             // broadcast to devices
@@ -262,7 +267,7 @@ class WposAdminCustomers {
         $custMdl = new CustomerModel();
         $qresult = $custMdl->removeContact($this->data->id);
         if ($qresult === false) {
-            $result['error'] = "Could not delete the contact: ".$custMdl->errorInfo;
+            $result['error'] = "Could not delete the contact: " . $custMdl->errorInfo;
         } else {
             $result['data'] = true;
 
@@ -272,12 +277,14 @@ class WposAdminCustomers {
         return $result;
     }
     // Customer Access functions for admin use
+
     /**
      * Enable or disable customer access
      * @param $result
      * @return mixed
      */
-    public function setAccess($result){
+    public function setAccess($result)
+    {
         $jsonval = new JsonValidate($this->data, '{"id":1, "disabled":""}');
         if (($errors = $jsonval->validate()) !== true) {
             $result['error'] = $errors;
@@ -285,8 +292,8 @@ class WposAdminCustomers {
         }
         $custMdl = new CustomerModel();
         $res = $custMdl->editAuth($this->data->id, null, null, $this->data->disabled);
-        if ($res===false){
-            $result['error']= "Could not set customer account status".$custMdl->errorInfo;
+        if ($res === false) {
+            $result['error'] = "Could not set customer account status" . $custMdl->errorInfo;
         }
         return $result;
     }
@@ -296,7 +303,8 @@ class WposAdminCustomers {
      * @param $result
      * @return mixed
      */
-    public function setPassword($result){
+    public function setPassword($result)
+    {
         $jsonval = new JsonValidate($this->data, '{"id":1, "hash":""}');
         if (($errors = $jsonval->validate()) !== true) {
             $result['error'] = $errors;
@@ -304,8 +312,8 @@ class WposAdminCustomers {
         }
         $custMdl = new CustomerModel();
         $res = $custMdl->editAuth($this->data->id, $this->data->hash, 1, 0);
-        if ($res===false){
-            $result['error']= "Could not set customer account status: ".$custMdl->errorInfo;
+        if ($res === false) {
+            $result['error'] = "Could not set customer account status: " . $custMdl->errorInfo;
         }
         return $result;
     }
@@ -315,7 +323,8 @@ class WposAdminCustomers {
      * @param $result
      * @return mixed
      */
-    public function sendResetEmail($result){
+    public function sendResetEmail($result)
+    {
         // validate input
         if (!is_numeric($this->data->id)) {
             $result['error'] = "A valid id must be supplied";
@@ -324,21 +333,21 @@ class WposAdminCustomers {
         // get customer details
         $custMdl = new CustomerModel();
         $customer = $custMdl->get($this->data->id)[0];
-        if (strpos($customer['email'], '@')===-1){
-            $result['error']= "The customer does not have a valid email";
+        if (strpos($customer['email'], '@') === -1) {
+            $result['error'] = "The customer does not have a valid email";
             return $result;
         }
         // generate url
         $token = WposAdminUtilities::getToken();
-        $link= "https://".$_SERVER['SERVER_NAME']."/myaccount/resetpassword.php?token=".$token;
+        $link = "https://" . $_SERVER['SERVER_NAME'] . "/myaccount/resetpassword.php?token=" . $token;
         // set token
-        if ($custMdl->setAuthToken($this->data->id, $token)===false){
-            $result['error'] = "Could not set auth token: ".$custMdl->errorInfo;
+        if ($custMdl->setAuthToken($this->data->id, $token) === false) {
+            $result['error'] = "Could not set auth token: " . $custMdl->errorInfo;
         }
         // send reset email
-        $linkhtml = '<a href="'.$link.'">'.$link.'</a>';
+        $linkhtml = '<a href="' . $link . '">' . $link . '</a>';
         $mailer = new WposMail();
-        if (($mres = $mailer->sendPredefinedMessage($customer['email'], 'reset_email', ['name'=>$customer['name'], 'link'=>$linkhtml]))!==true){
+        if (($mres = $mailer->sendPredefinedMessage($customer['email'], 'reset_email', ['name' => $customer['name'], 'link' => $linkhtml])) !== true) {
             $result['error'] = $mres;
         }
         return $result;

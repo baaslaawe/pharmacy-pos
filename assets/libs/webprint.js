@@ -33,7 +33,7 @@ var WebPrint = function (init, opt) {
     };
 
     this.printSerial = function (data, port) {
-        if (isAndroid){
+        if (isAndroid) {
             alert("Serial port printing is not available in Android.");
             return;
         }
@@ -47,7 +47,7 @@ var WebPrint = function (init, opt) {
     };
 
     this.printHtml = function (data, printer) {
-        if (isAndroid){
+        if (isAndroid) {
             alert("HTML printing is not available in Android.");
             return;
         }
@@ -76,7 +76,7 @@ var WebPrint = function (init, opt) {
     function sendAppletRequest(data) {
         data.cookie = cookie;
         if (!wpwindow || wpwindow.closed || !wpready) {
-            if (wpready){
+            if (wpready) {
                 openPrintWindow();
             } else {
                 retry = true;
@@ -92,9 +92,10 @@ var WebPrint = function (init, opt) {
 
     var wpwindow;
     var wpready = false;
+
     function openPrintWindow() {
         wpready = false;
-        wpwindow = window.open("http://"+options.relayHost+":"+options.relayPort+"/printwindow", 'WebPrintService');
+        wpwindow = window.open("http://" + options.relayHost + ":" + options.relayPort + "/printwindow", 'WebPrintService');
         if (wpwindow)
             wpwindow.blur();
         window.focus();
@@ -107,6 +108,7 @@ var WebPrint = function (init, opt) {
 
     var wptimeOut;
     var retry = true;
+
     function checkRelay() {
         if (wpwindow && !wpwindow.closed) {
             wpwindow.close();
@@ -118,13 +120,13 @@ var WebPrint = function (init, opt) {
     }
 
     function handleWebPrintMessage(event) {
-        if (event.origin != "http://"+options.relayHost+":"+options.relayPort)
+        if (event.origin != "http://" + options.relayHost + ":" + options.relayPort)
             return;
         switch (event.data.a) {
             case "init":
                 clearTimeout(wptimeOut);
                 wpready = true;
-                sendAppletRequest({a:"init"});
+                sendAppletRequest({a: "init"});
                 break;
             case "response":
                 var response = JSON.parse(event.data.json);
@@ -137,11 +139,11 @@ var WebPrint = function (init, opt) {
                 } else if (response.hasOwnProperty('error')) {
                     alert(response.error);
                 }
-                if (response.hasOwnProperty("cookie")){
+                if (response.hasOwnProperty("cookie")) {
                     cookie = response.cookie;
                     localStorage.setItem("webprint_auth", response.cookie);
                 }
-                if (response.hasOwnProperty("ready")){
+                if (response.hasOwnProperty("ready")) {
                     if (options.readyCallback instanceof Function) options.readyCallback();
                 }
                 break;
@@ -155,21 +157,21 @@ var WebPrint = function (init, opt) {
     function dispatchWebPrint() {
         var answer = confirm("Cannot communicate with the printing app.\nWould you like to open/install the printing app?");
         if (answer) {
-            if (isAndroid){
+            if (isAndroid) {
                 deployAndroid();
                 return;
             }
-            var installFile="WebPrint.jar";
-            if (navigator.appVersion.indexOf("Win")!=-1) installFile="WebPrint_windows_1_1_1.exe";
-            if (navigator.appVersion.indexOf("Mac")!=-1) installFile="WebPrint_macos_1_1_1.dmg";
-            if (navigator.appVersion.indexOf("X11")!=-1) installFile="WebPrint_unix_1_1_1.sh";
-            if (navigator.appVersion.indexOf("Linux")!=-1) installFile="WebPrint_unix_1_1_1.sh";
-            window.open("https://content.wallaceit.com.au/webprint/"+installFile, '_blank');
+            var installFile = "WebPrint.jar";
+            if (navigator.appVersion.indexOf("Win") != -1) installFile = "WebPrint_windows_1_1_1.exe";
+            if (navigator.appVersion.indexOf("Mac") != -1) installFile = "WebPrint_macos_1_1_1.dmg";
+            if (navigator.appVersion.indexOf("X11") != -1) installFile = "WebPrint_unix_1_1_1.sh";
+            if (navigator.appVersion.indexOf("Linux") != -1) installFile = "WebPrint_unix_1_1_1.sh";
+            window.open("https://content.wallaceit.com.au/webprint/" + installFile, '_blank');
         }
     }
 
-    function deployAndroid(){
-        if (isAndroidIntentSupported()){
+    function deployAndroid() {
+        if (isAndroidIntentSupported()) {
             deployAndroidChrome();
         } else {
             deployAndroidFirefox();
@@ -187,17 +189,17 @@ var WebPrint = function (init, opt) {
         }
     }
 
-    function deployAndroidChrome(){
+    function deployAndroidChrome() {
         // this link needs to be clicked by the user
         document.body.innerHTML += '<div id="intent_link" style="position: fixed; top:40%; width: 120px; background-color: white; left:50%; margin-left: -60px; border: solid 2px rgb(75, 75, 75); font-family: Helvetica SansSerif sans-serif; text-align: center; padding: 5px;">' +
             '<a onclick="window.location=\'intent://#Intent;scheme=webprint;package=au.com.wallaceit.webprint;S.browser_fallback_url=https%3A%2F%2Fwallaceit.com.au%2Fplaystore%2Fwebprint;end\'; document.getElementById(\'intent_link\').remove();">Click To Open WebPrint</a></div>';
     }
 
     function deployAndroidFirefox() {
-        var timeout = setTimeout(function() {
+        var timeout = setTimeout(function () {
             window.location = "https://wallaceit.com.au/playstore/webprint";
         }, 1000);
-        window.addEventListener("pagehide", function(evt) {
+        window.addEventListener("pagehide", function (evt) {
             clearTimeout(timeout);
         });
 
@@ -205,11 +207,11 @@ var WebPrint = function (init, opt) {
     }
 
     var cookie = localStorage.getItem("webprint_auth");
-    if (cookie==null){
+    if (cookie == null) {
         cookie = "";
     }
 
-    var isAndroid = navigator.appVersion.indexOf("Android")!=-1;
+    var isAndroid = navigator.appVersion.indexOf("Android") != -1;
 
     if (init) checkRelay();
 

@@ -17,13 +17,13 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 18/07/14 5:20 PM
  */
 
-class Logger {
+class Logger
+{
 
     /**
      * @var string the directory to store logs relative to project root (doc+app root).
@@ -36,10 +36,11 @@ class Logger {
      * @param string $type
      * @param null $data
      */
-    public static function write($msg, $type="Misc", $data=null, $showUser=true){
+    public static function write($msg, $type = "Misc", $data = null, $showUser = true)
+    {
 
         if ($showUser) {
-            if (php_sapi_name() === 'cli'){
+            if (php_sapi_name() === 'cli') {
                 $user = "system:cli";
             } else {
                 $auth = new Auth();
@@ -47,9 +48,9 @@ class Logger {
             }
         }
         // open file
-        $fd = fopen($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT'].self::$directory.DIRECTORY_SEPARATOR."wpos_log_".date("y-m-d").".txt", "a");
+        $fd = fopen($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . self::$directory . DIRECTORY_SEPARATOR . "wpos_log_" . date("y-m-d") . ".txt", "a");
         // write string
-        fwrite($fd, "[".date("y-m-d H:i:s")."] (".$type.(isset($user)?' - '.$user.') ':') ').$msg.($data!=null?"\nData: ".$data:"")."\n");
+        fwrite($fd, "[" . date("y-m-d H:i:s") . "] (" . $type . (isset($user) ? ' - ' . $user . ') ' : ') ') . $msg . ($data != null ? "\nData: " . $data : "") . "\n");
         // close file
         fclose($fd);
     }
@@ -59,16 +60,18 @@ class Logger {
      * @param $filename
      * @return string
      */
-    public static function read($filename){
-        return file_get_contents($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT'].self::$directory.DIRECTORY_SEPARATOR.$filename);
+    public static function read($filename)
+    {
+        return file_get_contents($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . self::$directory . DIRECTORY_SEPARATOR . $filename);
     }
 
     /**
      * List the contents of the log dir
      * @return array
      */
-    public static function ls(){
-        $dir = scandir($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT'].self::$directory);
+    public static function ls()
+    {
+        $dir = scandir($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . self::$directory);
         unset($dir[0]);
         unset($dir[1]);
         return $dir;

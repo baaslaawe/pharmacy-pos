@@ -1,539 +1,571 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<title>Que POS - Administration</title>
-        <meta name="copyright" content="Copyright (c) 2014 WallaceIT <micwallace@gmx.com> <https://www.gnu.org/licenses/lgpl.html>" />
-        <meta name="description" content="overview &amp; stats" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="utf-8"/>
+    <title>Que POS - Administration</title>
+    <meta content="Copyright (c) 2014 WallaceIT <micwallace@gmx.com> <https://www.gnu.org/licenses/lgpl.html>"
+          name="copyright"/>
+    <meta content="overview &amp; stats" name="description"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 
-        <link rel="shortcut icon" href="/assets/images/favicon.ico">
-        <link rel="apple-touch-icon" href="/assets/images/pos-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/pos-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="/assets/images/pos-icon142x142.png">
-		<!-- basic styles -->
+    <link href="/assets/images/favicon.ico" rel="shortcut icon">
+    <link href="/assets/images/pos-icon-57x57.png" rel="apple-touch-icon">
+    <link href="/assets/images/pos-icon-72x72.png" rel="apple-touch-icon" sizes="72x72">
+    <link href="/assets/images/pos-icon142x142.png" rel="apple-touch-icon" sizes="114x114">
+    <!-- basic styles -->
 
-		<link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet"/>
 
-		<link rel="stylesheet" href="assets/css/octicons.min.css" />
-		<link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+    <link href="assets/css/octicons.min.css" rel="stylesheet"/>
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet"/>
 
-		<!-- fonts -->
+    <!-- fonts -->
 
-		<!-- <link rel="stylesheet" href="assets/css/ace-fonts.css" /> -->
+    <!-- <link rel="stylesheet" href="assets/css/ace-fonts.css" /> -->
 
-		<!-- ace styles -->
+    <!-- ace styles -->
 
-		<link rel="stylesheet" href="assets/css/uncompressed/ace.css" />
-		<!--<link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
-		<link rel="stylesheet" href="assets/css/ace-skins.min.css" />-->
+    <link href="assets/css/uncompressed/ace.css" rel="stylesheet"/>
+    <!--<link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+    <link rel="stylesheet" href="assets/css/ace-skins.min.css" />-->
 
-		<!--[if lte IE 8]>
-		  <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
-		<![endif]-->
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="assets/css/ace-ie.min.css"/>
+    <![endif]-->
 
-		<!-- inline styles related to this page -->
+    <!-- inline styles related to this page -->
 
-		<!-- ace settings handler -->
+    <!-- ace settings handler -->
 
-		<script src="assets/js/ace-extra.min.js"></script>
+    <script src="assets/js/ace-extra.min.js"></script>
 
-		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 
-		<!--[if lt IE 9]>
-		<script src="assets/js/html5shiv.js"></script>
-		<script src="assets/js/respond.min.js"></script>
-		<![endif]-->
-      <!--<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>-->
+    <!--[if lt IE 9]>
+    <script src="assets/js/html5shiv.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+    <!--<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>-->
 
-      <!-- Styles used on most pages ->
-      <!-- page specific plugin styles -->
-        <link rel="stylesheet" href="/assets/css/jquery-ui-1.10.3.full.min.css" />
-        <link rel="stylesheet" href="assets/css/bootstrap-datepicker.min.css" />
-      <!--<link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" rel="stylesheet"/>-->
-      <link rel="stylesheet" href="assets/js/select2/select2.css" />
-        <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css" />
+    <!-- Styles used on most pages ->
+    <!-- page specific plugin styles -->
+    <link href="/assets/css/jquery-ui-1.10.3.full.min.css" rel="stylesheet"/>
+    <link href="assets/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
+    <!--<link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" rel="stylesheet"/>-->
+    <link href="assets/js/select2/select2.css" rel="stylesheet"/>
+    <link href="/assets/libs/datatables/datatables.min.css" rel="stylesheet"/>
 
-        <link rel="stylesheet" href="assets/css/wposadmin.css" />
-      <style>
-          .bootstrap-datetimepicker-widget {
-              position: absolute;
-              z-index: 5000;
-          }
-      </style>
-	</head>
+    <link href="assets/css/wposadmin.css" rel="stylesheet"/>
+    <style>
+        .bootstrap-datetimepicker-widget {
+            position: absolute;
+            z-index: 5000;
+        }
+    </style>
+</head>
 
-	<body>
-        <div class=container-fluid>
-		<div class="navbar navbar-default" id="navbar">
-			<script type="text/javascript">
-				try{ace.settings.check('navbar' , 'fixed')}catch(e){}
-			</script>
-            <div style="vertical-align: middle;margin-top:10px;">
-                <h3 style="margin-left:30px; display: inline;">Que POS Admin</h3>
-            </div>
-		</div>
-
-		<div class="main-container" id="main-container">
-			<script type="text/javascript">
-				try{ace.settings.check('main-container' , 'fixed')}catch(e){}
-			</script>
-
-			<div class="main-container-inner">
-				<a class="menu-toggler" id="menu-toggler" href="#">
-					<span class="menu-text"></span>
-				</a>
-
-				<div class="sidebar" id="sidebar">
-					<script type="text/javascript">
-						try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
-					</script>
-
-					<ul class="nav nav-list">
-						<li id="menudashboard" class="active">
-							<a href="#!dashboard" class="privmenuitem">
-								<span class="octicon octicon-dashboard"></span>
-								<span class="menu-text"> Dashboard </span>
-							</a>
-						</li>
-
-                        <li id="menurealtime" class="privmenuitem">
-                            <a href="#!realtime" class="dropdown-toggle">
-                                <span class="octicon octicon-eye"></span>
-                                <span class="menu-text"> Realtime </span>
-                            </a>
-                        </li>
-
-                        <li id="menureports" class="privmenuitem">
-                            <a href="#!reports" class="dropdown-toggle">
-                                <span class="octicon octicon-list-ordered"></span>
-                                <span class="menu-text"> Reports </span>
-                            </a>
-                        </li>
-
-                        <li id="menugraph" class="privmenuitem">
-                            <a href="#!graph" class="dropdown-toggle">
-                                <span class="octicon octicon-graph"></span>
-                                <span class="menu-text"> Graph </span>
-                            </a>
-                        </li>
-
-                        <li id="menuexpenses" class="privmenuitem">
-                            <a href="#!expenses" class="dropdown-toggle">
-                                <span class="octicon octicon-credit-card"></span>
-                                <span class="menu-text"> Expenses </span>
-                            </a>
-                        </li>
-
-                        <li id="menusales" class="privmenuitem">
-                            <a href="#!sales" class="dropdown-toggle">
-                                <span class="octicon octicon-briefcase"></span>
-                                <span class="menu-text"> POS Sales </span>
-                            </a>
-                        </li>
-
-                        <li id="menucustomers" class="privmenuitem">
-                            <a href="#!customers" class="dropdown-toggle">
-                                <span class="octicon octicon-person"></span>
-                                <span class="menu-text"> Customers </span>
-                            </a>
-                        </li>
-
-                        <li id="menuparentinvoices" class="privmenuitem">
-                            <a class="dropdown-toggle">
-                                <span class="octicon octicon-file-pdf"></span>
-                                <span class="menu-text"> Invoices </span>
-
-                                <b class="arrow icon-angle-down"></b>
-                            </a>
-
-                            <ul class="submenu">
-                                <li id="openinvoices" class="privmenuitem">
-                                    <a href="#!invoices">
-                                        <i class="icon-double-angle-right"></i>
-                                        Open
-                                    </a>
-                                </li>
-
-                                <li id="closedinvoices" class="privmenuitem">
-                                    <a href="#!invoicesclosed">
-                                        <i class="icon-double-angle-right"></i>
-                                        Closed
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </li>
-
-
-                        <li id="menuparentitems" class="privmenuitem">
-                            <a class="dropdown-toggle">
-                                <span class="octicon octicon-package"></span>
-                                <span class="menu-text"> Items </span>
-
-                                <b class="arrow icon-angle-down"></b>
-                            </a>
-
-                            <ul class="submenu">
-                                <li id="menuitems" class="privmenuitem">
-                                    <a href="#!items">
-                                        <i class="icon-double-angle-right"></i>
-                                        Stored Items
-                                    </a>
-                                </li>
-
-                                <li id="menustock" class="privmenuitem">
-                                    <a  href="#!stock">
-                                        <i class="icon-double-angle-right"></i>
-                                        Inventory
-                                    </a>
-                                </li>
-
-                                <li id="menunoninv" class="privmenuitem">
-                                    <a  href="#!noninventory">
-                                        <i class="icon-double-angle-right"></i>
-                                        Non-Inventory
-                                    </a>
-                                </li>
-
-                                <li id="menucategories" class="privmenuitem">
-                                    <a href="#!categories">
-                                        <i class="icon-double-angle-right"></i>
-                                        Categories
-                                    </a>
-                                </li>
-
-                                <li id="menusuppliers" class="privmenuitem">
-                                    <a href="#!suppliers">
-                                        <i class="icon-double-angle-right"></i>
-                                        Suppliers
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </li>
-
-                        <li id="menusettings" class="privmenuitem">
-                            <a class="dropdown-toggle">
-                                <i class="icon-edit"></i>
-                                <span class="menu-text"> Settings </span>
-
-                                <b class="arrow icon-angle-down"></b>
-                            </a>
-
-                            <ul class="submenu">
-                                <li>
-                                    <a href="#!staffadmins">
-                                        <i class="icon-double-angle-right"></i>
-                                        Staff & Admins
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#!devlocations">
-                                        <i class="icon-double-angle-right"></i>
-                                        Devices & Locations
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#!generalsettings">
-                                        <i class="icon-double-angle-right"></i>
-                                        General Settings
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#!possettings">
-                                        <i class="icon-double-angle-right"></i>
-                                        POS Settings
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#!invoicesettings">
-                                        <i class="icon-double-angle-right"></i>
-                                        Invoice Settings
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#!accountsettings">
-                                        <i class="icon-double-angle-right"></i>
-                                        Accounting Settings
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#!utilities">
-                                        <i class="icon-double-angle-right"></i>
-                                        Utilities
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-						<!--<li>-->
-							<!--<a class="dropdown-toggle">-->
-								<!--<i class="icon-file-alt"></i>-->
-
-								<!--<span class="menu-text">Help and Support</span>-->
-
-								<!--<b class="arrow icon-angle-down"></b>-->
-							<!--</a>-->
-
-							<!--<ul class="submenu">-->
-                                <!--<li>-->
-                                    <!--<a href="#!info">-->
-                                        <!--<i class="icon-double-angle-right"></i>-->
-                                        <!--Info-->
-                                    <!--</a>-->
-                                <!--</li>-->
-
-								<!--<li>-->
-									<!--<a href="#!faq">-->
-										<!--<i class="icon-double-angle-right"></i>-->
-										<!--FAQ-->
-									<!--</a>-->
-								<!--</li>-->
-							<!--</ul>-->
-						<!--</li>-->
-					</ul><!-- /.nav-list -->
-
-					<div class="sidebar-collapse" id="sidebar-collapse">
-						<i class="icon-double-angle-left" data-icon1="icon-double-angle-left" data-icon2="icon-double-angle-right"></i>
-					</div>
-
-					<script type="text/javascript">
-						try{ace.settings.check('sidebar' , 'collapsed')}catch(e){}
-					</script>
-				</div>
-
-				<div class="main-content">
-					<div class="breadcrumbs" id="breadcrumbs">
-						<script type="text/javascript">
-							try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
-						</script>
-
-						<ul class="breadcrumb">
-							<li>
-								<i class="icon-home home-icon"></i>
-								<a onclick="WPOS.goToHome();">Home</a>
-							</li>
-						</ul><!-- .breadcrumb -->
-                        <button class="btn btn-xs btn-primary pull-right" style="margin-top: 10px;" onclick="WPOS.stopSocket(); WPOS.loadPageContent(sec);"><i class="icon-refresh"></i> Refresh</button>
-					</div>
-
-					<div id="maincontent" class="page-content">
-
-					</div><!-- /.page-content -->
-				</div><!-- /.main-content -->
-
-
-			</div><!-- /.main-container-inner -->
-
-			<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
-				<i class="icon-double-angle-up icon-only bigger-110"></i>
-			</a>
-		</div><!-- /.main-container -->
-        <div id="loginmodal" class="login-layout">
-            <div class="login-page">
-                <div class="form text-center">
-                    <img style="margin-top: -5px; margin-bottom: 10px;" src="/assets/images/QuePOSLogo.png">
-                    <div id="login-banner" class="alert alert-block alert-success" style="display:none;">
-                        <i class="icon icon-lock green" style="margin-right: 3px;"></i>
-                        <span id="login-banner-txt"></span>
-                    </div>
-                    <form class="login-form">
-                      <input class="form-control"id="loguser" type="text" placeholder="Admin"/>
-                      <input class="form-control"id="logpass" onkeypress="if(event.keyCode == 13){WPOS.login();}" type="password"  placeholder="Password"/>
-                      <button id="loginbutton" onClick="WPOS.userLogin();">login <i style="margin-left: 10px;" class="icon icon-lock"></i></button>
-                    </form>
-                    <div id="loadingdiv" style="height: 225px;">
-                        <h3 id="loadingbartxt">Initializing</h3>
-                        <div id="loadingprogdiv" class="progress progress-striped active">
-                            <div class="progress-bar" id="loadingprog" style="width: 100%;"></div>
-                        </div>
-                        <span id="loadingstat"></span>
-                    </div>
-                 </div>
-            </div>
+<body>
+<div class=container-fluid>
+    <div class="navbar navbar-default" id="navbar">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('navbar', 'fixed')
+            } catch (e) {
+            }
+        </script>
+        <div style="vertical-align: middle;margin-top:10px;">
+            <h3 style="margin-left:30px; display: inline;">Que POS Admin</h3>
         </div>
-        <a style="display: none;" id="dlelem" href=""></a>
+    </div>
 
-        <div id="editcustdialog" class="hide">
-            <div class="tabbable" >
-                <ul class="nav nav-tabs" style="margin-left: 0;">
-                    <li class="active">
-                        <a href="#details" data-toggle="tab">
-                            Details
+    <div class="main-container" id="main-container">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('main-container', 'fixed')
+            } catch (e) {
+            }
+        </script>
+
+        <div class="main-container-inner">
+            <a class="menu-toggler" href="#" id="menu-toggler">
+                <span class="menu-text"></span>
+            </a>
+
+            <div class="sidebar" id="sidebar">
+                <script type="text/javascript">
+                    try {
+                        ace.settings.check('sidebar', 'fixed')
+                    } catch (e) {
+                    }
+                </script>
+
+                <ul class="nav nav-list">
+                    <li class="active" id="menudashboard">
+                        <a class="privmenuitem" href="#!dashboard">
+                            <span class="octicon octicon-dashboard"></span>
+                            <span class="menu-text"> Dashboard </span>
                         </a>
                     </li>
-                    <li class="">
-                        <a href="#notes" data-toggle="tab">
-                            Notes
+
+                    <li class="privmenuitem" id="menurealtime">
+                        <a class="dropdown-toggle" href="#!realtime">
+                            <span class="octicon octicon-eye"></span>
+                            <span class="menu-text"> Realtime </span>
                         </a>
                     </li>
-                    <!--<li class="">-->
-                        <!--<a href="#contacts" data-toggle="tab">-->
-                            <!--Contacts-->
-                        <!--</a>-->
-                    <!--</li>-->
-                    <!--<li class="">-->
-                        <!--<a href="#options" data-toggle="tab">-->
-                            <!--Options-->
-                        <!--</a>-->
-                    <!--</li>-->
-                </ul>
 
-                <div class="tab-content" style="padding-top:10px;">
-                    <div class="tab-pane active in" id="details">
-                        <table>
-                            <tr>
-                                <td style="text-align: right;"><label>Name:&nbsp;</label></td>
-                                <td><input class="form-control"id="custname" type="text"/><input class="form-control"id="custid" type="hidden"/></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: right;"><label>Email:&nbsp;</label></td>
-                                <td><input class="form-control"id="custemail" type="text"/></td>
-                            </tr>
-                            <tr style=" display: none;">
-                                <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
-                                <td><input class="form-control"id="custphone" type="text"/></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
-                                <td><input class="form-control"id="custmobile" type="text"/></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: right;"><label>Address:&nbsp;</label></td>
-                                <td><input class="form-control"id="custaddress" type="text"/></td>
-                            </tr>
-                            <tr style=" display: none;">
-                                <td style="text-align: right;"><label>Suburb:&nbsp;</label></td>
-                                <td><input class="form-control"id="custsuburb" type="text"/></td>
-                            </tr>
-                            <tr style=" display: none;">
-                                <td style="text-align: right;"><label>Postcode:&nbsp;</label></td>
-                                <td><input class="form-control"id="custpostcode" type="text"/></td>
-                            </tr>
-                            <tr style=" display: none;">
-                                <td style="text-align: right;"><label>State:&nbsp;</label></td>
-                                <td><input class="form-control"id="custstate" type="text"/></td>
-                            </tr>
-                            <tr style=" display: none;">
-                                <td style="text-align: right;"><label>Country:&nbsp;</label></td>
-                                <td><input class="form-control"id="custcountry" type="text"/></td>
-                            </tr>
-                        </table>
+                    <li class="privmenuitem" id="menureports">
+                        <a class="dropdown-toggle" href="#!reports">
+                            <span class="octicon octicon-list-ordered"></span>
+                            <span class="menu-text"> Reports </span>
+                        </a>
+                    </li>
+
+                    <li class="privmenuitem" id="menugraph">
+                        <a class="dropdown-toggle" href="#!graph">
+                            <span class="octicon octicon-graph"></span>
+                            <span class="menu-text"> Graph </span>
+                        </a>
+                    </li>
+
+                    <li class="privmenuitem" id="menuexpenses">
+                        <a class="dropdown-toggle" href="#!expenses">
+                            <span class="octicon octicon-credit-card"></span>
+                            <span class="menu-text"> Expenses </span>
+                        </a>
+                    </li>
+
+                    <li class="privmenuitem" id="menusales">
+                        <a class="dropdown-toggle" href="#!sales">
+                            <span class="octicon octicon-briefcase"></span>
+                            <span class="menu-text"> POS Sales </span>
+                        </a>
+                    </li>
+
+                    <li class="privmenuitem" id="menucustomers">
+                        <a class="dropdown-toggle" href="#!customers">
+                            <span class="octicon octicon-person"></span>
+                            <span class="menu-text"> Customers </span>
+                        </a>
+                    </li>
+
+                    <li class="privmenuitem" id="menuparentinvoices">
+                        <a class="dropdown-toggle">
+                            <span class="octicon octicon-file-pdf"></span>
+                            <span class="menu-text"> Invoices </span>
+
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+
+                        <ul class="submenu">
+                            <li class="privmenuitem" id="openinvoices">
+                                <a href="#!invoices">
+                                    <i class="icon-double-angle-right"></i>
+                                    Open
+                                </a>
+                            </li>
+
+                            <li class="privmenuitem" id="closedinvoices">
+                                <a href="#!invoicesclosed">
+                                    <i class="icon-double-angle-right"></i>
+                                    Closed
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+
+                    <li class="privmenuitem" id="menuparentitems">
+                        <a class="dropdown-toggle">
+                            <span class="octicon octicon-package"></span>
+                            <span class="menu-text"> Items </span>
+
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+
+                        <ul class="submenu">
+                            <li class="privmenuitem" id="menuitems">
+                                <a href="#!items">
+                                    <i class="icon-double-angle-right"></i>
+                                    Stored Items
+                                </a>
+                            </li>
+
+                            <li class="privmenuitem" id="menustock">
+                                <a href="#!stock">
+                                    <i class="icon-double-angle-right"></i>
+                                    Inventory
+                                </a>
+                            </li>
+
+                            <li class="privmenuitem" id="menunoninv">
+                                <a href="#!noninventory">
+                                    <i class="icon-double-angle-right"></i>
+                                    Non-Inventory
+                                </a>
+                            </li>
+
+                            <li class="privmenuitem" id="menucategories">
+                                <a href="#!categories">
+                                    <i class="icon-double-angle-right"></i>
+                                    Categories
+                                </a>
+                            </li>
+
+                            <li class="privmenuitem" id="menusuppliers">
+                                <a href="#!suppliers">
+                                    <i class="icon-double-angle-right"></i>
+                                    Suppliers
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li class="privmenuitem" id="menusettings">
+                        <a class="dropdown-toggle">
+                            <i class="icon-edit"></i>
+                            <span class="menu-text"> Settings </span>
+
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+
+                        <ul class="submenu">
+                            <li>
+                                <a href="#!staffadmins">
+                                    <i class="icon-double-angle-right"></i>
+                                    Staff & Admins
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#!devlocations">
+                                    <i class="icon-double-angle-right"></i>
+                                    Devices & Locations
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#!generalsettings">
+                                    <i class="icon-double-angle-right"></i>
+                                    General Settings
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#!possettings">
+                                    <i class="icon-double-angle-right"></i>
+                                    POS Settings
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#!invoicesettings">
+                                    <i class="icon-double-angle-right"></i>
+                                    Invoice Settings
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#!accountsettings">
+                                    <i class="icon-double-angle-right"></i>
+                                    Accounting Settings
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#!utilities">
+                                    <i class="icon-double-angle-right"></i>
+                                    Utilities
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!--<li>-->
+                    <!--<a class="dropdown-toggle">-->
+                    <!--<i class="icon-file-alt"></i>-->
+
+                    <!--<span class="menu-text">Help and Support</span>-->
+
+                    <!--<b class="arrow icon-angle-down"></b>-->
+                    <!--</a>-->
+
+                    <!--<ul class="submenu">-->
+                    <!--<li>-->
+                    <!--<a href="#!info">-->
+                    <!--<i class="icon-double-angle-right"></i>-->
+                    <!--Info-->
+                    <!--</a>-->
+                    <!--</li>-->
+
+                    <!--<li>-->
+                    <!--<a href="#!faq">-->
+                    <!--<i class="icon-double-angle-right"></i>-->
+                    <!--FAQ-->
+                    <!--</a>-->
+                    <!--</li>-->
+                    <!--</ul>-->
+                    <!--</li>-->
+                </ul><!-- /.nav-list -->
+
+                <div class="sidebar-collapse" id="sidebar-collapse">
+                    <i class="icon-double-angle-left" data-icon1="icon-double-angle-left"
+                       data-icon2="icon-double-angle-right"></i>
+                </div>
+
+                <script type="text/javascript">
+                    try {
+                        ace.settings.check('sidebar', 'collapsed')
+                    } catch (e) {
+                    }
+                </script>
+            </div>
+
+            <div class="main-content">
+                <div class="breadcrumbs" id="breadcrumbs">
+                    <script type="text/javascript">
+                        try {
+                            ace.settings.check('breadcrumbs', 'fixed')
+                        } catch (e) {
+                        }
+                    </script>
+
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="icon-home home-icon"></i>
+                            <a onclick="WPOS.goToHome();">Home</a>
+                        </li>
+                    </ul><!-- .breadcrumb -->
+                    <button class="btn btn-xs btn-primary pull-right" onclick="WPOS.stopSocket(); WPOS.loadPageContent(sec);"
+                            style="margin-top: 10px;"><i class="icon-refresh"></i> Refresh
+                    </button>
+                </div>
+
+                <div class="page-content" id="maincontent">
+
+                </div><!-- /.page-content -->
+            </div><!-- /.main-content -->
+
+
+        </div><!-- /.main-container-inner -->
+
+        <a class="btn-scroll-up btn btn-sm btn-inverse" href="#" id="btn-scroll-up">
+            <i class="icon-double-angle-up icon-only bigger-110"></i>
+        </a>
+    </div><!-- /.main-container -->
+    <div class="login-layout" id="loginmodal">
+        <div class="login-page">
+            <div class="form text-center">
+                <img src="/assets/images/QuePOSLogo.png" style="margin-top: -5px; margin-bottom: 10px;">
+                <div class="alert alert-block alert-success" id="login-banner" style="display:none;">
+                    <i class="icon icon-lock green" style="margin-right: 3px;"></i>
+                    <span id="login-banner-txt"></span>
+                </div>
+                <form class="login-form">
+                    <input class="form-control" id="loguser" placeholder="Admin" type="text"/>
+                    <input class="form-control" id="logpass" onkeypress="if(event.keyCode == 13){WPOS.login();}"
+                           placeholder="Password" type="password"/>
+                    <button id="loginbutton" onClick="WPOS.userLogin();">login <i class="icon icon-lock"
+                                                                                  style="margin-left: 10px;"></i></button>
+                </form>
+                <div id="loadingdiv" style="height: 225px;">
+                    <h3 id="loadingbartxt">Initializing</h3>
+                    <div class="progress progress-striped active" id="loadingprogdiv">
+                        <div class="progress-bar" id="loadingprog" style="width: 100%;"></div>
                     </div>
-                    <div class="tab-pane" id="notes">
-                        <textarea class="form-control" id="custnotes"></textarea>
-                    </div>
-                    <div class="tab-pane" id="contacts">
-                        <button onclick="WPOS.customers.openEditContactDialog(null);" class="btn btn-sm btn-primary pull-right">Add</button>
-                        <table class="table table-stripped">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody id="contactstable">
-                            <tr>
-                                <td colspan="3" style="text-align: center;">No customer contacts</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="tab-pane" id="options" style="text-align: center;">
-                        <button id="custdisbtn" class="btn btn-primary" onclick="WPOS.customers.setOnlineAccess();">Disable Customer Access</button>
-                        <div class="space-10"></div>
-                        <input class="form-control"id="newcustpass" type="password" autocomplete="off"/>
-                        <button class="btn btn-primary" onclick="WPOS.customers.setOnlinePassword();">Set Customer Password</button>
-                        <div class="space-10"></div>
-                        <button class="btn btn-primary" onclick="WPOS.customers.sendResetEmail();">Send Password Reset Email</button>
-                        <div class="space-10"></div>
-                    </div>
+                    <span id="loadingstat"></span>
                 </div>
             </div>
         </div>
-        <div id="addcustdialog" class="hide">
+    </div>
+    <a href="" id="dlelem" style="display: none;"></a>
+
+    <div class="hide" id="editcustdialog">
+        <div class="tabbable">
+            <ul class="nav nav-tabs" style="margin-left: 0;">
+                <li class="active">
+                    <a data-toggle="tab" href="#details">
+                        Details
+                    </a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#notes">
+                        Notes
+                    </a>
+                </li>
+                <!--<li class="">-->
+                <!--<a href="#contacts" data-toggle="tab">-->
+                <!--Contacts-->
+                <!--</a>-->
+                <!--</li>-->
+                <!--<li class="">-->
+                <!--<a href="#options" data-toggle="tab">-->
+                <!--Options-->
+                <!--</a>-->
+                <!--</li>-->
+            </ul>
+
+            <div class="tab-content" style="padding-top:10px;">
+                <div class="tab-pane active in" id="details">
+                    <table>
+                        <tr>
+                            <td style="text-align: right;"><label>Name:&nbsp;</label></td>
+                            <td><input class="form-control" id="custname" type="text"/><input class="form-control"
+                                                                                              id="custid"
+                                                                                              type="hidden"/></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><label>Email:&nbsp;</label></td>
+                            <td><input class="form-control" id="custemail" type="text"/></td>
+                        </tr>
+                        <tr style=" display: none;">
+                            <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
+                            <td><input class="form-control" id="custphone" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
+                            <td><input class="form-control" id="custmobile" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><label>Address:&nbsp;</label></td>
+                            <td><input class="form-control" id="custaddress" type="text"/></td>
+                        </tr>
+                        <tr style=" display: none;">
+                            <td style="text-align: right;"><label>Suburb:&nbsp;</label></td>
+                            <td><input class="form-control" id="custsuburb" type="text"/></td>
+                        </tr>
+                        <tr style=" display: none;">
+                            <td style="text-align: right;"><label>Postcode:&nbsp;</label></td>
+                            <td><input class="form-control" id="custpostcode" type="text"/></td>
+                        </tr>
+                        <tr style=" display: none;">
+                            <td style="text-align: right;"><label>State:&nbsp;</label></td>
+                            <td><input class="form-control" id="custstate" type="text"/></td>
+                        </tr>
+                        <tr style=" display: none;">
+                            <td style="text-align: right;"><label>Country:&nbsp;</label></td>
+                            <td><input class="form-control" id="custcountry" type="text"/></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="tab-pane" id="notes">
+                    <textarea class="form-control" id="custnotes"></textarea>
+                </div>
+                <div class="tab-pane" id="contacts">
+                    <button class="btn btn-sm btn-primary pull-right"
+                            onclick="WPOS.customers.openEditContactDialog(null);">Add
+                    </button>
+                    <table class="table table-stripped">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="contactstable">
+                        <tr>
+                            <td colspan="3" style="text-align: center;">No customer contacts</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="options" style="text-align: center;">
+                    <button class="btn btn-primary" id="custdisbtn" onclick="WPOS.customers.setOnlineAccess();">Disable
+                        Customer Access
+                    </button>
+                    <div class="space-10"></div>
+                    <input autocomplete="off" class="form-control" id="newcustpass" type="password"/>
+                    <button class="btn btn-primary" onclick="WPOS.customers.setOnlinePassword();">Set Customer
+                        Password
+                    </button>
+                    <div class="space-10"></div>
+                    <button class="btn btn-primary" onclick="WPOS.customers.sendResetEmail();">Send Password Reset
+                        Email
+                    </button>
+                    <div class="space-10"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hide" id="addcustdialog">
+        <table>
+            <tr>
+                <td style="text-align: right;"><label>Name: (<span class="text-danger">Required</span>)&nbsp;</label>
+                </td>
+                <td><input class="form-control" id="newcustname" type="text"/></td>
+            </tr>
+            <tr>
+                <td style="text-align: right;"><label>Email:&nbsp;</label></td>
+                <td><input class="form-control" id="newcustemail" placeholder="Email..." type="text"/></td>
+            </tr>
+            <tr style="display: none;">
+                <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
+                <td><input class="form-control" id="newcustphone" placeholder="Phone number..." type="hidden"/></td>
+            </tr>
+            <tr>
+                <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
+                <td><input class="form-control" id="newcustmobile" placeholder="Phone number..." type="text"/></td>
+            </tr>
+            <tr>
+                <td style="text-align: right;"><label>Address:&nbsp;</label></td>
+                <td><input class="form-control" id="newcustaddress" type="text"/></td>
+            </tr>
+            <tr style="display: none;">
+                <td style="text-align: right;"><label>Suburb:&nbsp;</label></td>
+                <td><input class="form-control" id="newcustsuburb" type="text"/></td>
+            </tr>
+            <tr style="display: none;">
+                <td style="text-align: right;"><label>Postcode:&nbsp;</label></td>
+                <td><input class="form-control" id="newcustpostcode" type="text" value="0002030"/></td>
+            </tr>
+            <tr style="display: none;">
+                <td style="text-align: right;"><label>State:&nbsp;</label></td>
+                <td><input class="form-control" id="newcuststate" type="text"/></td>
+            </tr>
+            <tr style="display: none;">
+                <td style="text-align: right;"><label>Country:&nbsp;</label></td>
+                <td><input class="form-control" id="newcustcountry" type="text"/></td>
+            </tr>
+        </table>
+    </div>
+    <div class="hide" id="custcontactdialog">
+        <form id="custcontactform">
+            <input class="form-control" id="contid" type="hidden" value="0"/>
+            <input class="form-control" id="contcustid" type="hidden" value="0"/>
             <table>
                 <tr>
-                    <td style="text-align: right;"><label>Name: (<span class="text-danger">Required</span>)&nbsp;</label></td>
-                    <td><input class="form-control" id="newcustname" type="text"/></td>
+                    <td style="text-align: right;"><label>Name:&nbsp;</label></td>
+                    <td><input class="form-control" id="contname" type="text"/></td>
+                </tr>
+                <tr>
+                    <td style="text-align: right;"><label>Position:&nbsp;</label></td>
+                    <td><input class="form-control" id="contposition" type="text"/></td>
                 </tr>
                 <tr>
                     <td style="text-align: right;"><label>Email:&nbsp;</label></td>
-                    <td><input class="form-control" id="newcustemail" placeholder="Email..." type="text"/></td>
-                </tr>
-                <tr style="display: none;">
-                    <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
-                    <td><input class="form-control" id="newcustphone" placeholder="Phone number..." type="hidden"/></td>
+                    <td><input class="form-control" id="contemail" type="text"/><br/></td>
                 </tr>
                 <tr>
                     <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
-                    <td><input class="form-control" id="newcustmobile" placeholder="Phone number..." type="text"/></td>
+                    <td><input class="form-control" id="contphone" type="text"/></td>
                 </tr>
                 <tr>
-                    <td style="text-align: right;"><label>Address:&nbsp;</label></td>
-                    <td><input class="form-control" id="newcustaddress" type="text"/></td>
+                    <td style="text-align: right;"><label>Mobile:&nbsp;</label></td>
+                    <td><input class="form-control" id="contmobile" type="text"/></td>
                 </tr>
-                <tr style="display: none;">
-                    <td style="text-align: right;"><label>Suburb:&nbsp;</label></td>
-                    <td><input class="form-control" id="newcustsuburb" type="text"/></td>
-                </tr>
-                <tr style="display: none;">
-                    <td style="text-align: right;"><label>Postcode:&nbsp;</label></td>
-                    <td><input class="form-control" id="newcustpostcode" value="0002030" type="text"/></td>
-                </tr>
-                <tr style="display: none;">
-                    <td style="text-align: right;"><label>State:&nbsp;</label></td>
-                    <td><input class="form-control" id="newcuststate" type="text"/></td>
-                </tr>
-                <tr style="display: none;">
-                    <td style="text-align: right;"><label>Country:&nbsp;</label></td>
-                    <td><input class="form-control" id="newcustcountry" type="text"/></td>
+                <tr>
+                    <td style="text-align: right;"><label>Receives Invoices:&nbsp;</label></td>
+                    <td><input class="form-control" id="contrecinv" type="checkbox"/></td>
                 </tr>
             </table>
-        </div>
-        <div id="custcontactdialog" class="hide">
-            <form id="custcontactform">
-                <input class="form-control" id="contid" type="hidden" value="0"/>
-                <input class="form-control" id="contcustid" type="hidden" value="0"/>
-                <table>
-                    <tr>
-                        <td style="text-align: right;"><label>Name:&nbsp;</label></td>
-                        <td><input class="form-control" id="contname" type="text"/></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: right;"><label>Position:&nbsp;</label></td>
-                        <td><input class="form-control" id="contposition" type="text"/></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: right;"><label>Email:&nbsp;</label></td>
-                        <td><input class="form-control" id="contemail" type="text"/><br/></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: right;"><label>Phone:&nbsp;</label></td>
-                        <td><input class="form-control" id="contphone" type="text"/></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: right;"><label>Mobile:&nbsp;</label></td>
-                        <td><input class="form-control" id="contmobile" type="text"/></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: right;"><label>Receives Invoices:&nbsp;</label></td>
-                        <td><input class="form-control" id="contrecinv" type="checkbox"/></td>
-                    </tr>
-                </table>
-            </form>
-        </div>
+        </form>
+    </div>
 
-        <div id="edittransdialog" class="hide" style="padding-left: 20px; padding-right: 20px;">
-            <div style="width: 100%; margin: 0; margin-bottom: 5px;">
+    <div class="hide" id="edittransdialog" style="padding-left: 20px; padding-right: 20px;">
+        <div style="width: 100%; margin: 0; margin-bottom: 5px;">
             <div style="display: inline-block; margin: 0; width: 49%; min-width: 250px; max-width: 300px;">
                 <label class="fixedlabel">Status:</label> <span id="transstat"></span><br/>
                 <label class="fixedlabel">ID:</label> <span id="transid"></span><br/>
@@ -547,425 +579,482 @@
                 <label class="fixedlabel">Location:</label> <span id="transloc"></span><br/>
             </div>
             <div style="display: inline-block; margin: 0; width: 49%; min-width: 250px; max-width: 300px; padding: 0 10px 5px 10px; vertical-align: top;">
-                <label class="fixedlabel">Notes:</label><textarea class="form-control" style="width: 100%;height: 100px;" id="transnotes"></textarea>
+                <label class="fixedlabel">Notes:</label><textarea class="form-control"
+                                                                  id="transnotes"
+                                                                  style="width: 100%;height: 100px;"></textarea>
                 <div class="space-8"></div>
             </div>
             <div style="display: inline-block; margin: 0; width: 49%; min-width: 250px; max-width: 300px; padding: 0 10px 5px 10px;">
-                <input class="form-control" type="hidden" autofocus="true" />
+                <input autofocus="true" class="form-control" type="hidden"/>
                 <div class="transinvoptions">
                     <table>
                         <tr>
                             <td><label class="fixedlabel">Invoice Date:</label></td>
-                            <td><input class="form-control" type="text" id="invprocessdt" onclick="$(this).blur();" style="width: 100%; display: inline;"/></td>
+                            <td><input class="form-control" id="invprocessdt" onclick="$(this).blur();" style="width: 100%; display: inline;"
+                                       type="text"/></td>
                         </tr>
                         <tr>
                             <td><label class="fixedlabel">Due Date:</label></td>
-                            <td><input class="form-control" type="text" id="invduedt" onclick="$(this).blur();" style="width: 100%; display: inline;"/></td>
+                            <td><input class="form-control" id="invduedt" onclick="$(this).blur();" style="width: 100%; display: inline;"
+                                       type="text"/></td>
                         </tr>
                         <tr>
                             <td><label class="fixedlabel">Close Date:</label></td>
-                            <td><input class="form-control" type="text" id="invclosedt" onclick="$(this).blur();" style="width: 100%; display: inline;"/></td></tr>
+                            <td><input class="form-control" id="invclosedt" onclick="$(this).blur();" style="width: 100%; display: inline;"
+                                       type="text"/></td>
+                        </tr>
                         <tr>
                             <td><label class="fixedlabel">Discount:</label></td>
-                            <td><input class="form-control" style="width: 70%; display: inline;" type="text" id="invdiscountval" /> Kshs</td>
+                            <td><input class="form-control" id="invdiscountval" style="width: 70%; display: inline;"
+                                       type="text"/> Kshs
+                            </td>
                         </tr>
                     </table>
                 </div>
             </div>
             <div style="text-align: center;">
                 <div class="transinvoptions" style="text-align: center;">
-                    <button class="btn btn-sm btn-success" onclick="WPOS.transactions.updateInvoice();"><i class='icon-edit bigger-110'></i>&nbsp; Save</button>
+                    <button class="btn btn-sm btn-success" onclick="WPOS.transactions.updateInvoice();"><i
+                            class='icon-edit bigger-110'></i>&nbsp; Save
+                    </button>
                 </div>
                 <div class="transsaleoptions" style="text-align: center;">
-                    <button class="btn btn-sm btn-success" onclick="WPOS.transactions.updateNotes();"><i class='icon-edit bigger-110'></i>&nbsp; Save</button>
+                    <button class="btn btn-sm btn-success" onclick="WPOS.transactions.updateNotes();"><i
+                            class='icon-edit bigger-110'></i>&nbsp; Save
+                    </button>
                 </div>
             </div>
-            </div>
-            <div class="tabbable" style="margin-top: 10px;">
-                <ul class="nav nav-tabs" style="margin: 0;">
-                    <li class="active">
-                        <a href="#transdetails" data-toggle="tab">
-                            <i class="green icon-gift bigger-120"></i>
-                            Details
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#transitems" data-toggle="tab">
-                            <i class="green icon-gift bigger-120"></i>
-                            Items
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="#transpayments" data-toggle="tab">
-                            <i class="red icon-dollar bigger-120"></i>
-                            Payments
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="#transoptions" data-toggle="tab">
-                            <i class="blue icon-cogs bigger-120"></i>
-                            Options
-                        </a>
-                    </li>
-                </ul>
+        </div>
+        <div class="tabbable" style="margin-top: 10px;">
+            <ul class="nav nav-tabs" style="margin: 0;">
+                <li class="active">
+                    <a data-toggle="tab" href="#transdetails">
+                        <i class="green icon-gift bigger-120"></i>
+                        Details
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#transitems">
+                        <i class="green icon-gift bigger-120"></i>
+                        Items
+                    </a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#transpayments">
+                        <i class="red icon-dollar bigger-120"></i>
+                        Payments
+                    </a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#transoptions">
+                        <i class="blue icon-cogs bigger-120"></i>
+                        Options
+                    </a>
+                </li>
+            </ul>
 
-                <div class="tab-content" style="padding-top:10px;">
-                    <div class="tab-pane active in" id="transdetails">
-                        <div class="inline" style="vertical-align: top; min-width: 250px;">
-                            <h4>Sale Totals:</h4>
-                            <label class="fixedlabel">Subtotal:</label><span id="transsubtotal"></span><br/>
-                            <div id="transtax">
-                            </div>
-                            <div id="transdisdiv"><label class="fixedlabel">Discount:</label><span id="transdiscount"></span></div>
-                            <label class="fixedlabel">Total:</label><span id="transtotal"></span><br/>
-                            <div id="voidinfo" style="display: none;">
-                                <h4>Void/Refunds:</h4>
-                                <table style="width: 100%" class="table">
-                                    <thead class="table-header">
-                                    <tr>
-                                        <th>Type</th>
-                                        <th>Time</th>
-                                        <th>View</th>
-                                        <th>Delete</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="transvoidtable" class="ui-widget-content">
-
-                                    </tbody>
-                                </table>
-                            </div>
+            <div class="tab-content" style="padding-top:10px;">
+                <div class="tab-pane active in" id="transdetails">
+                    <div class="inline" style="vertical-align: top; min-width: 250px;">
+                        <h4>Sale Totals:</h4>
+                        <label class="fixedlabel">Subtotal:</label><span id="transsubtotal"></span><br/>
+                        <div id="transtax">
                         </div>
-                        <div class="inline" style="min-width: 250px; vertical-align: top;">
+                        <div id="transdisdiv"><label class="fixedlabel">Discount:</label><span
+                                id="transdiscount"></span></div>
+                        <label class="fixedlabel">Total:</label><span id="transtotal"></span><br/>
+                        <div id="voidinfo" style="display: none;">
+                            <h4>Void/Refunds:</h4>
+                            <table class="table" style="width: 100%">
+                                <thead class="table-header">
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Time</th>
+                                    <th>View</th>
+                                    <th>Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody class="ui-widget-content" id="transvoidtable">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="inline" style="min-width: 250px; vertical-align: top;">
                         <div id="tcustdetails">
                             <h4>Customer Details:</h4>
                             <span>Name: </span><span id="tcustname"></span><br/>
                             <span>Address: </span><span id="tcustaddress"></span><br/>
                             <span>Phone: </span><span id="tcustmobile"></span><br/>
                             <span>Email: </span><span id="tcustemail"></span><br/>
-                            <input class="form-control" type="hidden" id="tcustid"/>
-                            <button id="transcustdtlbtn" class="btn btn-xs btn-primary" onclick="WPOS.customers.openCustomerDialog($('#tcustid').val());">Details</button>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="transitems">
-                        <h4 class="inline">Items:</h4>
-                        <button onclick="WPOS.transactions.openInvoiceItemDialog(false);" class="btn btn-sm btn-primary transinvoptions" style="float: right;">Add Item(s)</button>
-                        <table width="100%" class="table">
-                            <thead class="table-header">
-                            <tr align="left">
-                                <th>Qty</th>
-                                <th>Name</th>
-                                <th>Unit</th>
-                                <th>Tax</th>
-                                <th>Price</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody id="transitemtable" style="overflow:auto;" class="ui-widget-content">
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="tab-pane" id="transpayments">
-                        <h4 class="inline">Payments:</h4>
-                        <button onclick="WPOS.transactions.openInvoicePaymentDialog(false);" class="btn btn-sm btn-primary transinvoptions" style="float: right;">Add Payment(s)</button>
-                        <table width="100%" class="table">
-                            <thead class="table-header">
-                            <tr>
-                                <th>Method</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody id="transpaymenttable" class="ui-widget-content">
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="tab-pane" id="transoptions">
-                        <h4>Options:</h4>
-                        <div style="text-align: center;">
-                            <button onclick="WPOS.transactions.showGenerateDialog();" class="btn btn-sm btn-primary" style="padding: 5px;"><i class="icon-file"></i> Generate Invoice</button>
-                            <!--<button onclick="WPOS.transactions.showEmailDialog();" class="btn btn-sm btn-success" style="padding: 5px;"><i class="icon-envelope"></i> Email Invoice</button>-->
-                            <button onclick="WPOS.transactions.showHistoryDialog();" class="btn btn-sm btn-warning" style="padding: 5px;"><i class="icon-list"></i> History</button>
+                            <input class="form-control" id="tcustid" type="hidden"/>
+                            <button class="btn btn-xs btn-primary" id="transcustdtlbtn"
+                                    onclick="WPOS.customers.openCustomerDialog($('#tcustid').val());">Details
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div id="transitemdialog" class="hide" style="padding-left: 20px; padding-right: 20px;">
-            <form id="transitemform">
-                <input class="form-control" type="hidden" id="transitemid" value="0"/>
-                <input class="form-control" type="hidden" id="transitemsitemid" value="0"/>
-                <input class="form-control" type="hidden" id="transitemtaxval" value="0"/>
-                <input class="form-control" type="hidden" id="transitempriceval" value="0"/>
-                <div class="col-sm-12">
-                    <label class="fixedlabel">Search for item name or code: </label>
-                    <input class="form-control" placeholder="Search for item name/stock code here..." type="text" id="stitemsearch"/>
-                    <hr>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <input type="hidden" id="transitemstocklevel">
-                        <input type="hidden" id="transitemexpirydate">
-                        <input type="hidden" id="transitemreorderPoint">
-                        <input type="hidden" id="transitemdt">
-                        <input type="hidden" id="transiteminventoryNo">
-                        <input type="hidden" id="transitemstockType">
-                        <input type="hidden" id="transitemsaleitemid">
-                        <input type="hidden" id="transitemlocationid">
-                        <input type="hidden" id="transitemcode">
-                        <label class="fixedlabel">Qty: (<span class="text-danger">Required*</span>)</label>
-                        <input class="form-control" type="text" placeholder="Total items..." id="transitemqty" onchange="WPOS.transactions.calculateItemTotals();"/>
-                        <div class="space-4"></div>
-                        <label class="fixedlabel">Type:</label>
-                        <select onchange="WPOS.transactions.updateUnitPrice($(this).val());" name="prices" id="itemtype" class="form-control"></select>
-                        <div class="space-4"></div>
-                        <label class="fixedlabel">Name: </label><input class="form-control" type="text" id="transitemname"/>
-                        <div class="space-4" style="display: none;"></div>
-                        <label class="fixedlabel" style="display: none;">Alt Name: </label><input class="form-control" type="text" id="transitemaltname" style="display: none;"/><small  style="display: none;">Alternate language name</small>
-                        <div class="space-4"></div>
-                        <label class="fixedlabel">Description: </label><textarea class="form-control" style="width: 100%; resize: none;" id="transitemdesc"></textarea>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="fixedlabel">Cost: </label><input class="form-control" type="text" id="transitemcost"/>
-                        <div class="space-4"></div>
-                        <label class="fixedlabel">Unit: </label><input class="form-control" type="text" id="transitemunit" onchange="WPOS.transactions.calculateItemTotals();"/>
-                        <div class="space-4"></div>
-                        <label class="fixedlabel">Tax: </label><select type="text" id="transitemtaxid" class="taxselect form-control" onchange="WPOS.transactions.calculateItemTotals();"></select>
-                        <div class="space-4"></div>
-                        <div id="transitemtax">
-                        </div>
-                        <label class="fixedlabel"><b>Price:</b> </label><span id="transitemprice">0</span><br/>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div id="transpaydialog" class="hide" style="padding-left: 20px; padding-right: 20px;">
-            <form id="transpayform">
-                <div class="row">
-                    <div class="col-sm-8">
-                        <p>Total :: <span id="invoiceTotal"></span></p>
-                    </div>
-                    <div class="col-sm-8">
-                        <p>Balance :: <span id="invoiceBalance"></span></p>
-                    </div>
-                </div>
-                <table>
-                    <tr>
-                        <td><label class="fixedlabel">Date(<span class="text-danger">Required</span>): </label></td>
-                        <td><input class="form-control" type="text" id="transpaydt" style="width: 100%;" onclick="$(this).blur();"/></td>
-                    </tr>
-                    <tr>
-                        <td><label class="fixedlabel">Method(<span class="text-danger">Required</span>): </label></td>
-                        <td>
-                            <select id="transpaymethod" class="form-control">
-                                <option value="deposit">Deposit</option>
-                                <option selected="selected" value="cash">Cash</option>
-                                <option value="mpesa">Mpesa</option>
-                                <option value="bank">Bank</option>
-                                <option value="credit">Credit</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label class="fixedlabel">Amount(<span class="text-danger">Required</span>): </label></td>
-                        <td><input class="form-control" type="text" id="transpayamount"/></td>
-                    </tr>
-                </table>
-                <input class="form-control" type="hidden" autofocus="true" />
-                <input class="form-control" type="hidden" id="transpayid" value="0"/>
-            </form>
-        </div>
-        <div id="miscdialog" class="hide">
-            <div id="geninvoiceform" style="text-align: center; min-width: 150px;">
-                <!--<h3>Invoice Template</h3>
-                <select id="invoicetemplate" class="form-control">
-                </select>-->
-                <h3>Invoice Receipt</h3>
-                <button onclick="WPOS.transactions.printInvoice('html', 0, '');" class="btn btn-sm btn-primary" style="padding: 5px;"><span class="glyphicon glyphicon-print"></span> PRINT</button>
-                <h3>View</h3>
-                <button onclick="WPOS.transactions.generateInvoice('html', 0, 'invoice');" class="btn btn-sm btn-primary" style="padding: 5px;">HTML</button>
-                <button onclick="WPOS.transactions.generateInvoice('pdf', 0, 'invoice_mixed');" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
-                <h3>Download</h3>
-                <button onclick="WPOS.transactions.generateInvoice('html', 1, 'invoice');" class="btn btn-sm btn-primary" style="padding: 5px;">HTML</button>
-                <button onclick="WPOS.transactions.generateInvoice('pdf', 1, 'invoice_mixed');" class="btn btn-sm btn-primary" style="padding: 5px;">PDF</button>
-            </div>
-            <div id="sendinvoiceform" style="min-width: 420px;">
-                <label class="smfixedlabel inline">Invoice Template: </label><div class="inline"><select id="emlinvoicetemplate"></select></div>
-                <div class="space-4"></div>
-                <label class="smfixedlabel inline">TO: </label><div class="inline"><input class="form-control" type="text" placeholder="Enter recipients..." id="emailto" class="email-input" name="tags"/></div>
-                <div class="space-4"></div>
-                <label class="smfixedlabel inline">CC: </label><div class="inline"><input class="form-control" type="text" placeholder="Enter recipients..." id="emailcc" class="email-input" name="tags"/></div>
-                <div class="space-4"></div>
-                <label class="smfixedlabel inline">BCC: </label><div class="inline"><input class="form-control" type="text" placeholder="Enter recipients..." id="emailbcc" class="email-input" name="tags"/></div>
-                <div class="space-4"></div>
-                <label class="smfixedlabel inline">Subject: </label><input class="form-control"style="width: 410px;" type="text" placeholder="Enter Subject" id="emailsubject" />
-                <div class="space-4"></div>
-                <div class="wysiwyg-editor" id="emailmessage"></div>
-                <div class="space-8"></div>
-                <div style="text-align: center;">
-                    <button type="button" onclick="WPOS.transactions.emailInvoice();" class="btn btn-primary">Send</button>
-                </div>
-            </div>
-            <div id="transhist">
-                <table class="table table-stripped table-responsive">
-                    <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>User</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                    </tr>
-                    </thead>
-                    <tbody id="transhisttable">
-                    </tbody>
-                </table>
-            </div>
-            <div id="voiddetails">
-                <label class="fixedlabel">Time: </label><span id="reftime"></span><br/>
-                <label class="fixedlabel">User: </label><span id="refuser"></span><br/>
-                <label class="fixedlabel">Device: </label><span id="refdev"></span><br/>
-                <label class="fixedlabel">Location: </label><span id="refloc"></span><br/>
-                <label class="fixedlabel">Reason: </label><span id="refreason"></span><br/>
-
-                <div id="refunddetails">
-                    <label class="fixedlabel">Amount: </label><span id="refamount"></span>
-                    <div class="space-6"></div>
-                    <label class="fixedlabel">Method: </label><span id="refmethod"></span>
-                    <button style="float: right; display: inline-block;" onclick="WPOS.transactions.showPaymentInfo(this);" id="refpaydtlbtn" class="btn btn-xs btn-primary">Details</button>
-                    <div class="space-6"></div>
-                    <table style="width: 100%;" class="table">
+                <div class="tab-pane" id="transitems">
+                    <h4 class="inline">Items:</h4>
+                    <button class="btn btn-sm btn-primary transinvoptions"
+                            onclick="WPOS.transactions.openInvoiceItemDialog(false);" style="float: right;">Add Item(s)
+                    </button>
+                    <table class="table" width="100%">
                         <thead class="table-header">
-                        <tr>
-                            <th>Item ID</th>
-                            <th># Returned</th>
+                        <tr align="left">
+                            <th>Qty</th>
+                            <th>Name</th>
+                            <th>Unit</th>
+                            <th>Tax</th>
+                            <th>Price</th>
+                            <th></th>
                         </tr>
                         </thead>
-                        <tbody id="refitemtable">
+                        <tbody class="ui-widget-content" id="transitemtable" style="overflow:auto;">
 
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-        <div id="eftdetailsdialog" class="hide" title="Payment Details">
-            <div>
-                <div>
-                    <label>Reference: <span id="efttransref" style="margin-right: 20px;"></span></label>
-                    <label>Card Type: <span id="efttranscard"></span></label>
+                <div class="tab-pane" id="transpayments">
+                    <h4 class="inline">Payments:</h4>
+                    <button class="btn btn-sm btn-primary transinvoptions"
+                            onclick="WPOS.transactions.openInvoicePaymentDialog(false);" style="float: right;">Add Payment(s)
+                    </button>
+                    <table class="table" width="100%">
+                        <thead class="table-header">
+                        <tr>
+                            <th>Method</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody class="ui-widget-content" id="transpaymenttable">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="transoptions">
+                    <h4>Options:</h4>
+                    <div style="text-align: center;">
+                        <button class="btn btn-sm btn-primary" onclick="WPOS.transactions.showGenerateDialog();"
+                                style="padding: 5px;"><i class="icon-file"></i> Generate Invoice
+                        </button>
+                        <!--<button onclick="WPOS.transactions.showEmailDialog();" class="btn btn-sm btn-success" style="padding: 5px;"><i class="icon-envelope"></i> Email Invoice</button>-->
+                        <button class="btn btn-sm btn-warning" onclick="WPOS.transactions.showHistoryDialog();"
+                                style="padding: 5px;"><i class="icon-list"></i> History
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div>
-                <div style="width: 250px; display: inline-block; text-align: center;">
-                    <pre id="eftcustrec"></pre>
+        </div>
+    </div>
+    <div class="hide" id="transitemdialog" style="padding-left: 20px; padding-right: 20px;">
+        <form id="transitemform">
+            <input class="form-control" id="transitemid" type="hidden" value="0"/>
+            <input class="form-control" id="transitemsitemid" type="hidden" value="0"/>
+            <input class="form-control" id="transitemtaxval" type="hidden" value="0"/>
+            <input class="form-control" id="transitempriceval" type="hidden" value="0"/>
+            <div class="col-sm-12">
+                <label class="fixedlabel">Search for item name or code: </label>
+                <input class="form-control" id="stitemsearch" placeholder="Search for item name/stock code here..."
+                       type="text"/>
+                <hr>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <input id="transitemstocklevel" type="hidden">
+                    <input id="transitemexpirydate" type="hidden">
+                    <input id="transitemreorderPoint" type="hidden">
+                    <input id="transitemdt" type="hidden">
+                    <input id="transiteminventoryNo" type="hidden">
+                    <input id="transitemstockType" type="hidden">
+                    <input id="transitemsaleitemid" type="hidden">
+                    <input id="transitemlocationid" type="hidden">
+                    <input id="transitemcode" type="hidden">
+                    <label class="fixedlabel">Qty: (<span class="text-danger">Required*</span>)</label>
+                    <input class="form-control" id="transitemqty" onchange="WPOS.transactions.calculateItemTotals();" placeholder="Total items..."
+                           type="text"/>
+                    <div class="space-4"></div>
+                    <label class="fixedlabel">Type:</label>
+                    <select class="form-control" id="itemtype" name="prices"
+                            onchange="WPOS.transactions.updateUnitPrice($(this).val());"></select>
+                    <div class="space-4"></div>
+                    <label class="fixedlabel">Name: </label><input class="form-control" id="transitemname" type="text"/>
+                    <div class="space-4" style="display: none;"></div>
+                    <label class="fixedlabel" style="display: none;">Alt Name: </label><input class="form-control"
+                                                                                              id="transitemaltname"
+                                                                                              style="display: none;"
+                                                                                              type="text"/>
+                    <small style="display: none;">Alternate language name</small>
+                    <div class="space-4"></div>
+                    <label class="fixedlabel">Description: </label><textarea class="form-control"
+                                                                             id="transitemdesc"
+                                                                             style="width: 100%; resize: none;"></textarea>
                 </div>
-                <div style="width: 250px; display: inline-block; text-align: center;">
-                    <pre id="eftmerchrec"></pre>
+                <div class="col-sm-6">
+                    <label class="fixedlabel">Cost: </label><input class="form-control" id="transitemcost" type="text"/>
+                    <div class="space-4"></div>
+                    <label class="fixedlabel">Unit: </label><input class="form-control" id="transitemunit" onchange="WPOS.transactions.calculateItemTotals();"
+                                                                   type="text"/>
+                    <div class="space-4"></div>
+                    <label class="fixedlabel">Tax: </label><select class="taxselect form-control" id="transitemtaxid"
+                                                                   onchange="WPOS.transactions.calculateItemTotals();"
+                                                                   type="text"></select>
+                    <div class="space-4"></div>
+                    <div id="transitemtax">
+                    </div>
+                    <label class="fixedlabel"><b>Price:</b> </label><span id="transitemprice">0</span><br/>
                 </div>
             </div>
+        </form>
+    </div>
+    <div class="hide" id="transpaydialog" style="padding-left: 20px; padding-right: 20px;">
+        <form id="transpayform">
+            <div class="row">
+                <div class="col-sm-8">
+                    <p>Total :: <span id="invoiceTotal"></span></p>
+                </div>
+                <div class="col-sm-8">
+                    <p>Balance :: <span id="invoiceBalance"></span></p>
+                </div>
+            </div>
+            <table>
+                <tr>
+                    <td><label class="fixedlabel">Date(<span class="text-danger">Required</span>): </label></td>
+                    <td><input class="form-control" id="transpaydt" onclick="$(this).blur();" style="width: 100%;"
+                               type="text"/></td>
+                </tr>
+                <tr>
+                    <td><label class="fixedlabel">Method(<span class="text-danger">Required</span>): </label></td>
+                    <td>
+                        <select class="form-control" id="transpaymethod">
+                            <option value="deposit">Deposit</option>
+                            <option selected="selected" value="cash">Cash</option>
+                            <option value="mpesa">Mpesa</option>
+                            <option value="bank">Bank</option>
+                            <option value="credit">Credit</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label class="fixedlabel">Amount(<span class="text-danger">Required</span>): </label></td>
+                    <td><input class="form-control" id="transpayamount" type="text"/></td>
+                </tr>
+            </table>
+            <input autofocus="true" class="form-control" type="hidden"/>
+            <input class="form-control" id="transpayid" type="hidden" value="0"/>
+        </form>
+    </div>
+    <div class="hide" id="miscdialog">
+        <div id="geninvoiceform" style="text-align: center; min-width: 150px;">
+            <!--<h3>Invoice Template</h3>
+            <select id="invoicetemplate" class="form-control">
+            </select>-->
+            <h3>Invoice Receipt</h3>
+            <button class="btn btn-sm btn-primary" onclick="WPOS.transactions.printInvoice('html', 0, '');"
+                    style="padding: 5px;"><span class="glyphicon glyphicon-print"></span> PRINT
+            </button>
+            <h3>View</h3>
+            <button class="btn btn-sm btn-primary" onclick="WPOS.transactions.generateInvoice('html', 0, 'invoice');"
+                    style="padding: 5px;">HTML
+            </button>
+            <button class="btn btn-sm btn-primary"
+                    onclick="WPOS.transactions.generateInvoice('pdf', 0, 'invoice_mixed');" style="padding: 5px;">PDF
+            </button>
+            <h3>Download</h3>
+            <button class="btn btn-sm btn-primary" onclick="WPOS.transactions.generateInvoice('html', 1, 'invoice');"
+                    style="padding: 5px;">HTML
+            </button>
+            <button class="btn btn-sm btn-primary"
+                    onclick="WPOS.transactions.generateInvoice('pdf', 1, 'invoice_mixed');" style="padding: 5px;">PDF
+            </button>
         </div>
-        <div id="voidform" style="display:none; padding:5px; z-index: 1100;" title="Void Invoice">
-            <input class="form-control" id="voidref" type="hidden" value=""/>
-            <label class="fixedlabel">Reason:</label><br/>
-            <textarea rows="6" id="voidreason" style="width: 100%;"></textarea>
+        <div id="sendinvoiceform" style="min-width: 420px;">
+            <label class="smfixedlabel inline">Invoice Template: </label>
+            <div class="inline"><select id="emlinvoicetemplate"></select></div>
+            <div class="space-4"></div>
+            <label class="smfixedlabel inline">TO: </label>
+            <div class="inline"><input class="form-control" class="email-input" id="emailto" name="tags"
+                                       placeholder="Enter recipients..." type="text"/></div>
+            <div class="space-4"></div>
+            <label class="smfixedlabel inline">CC: </label>
+            <div class="inline"><input class="form-control" class="email-input" id="emailcc" name="tags"
+                                       placeholder="Enter recipients..." type="text"/></div>
+            <div class="space-4"></div>
+            <label class="smfixedlabel inline">BCC: </label>
+            <div class="inline"><input class="form-control" class="email-input" id="emailbcc" name="tags"
+                                       placeholder="Enter recipients..." type="text"/></div>
+            <div class="space-4"></div>
+            <label class="smfixedlabel inline">Subject: </label><input class="form-control" id="emailsubject"
+                                                                       placeholder="Enter Subject" style="width: 410px;"
+                                                                       type="text"/>
+            <div class="space-4"></div>
+            <div class="wysiwyg-editor" id="emailmessage"></div>
+            <div class="space-8"></div>
+            <div style="text-align: center;">
+                <button class="btn btn-primary" onclick="WPOS.transactions.emailInvoice();" type="button">Send</button>
+            </div>
         </div>
-        <div id="translistdialog" class="hide">
-            <table class="table table-responsive">
+        <div id="transhist">
+            <table class="table table-stripped table-responsive">
                 <thead>
-                <tr id="translistheader">
-                    <th>Ref</th>
-                    <th>Details</th>
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Description</th>
                 </tr>
                 </thead>
-                <tbody id="translist">
-
+                <tbody id="transhisttable">
                 </tbody>
             </table>
         </div>
-            <div id="expenseslistdialog" class="hide">
-                <table class="table table-responsive">
-                    <thead>
-                    <tr id="expenseslistheader">
-                        <th>Ref</th>
+        <div id="voiddetails">
+            <label class="fixedlabel">Time: </label><span id="reftime"></span><br/>
+            <label class="fixedlabel">User: </label><span id="refuser"></span><br/>
+            <label class="fixedlabel">Device: </label><span id="refdev"></span><br/>
+            <label class="fixedlabel">Location: </label><span id="refloc"></span><br/>
+            <label class="fixedlabel">Reason: </label><span id="refreason"></span><br/>
+
+            <div id="refunddetails">
+                <label class="fixedlabel">Amount: </label><span id="refamount"></span>
+                <div class="space-6"></div>
+                <label class="fixedlabel">Method: </label><span id="refmethod"></span>
+                <button class="btn btn-xs btn-primary" id="refpaydtlbtn"
+                        onclick="WPOS.transactions.showPaymentInfo(this);" style="float: right; display: inline-block;">Details
+                </button>
+                <div class="space-6"></div>
+                <table class="table" style="width: 100%;">
+                    <thead class="table-header">
+                    <tr>
+                        <th>Item ID</th>
+                        <th># Returned</th>
                     </tr>
                     </thead>
-                    <tbody id="expenseslist">
+                    <tbody id="refitemtable">
 
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
+    <div class="hide" id="eftdetailsdialog" title="Payment Details">
+        <div>
+            <div>
+                <label>Reference: <span id="efttransref" style="margin-right: 20px;"></span></label>
+                <label>Card Type: <span id="efttranscard"></span></label>
+            </div>
+        </div>
+        <div>
+            <div style="width: 250px; display: inline-block; text-align: center;">
+                <pre id="eftcustrec"></pre>
+            </div>
+            <div style="width: 250px; display: inline-block; text-align: center;">
+                <pre id="eftmerchrec"></pre>
+            </div>
+        </div>
+    </div>
+    <div id="voidform" style="display:none; padding:5px; z-index: 1100;" title="Void Invoice">
+        <input class="form-control" id="voidref" type="hidden" value=""/>
+        <label class="fixedlabel">Reason:</label><br/>
+        <textarea id="voidreason" rows="6" style="width: 100%;"></textarea>
+    </div>
+    <div class="hide" id="translistdialog">
+        <table class="table table-responsive">
+            <thead>
+            <tr id="translistheader">
+                <th>Ref</th>
+                <th>Details</th>
+            </tr>
+            </thead>
+            <tbody id="translist">
 
-        <!-- basic scripts -->
+            </tbody>
+        </table>
+    </div>
+    <div class="hide" id="expenseslistdialog">
+        <table class="table table-responsive">
+            <thead>
+            <tr id="expenseslistheader">
+                <th>Ref</th>
+            </tr>
+            </thead>
+            <tbody id="expenseslist">
 
-        <!--[if !IE]> -->
-        <script type="text/javascript">
-            window.jQuery || document.write("<script src='assets/js/jquery-2.0.3.min.js'>"+"<"+"/script>");
-        </script>
-        <!-- <![endif]-->
+            </tbody>
+        </table>
+    </div>
+</div>
 
-        <!--[if IE]>
-        <script type="text/javascript">
-            window.jQuery || document.write("<script src='assets/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
-        </script>
-        <![endif]-->
+<!-- basic scripts -->
 
-        <script type="text/javascript">
-            if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
-        </script>
-        <script src="/assets/js/bootstrap.min.js"></script>
-        <!--<script src="assets/js/typeahead"></script>!-->
+<!--[if !IE]> -->
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='assets/js/jquery-2.0.3.min.js'>" + "<" + "/script>");
+</script>
+<!-- <![endif]-->
 
-        <!-- page specific plugin scripts -->
+<!--[if IE]>
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='assets/js/jquery-1.10.2.min.js'>" + "<" + "/script>");
+</script>
+<![endif]-->
 
-        <!--[if lte IE 8]>
-        <script src="assets/js/excanvas.min.js"></script>
-        <![endif]-->
-        <script src="assets/js/typeahead-bs2.min.js"></script>
-        <script src="assets/js/jquery-ui-1.10.3.full.min.js"></script>
-        <script src="assets/js/jquery.ui.touch-punch.min.js"></script>
-        <script src="assets/js/jquery.slimscroll.min.js"></script>
-        <script src="assets/js/jquery.easy-pie-chart.min.js"></script>
-        <script src="assets/js/jquery.sparkline.min.js"></script>
-        <script src="assets/js/flot/jquery.flot.min.js"></script>
-        <script src="assets/js/flot/jquery.flot.pie.min.js"></script>
-        <script src="assets/js/flot/jquery.flot.resize.min.js"></script>
-        <script src="assets/js/flot/jquery.flot.time.min.js"></script>
-        <script src="assets/js/bootstrap-tag.js"></script>
-        <script src="/assets/js/jquery.mustache.js"></script>
-        <!-- ace scripts -->
-        <script src="assets/js/ace-elements.min.js"></script>
-        <script src="assets/js/ace.min.js"></script>
+<script type="text/javascript">
+    if ('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
+</script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<!--<script src="assets/js/typeahead"></script>!-->
 
-        <!-- Scripts included on many of the pages -->
-        <script src="../assets/js/wpos/utilities.js"></script>
+<!-- page specific plugin scripts -->
 
-        <script src="/assets/libs/datatables/datatables.min.js"></script>
-        <script src="/assets/libs/datatables/datatableSorting.js"></script>
+<!--[if lte IE 8]>
+<script src="assets/js/excanvas.min.js"></script>
+<![endif]-->
+<script src="assets/js/typeahead-bs2.min.js"></script>
+<script src="assets/js/jquery-ui-1.10.3.full.min.js"></script>
+<script src="assets/js/jquery.ui.touch-punch.min.js"></script>
+<script src="assets/js/jquery.slimscroll.min.js"></script>
+<script src="assets/js/jquery.easy-pie-chart.min.js"></script>
+<script src="assets/js/jquery.sparkline.min.js"></script>
+<script src="assets/js/flot/jquery.flot.min.js"></script>
+<script src="assets/js/flot/jquery.flot.pie.min.js"></script>
+<script src="assets/js/flot/jquery.flot.resize.min.js"></script>
+<script src="assets/js/flot/jquery.flot.time.min.js"></script>
+<script src="assets/js/bootstrap-tag.js"></script>
+<script src="/assets/js/jquery.mustache.js"></script>
+<!-- ace scripts -->
+<script src="assets/js/ace-elements.min.js"></script>
+<script src="assets/js/ace.min.js"></script>
 
-        <script src="assets/js/date-time/bootstrap-datepicker.min.js"></script>
-        <!--<script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>-->
+<!-- Scripts included on many of the pages -->
+<script src="../assets/js/wpos/utilities.js"></script>
 
-        <script src="assets/js/select2/select2.min.js"></script>
-        <script src="assets/js/jquery.hotkeys.min.js"></script>
-        <script src="assets/js/bootstrap-wysiwyg.min.js"></script>
-        <script src="assets/js/bootbox.min.js"></script>
+<script src="/assets/libs/datatables/datatables.min.js"></script>
+<script src="/assets/libs/datatables/datatableSorting.js"></script>
 
-        <script src="assets/wpos/wpos.js"></script>
-        <script src="assets/wpos/customers.js"></script>
-        <script src="assets/wpos/transactions.js"></script>
-        <script src="../assets/js/wpos/print.js"></script>
-        <script type="text/javascript" src="../assets/libs/webprint.js"></script>
+<script src="assets/js/date-time/bootstrap-datepicker.min.js"></script>
+<!--<script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>-->
 
-        <!-- Websocket library -->
-        <script type="text/javascript" src="/assets/libs/socketio/socket.io-1.4.5.js"></script>
+<script src="assets/js/select2/select2.min.js"></script>
+<script src="assets/js/jquery.hotkeys.min.js"></script>
+<script src="assets/js/bootstrap-wysiwyg.min.js"></script>
+<script src="assets/js/bootbox.min.js"></script>
 
-        <!-- Sweet Alert Library -->
-        <script src="/assets/js/sweetalert2.all.min.js"></script>
+<script src="assets/wpos/wpos.js"></script>
+<script src="assets/wpos/customers.js"></script>
+<script src="assets/wpos/transactions.js"></script>
+<script src="../assets/js/wpos/print.js"></script>
+<script src="../assets/libs/webprint.js" type="text/javascript"></script>
 
-        <script src="assets/js/date-time/moment.min.js"></script>
-        
-	</body>
+<!-- Websocket library -->
+<script src="/assets/libs/socketio/socket.io-1.4.5.js" type="text/javascript"></script>
+
+<!-- Sweet Alert Library -->
+<script src="/assets/js/sweetalert2.all.min.js"></script>
+
+<script src="assets/js/date-time/moment.min.js"></script>
+
+</body>
 </html>

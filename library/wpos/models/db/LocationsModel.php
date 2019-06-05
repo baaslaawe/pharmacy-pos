@@ -17,7 +17,6 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 14/12/13 07:46 PM
@@ -48,7 +47,7 @@ class LocationsModel extends DbConfig
     public function create($name)
     {
         $sql = "INSERT INTO locations (name) VALUES (:name)";
-        $placeholders = ['name'=>$name];
+        $placeholders = ['name' => $name];
 
         return $this->insert($sql, $placeholders);
     }
@@ -79,7 +78,7 @@ class LocationsModel extends DbConfig
                 $sql .= ' AND';
             }
             $sql .= ' disabled = :disabled';
-            $placeholders[':disabled'] = $disabled?1:0;
+            $placeholders[':disabled'] = $disabled ? 1 : 0;
         }
         if ($limit !== 0 && is_int($limit)) {
             $sql .= ' LIMIT :limit';
@@ -102,7 +101,7 @@ class LocationsModel extends DbConfig
     public function edit($locationId, $name)
     {
         $sql = "UPDATE locations SET name= :name WHERE id= :id";
-        $placeholders = ['id'=>$locationId,'name'=>$name];
+        $placeholders = ['id' => $locationId, 'name' => $name];
 
         return $this->update($sql, $placeholders);
     }
@@ -112,9 +111,10 @@ class LocationsModel extends DbConfig
      * @param bool $disabled
      * @return bool|int Returns false on an unexpected failure, number of affected Ids on success.
      */
-    public function setDisabled($locationId, $disabled = true){
+    public function setDisabled($locationId, $disabled = true)
+    {
         $sql = "UPDATE locations SET disabled= :disabled WHERE id= :id";
-        $placeholders = ['id'=>$locationId, ':disabled'=>($disabled===true?1:0)];
+        $placeholders = ['id' => $locationId, ':disabled' => ($disabled === true ? 1 : 0)];
 
         return $this->update($sql, $placeholders);
     }
@@ -131,7 +131,7 @@ class LocationsModel extends DbConfig
             return false;
         }
         $sql = "DELETE FROM locations WHERE id= :id";
-        $placeholders = ['id'=>$locationId];
+        $placeholders = ['id' => $locationId];
         return $this->delete($sql, $placeholders);
     }
 

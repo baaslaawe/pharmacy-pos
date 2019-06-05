@@ -1,4 +1,5 @@
 <?php
+
 /**
  * WposTemplates is part of Wallace Point of Sale system (WPOS) API
  *
@@ -48,14 +49,15 @@ class WposTemplates
      * @param $result
      * @return mixed
      */
-    public static function getTemplates($result = ['error'=>'OK']){
+    public static function getTemplates($result = ['error' => 'OK'])
+    {
         $templates = WposAdminSettings::getSettingsObject('templates');
-        if (!$templates){
+        if (!$templates) {
             $result['error'] = "Failed to load templates";
             return $result;
         }
         // append template data
-        foreach ($templates as $key=>$template){
+        foreach ($templates as $key => $template) {
             $templates->{$key}->template = self::getTemplateData($template->filename);
         }
         $result['data'] = $templates;
@@ -63,20 +65,47 @@ class WposTemplates
     }
 
     /**
+     * Get template data from the specified file
+     * @param $filename
+     * @return string
+     */
+    private static function getTemplateData($filename)
+    {
+        return file_get_contents($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs/templates/" . $filename);
+    }
+
+    /**
+     * Restore default templates
+     * @return string
+     */
+    public static function restoreDefaults($filename = null)
+    {
+        if ($filename != null) {
+            if (file_exists($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs-template/templates/" . $filename))
+                copy($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs-template/templates/" . $filename, $_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs/templates/" . $filename);
+            return;
+        }
+        foreach (glob($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs-template/templates/*") as $file) {
+            copy($file, $_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs/templates/" . basename($file));
+        }
+    }
+
+    /**
      * Edit a given template
      * @param array $result
      * @return array
      */
-    public function editTemplate($result = ['error'=>'OK']){
+    public function editTemplate($result = ['error' => 'OK'])
+    {
         // validate input
         $jsonval = new JsonValidate($this->data, '{"id":"", "name":"", "template":""}');
-        if (($errors = $jsonval->validate())!==true){
+        if (($errors = $jsonval->validate()) !== true) {
             $result['error'] = $errors;
             return $result;
         }
 
         $template = $this->getTemplate($this->data->id);
-        if (!$template){
+        if (!$template) {
             $result['error'] = "Failed to load template";
             return $result;
         }
@@ -84,7 +113,7 @@ class WposTemplates
         unset($template->template);
         WposAdminSettings::putValue('templates', $this->data->id, $template);
 
-        if (!file_put_contents($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs/templates/".$template->filename, $this->data->template)){
+        if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs/templates/" . $template->filename, $this->data->template)) {
             $result['error'] = "Error saving template file";
         }
 
@@ -92,27 +121,14 @@ class WposTemplates
     }
 
     /**
-     * Render the template by id, using the provided data
-     * @param $id
-     * @param $data
-     * @return null
-     */
-    public function renderTemplate($id, $data){
-        require_once $_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."library/mustache.php";
-        $template = $this->getTemplate($id);
-        if (!$template) return null;
-        $m = new Mustache_Engine;
-        return $m->render($template->template, $data);
-    }
-
-    /**
      * Get template object, including contents of the template
      * @param $id
      * @return bool
      */
-    private function getTemplate($id){
+    private function getTemplate($id)
+    {
         $templates = WposAdminSettings::getSettingsObject('templates');
-        if (isset($templates->{$id})){
+        if (isset($templates->{$id})) {
             $template = $templates->{$id};
             $template->template = $this->getTemplateData($template->filename);
             return $template;
@@ -121,26 +137,17 @@ class WposTemplates
     }
 
     /**
-     * Get template data from the specified file
-     * @param $filename
-     * @return string
+     * Render the template by id, using the provided data
+     * @param $id
+     * @param $data
+     * @return null
      */
-    private static function getTemplateData($filename){
-        return file_get_contents($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs/templates/".$filename);
-    }
-
-    /**
-     * Restore default templates
-     * @return string
-     */
-    public static function restoreDefaults($filename=null){
-        if ($filename!=null){
-            if (file_exists($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs-template/templates/".$filename))
-                copy($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs-template/templates/".$filename, $_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs/templates/".$filename);
-            return;
-        }
-        foreach (glob($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs-template/templates/*") as $file) {
-            copy($file, $_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs/templates/".basename($file));
-        }
+    public function renderTemplate($id, $data)
+    {
+        require_once $_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "library/mustache.php";
+        $template = $this->getTemplate($id);
+        if (!$template) return null;
+        $m = new Mustache_Engine;
+        return $m->render($template->template, $data);
     }
 }

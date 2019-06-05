@@ -38,9 +38,9 @@ function WPOSReports() {
         this.generateTakingsReport();
     };
 
-    function showAdditionalReports(){
+    function showAdditionalReports() {
         // show eftpos reports if available
-        if (WPOS.hasOwnProperty('bank') && WPOS.bank.isEnabledAndReady() && WPOS.bank.getType()=="tyro"){
+        if (WPOS.hasOwnProperty('bank') && WPOS.bank.isEnabledAndReady() && WPOS.bank.getType() == "tyro") {
             $("#tyroreports").removeClass('hide');
         } else {
             $("#tyroreports").addClass('hide');
@@ -68,7 +68,7 @@ function WPOSReports() {
         var rectakings = $("#rectakings");
         var recbalance = $("#recbalance");
 
-        calcedtakings = (recdom1000 + recdom500 + recdom200 + recdom100 + recdom50 + recdom40 + recdom20 + recdom10 + recdom5  + recdom1 + recdom50c + recdom10c + recdom5c + recdom1c) - recfloat;
+        calcedtakings = (recdom1000 + recdom500 + recdom200 + recdom100 + recdom50 + recdom40 + recdom20 + recdom10 + recdom5 + recdom1 + recdom50c + recdom10c + recdom5c + recdom1c) - recfloat;
         calcedtakings = calcedtakings.toFixed(2);
         balance = (calcedtakings - curcashtakings).toFixed(2);
         $(rectakings).text(WPOS.util.currencyFormat(calcedtakings));
@@ -145,7 +145,16 @@ function WPOSReports() {
         etime.setMinutes(59);
         etime.setSeconds(59);
         etime = etime.getTime();
-        var data = {'salesnum': 0, 'salestotal': emptfloat, 'voidnum': 0, 'voidtotal': emptfloat, 'refundnum': 0, 'refundtotal': emptfloat, 'totaltakings': emptfloat, 'methodtotals': {}};
+        var data = {
+            'salesnum': 0,
+            'salestotal': emptfloat,
+            'voidnum': 0,
+            'voidtotal': emptfloat,
+            'refundnum': 0,
+            'refundtotal': emptfloat,
+            'totaltakings': emptfloat,
+            'methodtotals': {}
+        };
         var salestat;
         for (var key in sales) {
             sale = sales[key];
@@ -200,7 +209,7 @@ function WPOSReports() {
                     }
             }
         }
-        for (var x in data.methodtotals){
+        for (var x in data.methodtotals) {
             data.methodtotals[x].amount = parseFloat(data.methodtotals[x].amount).toFixed(2);
             data.methodtotals[x].refamount = parseFloat(data.methodtotals[x].refamount).toFixed(2);
         }
@@ -233,7 +242,7 @@ function WPOSReports() {
         return '<div style="text-align: center; margin-bottom: 5px;"><h3>' + name + '</h3><h5>' + WPOS.util.getShortDate(null) + ' - ' + config.devicename + ' - ' + config.locationname + '</h5></div>';
     };
 
-    function getSellerStats(){
+    function getSellerStats() {
         var sales = getTodaysRecords(true);
         var sale;
         var emptfloat = parseFloat("0.00");
@@ -319,7 +328,7 @@ function WPOSReports() {
                     }
             }
         }
-        for (var x in data){
+        for (var x in data) {
             data[x].balance = (data[x].saletotal - data[x].reftotal).toFixed(2);
             data[x].saletotal = data[x].saletotal.toFixed(2);
             data[x].reftotal = data[x].reftotal.toFixed(2);
@@ -341,7 +350,7 @@ function WPOSReports() {
                 items = records[ref].items;
                 for (var index in items) {
                     item = items[index];
-                    discprice = (parseFloat(item.price)-(item.price*(discount/100)));
+                    discprice = (parseFloat(item.price) - (item.price * (discount / 100)));
                     // check if record exists
                     if (itemstats.items.hasOwnProperty(item.sitemid)) {
                         // sum values
@@ -350,7 +359,11 @@ function WPOSReports() {
                     } else {
                         // create new record
                         var itemname = (item.sitemid == "0" ? "Miscellaneous" : item.name);
-                        itemstats.items[item.sitemid] = {"qty": parseInt(item.qty), "total": discprice, "name": itemname};
+                        itemstats.items[item.sitemid] = {
+                            "qty": parseInt(item.qty),
+                            "total": discprice,
+                            "name": itemname
+                        };
                     }
                     itemstats.totalsold += item.qty;
                 }
@@ -375,37 +388,37 @@ function WPOSReports() {
         var html = reportheader("What's Selling Report") + '<table style="width:100%;" class="table table-stripped"><thead><tr><th>Item</th><th># Sold</th><th>Total</th></tr></thead><tbody>';
         var stats = getWhatsSellingStats();
         var item;
-      var items = stats.items;
-      var names = [];
-      for (var i in items) {
-        names[items[i].name] = [];
-        names[items[i].name].name = items[i].name;
-        names[items[i].name].qty = 0;
-        names[items[i].name].total = 0;
-      }
-      for (var i in items) {
-        names[items[i].name].qty += parseInt(items[i].qty);// Sum all the qty from same item name
-        names[items[i].name].total += parseInt(items[i].total);// Sum all the qty from same item name
-      }
-      var filteredItems = [];
-      for (var i in items) {
-        filteredItems.push(items[i].name);// get all names
-      }
-      var uniqueItems = [...new Set(filteredItems)]; //get only unque names
-      var list = [];
-      for(var i in names) {
-        if (uniqueItems.indexOf(names[i].name) !== -1) {
-          list[uniqueItems.indexOf(names[i].name)] = names[i];
+        var items = stats.items;
+        var names = [];
+        for (var i in items) {
+            names[items[i].name] = [];
+            names[items[i].name].name = items[i].name;
+            names[items[i].name].qty = 0;
+            names[items[i].name].total = 0;
         }
-      }
-      var sort = [];
-      var order = [];
-      // put indexes into array and sort
-      for (var i in list){
-        order.push([list[i]['soldqty'], list[i]]);
-        sort.push([i, list[i].soldtotal]);
-      }
-      stats.items = list;
+        for (var i in items) {
+            names[items[i].name].qty += parseInt(items[i].qty);// Sum all the qty from same item name
+            names[items[i].name].total += parseInt(items[i].total);// Sum all the qty from same item name
+        }
+        var filteredItems = [];
+        for (var i in items) {
+            filteredItems.push(items[i].name);// get all names
+        }
+        var uniqueItems = [...new Set(filteredItems)]; //get only unque names
+        var list = [];
+        for (var i in names) {
+            if (uniqueItems.indexOf(names[i].name) !== -1) {
+                list[uniqueItems.indexOf(names[i].name)] = names[i];
+            }
+        }
+        var sort = [];
+        var order = [];
+        // put indexes into array and sort
+        for (var i in list) {
+            order.push([list[i]['soldqty'], list[i]]);
+            sort.push([i, list[i].soldtotal]);
+        }
+        stats.items = list;
         for (var id in stats.items) {
             item = stats.items[id];
             html += '<tr><td>' + item.name + '</td><td>' + item.qty + '</td><td>' + WPOS.util.currencyFormat(item.total) + '</td></tr>';
@@ -424,7 +437,7 @@ function WPOSReports() {
         for (var id in stats) {
             item = stats[id];
             var user = users.hasOwnProperty(id) ? users[id].username : 'Unknown';
-            html += '<tr><td>' + user + '</td><td>' + WPOS.util.currencyFormat(item.saletotal) + ' ('+item.salenum+')' + '</td><td>' + WPOS.util.currencyFormat(item.voidtotal) + ' ('+item.voidnum+')' + '</td><td>' + WPOS.util.currencyFormat(item.reftotal) + ' ('+item.refnum+')' + '</td><td>' + WPOS.util.currencyFormat(item.balance) + '</td></tr>';
+            html += '<tr><td>' + user + '</td><td>' + WPOS.util.currencyFormat(item.saletotal) + ' (' + item.salenum + ')' + '</td><td>' + WPOS.util.currencyFormat(item.voidtotal) + ' (' + item.voidnum + ')' + '</td><td>' + WPOS.util.currencyFormat(item.reftotal) + ' (' + item.refnum + ')' + '</td><td>' + WPOS.util.currencyFormat(item.balance) + '</td></tr>';
         }
 
         html += '</tbody></table>';
@@ -432,33 +445,33 @@ function WPOSReports() {
         $("#reportcontain").html(html);
     };
 
-    this.generateTyroReport = function(){
+    this.generateTyroReport = function () {
         var type = $("#tyroreptype").val();
-        WPOS.bank.getTyroReport(type, (type=="detail"?WPOS.reports.populateTyroDetailed:WPOS.reports.populateTyroSummary));
+        WPOS.bank.getTyroReport(type, (type == "detail" ? WPOS.reports.populateTyroDetailed : WPOS.reports.populateTyroSummary));
     };
 
-    this.populateTyroSummary = function(xml){
+    this.populateTyroSummary = function (xml) {
         xml = parseXML(xml);
         var html = reportheader("Tyro Eftpos Summary Report") + '<table style="width:100%;" class="table table-stripped"><thead><tr><th>Card Type</th><th style="text-align: right;">Purchase</th><th style="text-align: right;">Cash-Out</th><th style="text-align: right;">Refunds</th><th style="text-align: right;">Total</th></tr></thead><tbody>';
         var line = xml.find("card");
         //console.log(xml);
         //console.log(recon);
-        $.each(line, function(i){
+        $.each(line, function (i) {
             //console.log($(this));
-            html += '<tr><td style="text-align: left;">' + WPOS.util.capFirstLetter($(this).attr('type')) + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('purchases')) + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('cash-out')?$(this).attr('cash-out'):'0.00') + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('refunds')) + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('total')) + '</td></tr>';
+            html += '<tr><td style="text-align: left;">' + WPOS.util.capFirstLetter($(this).attr('type')) + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('purchases')) + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('cash-out') ? $(this).attr('cash-out') : '0.00') + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('refunds')) + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('total')) + '</td></tr>';
         });
-        html += '<tr><td colspan="4" style="text-align: left;"><strong>Total:</strong></td><td style="text-align: right;">' +WPOS.util.currencyFormat(xml.find("reconciliation-summary").attr('total')) + '</td></tr>';
+        html += '<tr><td colspan="4" style="text-align: left;"><strong>Total:</strong></td><td style="text-align: right;">' + WPOS.util.currencyFormat(xml.find("reconciliation-summary").attr('total')) + '</td></tr>';
         html += '</tbody></table>';
         // put into report window
         $("#reportcontain").html(html);
     };
 
-    this.populateTyroDetailed = function(xml){
+    this.populateTyroDetailed = function (xml) {
         xml = parseXML(xml);
         var html = reportheader("Tyro Eftpos Detail Report") + '<table style="width:100%;" class="table table-stripped"><thead><tr><th>Time</th><th>Type</th><th>Card Type</th><th style="text-align: right;">Cash Out</th><th style="text-align: right;">Total</th></tr></thead><tbody>';
         var line = xml.find("transaction");
-        $.each(line, function(i){
-            html += '<tr><td  style="text-align: left;">' + $(this).attr('transaction-local-date-time') + '</td><td style="text-align: left;">' + WPOS.util.capFirstLetter($(this).attr('type')) + '</td><td style="text-align: left;">' + WPOS.util.capFirstLetter($(this).attr('card-type')) + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('cash-out')?$(this).attr('cash-out'):'0.00') + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('amount')) + '</td></tr>';
+        $.each(line, function (i) {
+            html += '<tr><td  style="text-align: left;">' + $(this).attr('transaction-local-date-time') + '</td><td style="text-align: left;">' + WPOS.util.capFirstLetter($(this).attr('type')) + '</td><td style="text-align: left;">' + WPOS.util.capFirstLetter($(this).attr('card-type')) + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('cash-out') ? $(this).attr('cash-out') : '0.00') + '</td><td style="text-align: right;">' + WPOS.util.currencyFormat($(this).attr('amount')) + '</td></tr>';
         });
         html += '<tr><td colspan="3" style="text-align: left;"><strong>Total:</strong></td><td style="text-align: right;">' + WPOS.util.currencyFormat(xml.find("reconciliation-detail").attr('total')) + '</td></tr>';
         html += '</tbody></table>';
@@ -466,7 +479,7 @@ function WPOSReports() {
         $("#reportcontain").html(html);
     };
 
-    function parseXML(xml){
+    function parseXML(xml) {
         var xmlobj = $.parseXML(xml);
         return $(xmlobj);
     }

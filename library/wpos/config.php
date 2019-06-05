@@ -12,8 +12,8 @@ if (!isset($_SERVER['DOCUMENT_ROOT'])) {
 // load timezone config if available
 // TODO: cache this somehow
 $timezone = "Africa/Nairobi";
-if (file_exists($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs/.config.json")){
-    $GLOBALS['config'] = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs/.config.json"));
+if (file_exists($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs/.config.json")) {
+    $GLOBALS['config'] = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs/.config.json"));
     if (isset($GLOBALS['config']->timezone))
         $timezone = $GLOBALS['config']->timezone;
 }
@@ -31,14 +31,15 @@ error_reporting(E_ALL);
  * @param $errfile
  * @param $errline
  */
-function errorHandler($errorno, $errstr, $errfile, $errline){
+function errorHandler($errorno, $errstr, $errfile, $errline)
+{
     global $result;
 
     $result['errorCode'] = "phperr";
 
     if ($result['error'] == "OK") $result['error'] = "";
 
-    $result['error'] =  "ERROR: " . ": " . $errstr . " " . $errfile . " on line " . $errline . "\n";
+    $result['error'] = "ERROR: " . ": " . $errstr . " " . $errfile . " on line " . $errline . "\n";
 
     die(json_encode($result));
 }
@@ -50,7 +51,8 @@ function errorHandler($errorno, $errstr, $errfile, $errline){
  * @param $errfile
  * @param $errline
  */
-function warningHandler($errorno, $errstr, $errfile, $errline){
+function warningHandler($errorno, $errstr, $errfile, $errline)
+{
     global $result;
 
     $result['warning'] .= "WARNING: " . $errstr . " " . $errfile . " on line " . $errline . "\n";
@@ -60,14 +62,15 @@ function warningHandler($errorno, $errstr, $errfile, $errline){
  * Php exception handler, sets & returns json result object
  * @param Exception $ex
  */
-function exceptionHandler(Throwable $ex){
+function exceptionHandler(Throwable $ex)
+{
     global $result;
 
     $result['errorCode'] = "phpexc";
 
     if ($result['error'] == "OK") $result['error'] = "";
 
-    $result['error'] .= "EXCEPTION: " .$ex->getMessage() . "\nFile: " . $ex->getFile() . " line " . $ex->getLine();
+    $result['error'] .= "EXCEPTION: " . $ex->getMessage() . "\nFile: " . $ex->getFile() . " line " . $ex->getLine();
 
     die(json_encode($result));
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * StockModel is part of Wallace Point of Sale system (WPOS) API
  *
@@ -17,7 +18,6 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 24/05/14 4:13 PM
@@ -38,6 +38,26 @@ class StockModel extends DbConfig
         parent::__construct();
     }
 
+    /**
+     * @param $storeditemid
+     * @param $supplierid
+     * @return bool|int|string Returns false on failure, number of rows affected or a newly inserted id.
+     */
+    public function setStockLevel($storeditemid, $supplierid)
+    {
+
+        $sql = "UPDATE stock_inventory SET `storeditemid`=:storeditemid, `supplierid`=:supplierid WHERE `storeditemid`=:storeditemid AND `id`=:id";
+        $placeholders = [":storeditemid" => $storeditemid, ":supplierid" => $supplierid];
+        $result = $this->update($sql, $placeholders);
+        if ($result > 0) // if row has been updated, return
+            return $result;
+
+        if ($result === false) // if error occured return
+            return false;
+
+        // Otherwise add a new stock record, none exists
+        return $this->create($storeditemid, $supplierid);
+    }
 
     /**
      * @param $storeditemid
@@ -46,30 +66,10 @@ class StockModel extends DbConfig
      */
     public function create($storeditemid, $supplierid)
     {
-        $sql          = "INSERT INTO stock_inventory (`storeditemid`, `supplierid`) VALUES (:storeditemid, :supplierid);";
-        $placeholders = [":storeditemid"=>$storeditemid, ":supplierid"=>$supplierid];
+        $sql = "INSERT INTO stock_inventory (`storeditemid`, `supplierid`) VALUES (:storeditemid, :supplierid);";
+        $placeholders = [":storeditemid" => $storeditemid, ":supplierid" => $supplierid];
 
         return $this->insert($sql, $placeholders);
-    }
-
-    /**
-     * @param $storeditemid
-     * @param $supplierid
-     * @return bool|int|string Returns false on failure, number of rows affected or a newly inserted id.
-     */
-    public function setStockLevel($storeditemid, $supplierid){
-
-        $sql = "UPDATE stock_inventory SET `storeditemid`=:storeditemid, `supplierid`=:supplierid WHERE `storeditemid`=:storeditemid AND `id`=:id";
-        $placeholders = [":storeditemid"=>$storeditemid, ":supplierid"=>$supplierid];
-        $result=$this->update($sql, $placeholders);
-        if ($result>0) // if row has been updated, return
-            return $result;
-
-        if ($result===false) // if error occured return
-            return false;
-
-        // Otherwise add a new stock record, none exists
-        return $this->create($storeditemid, $supplierid);
     }
 
     /**
@@ -79,9 +79,10 @@ class StockModel extends DbConfig
      * @param bool $report
      * @return array|bool Returns false on failure, or an array of stock records
      */
-    public function get($storeditemid= null, $locationid= null, $report=false){
+    public function get($storeditemid = null, $locationid = null, $report = false)
+    {
 
-        $sql = 'SELECT s.*, items.name AS name, items.stockType AS stockType, items.isDaa AS isDaa, items.categoryid AS categoryid, items.description AS description, items.taxid AS taxid, items.reorderPoint AS reorderPoint, COALESCE(p.name, "Misc") AS supplier'.($report?', l.name AS location, s.price*s.stocklevel as stockvalue':'').' FROM stock_items as s LEFT JOIN stock_inventory as i ON s.stockinventoryid=i.id LEFT JOIN stored_items as items ON i.storeditemid=items.id LEFT JOIN stored_suppliers as p ON i.supplierid=p.id LEFT JOIN stored_categories as c ON items.categoryid=c.id'.($report?' LEFT JOIN locations as l ON s.locationid=l.id':'');
+        $sql = 'SELECT s.*, items.name AS name, items.stockType AS stockType, items.isDaa AS isDaa, items.categoryid AS categoryid, items.description AS description, items.taxid AS taxid, items.reorderPoint AS reorderPoint, COALESCE(p.name, "Misc") AS supplier' . ($report ? ', l.name AS location, s.price*s.stocklevel as stockvalue' : '') . ' FROM stock_items as s LEFT JOIN stock_inventory as i ON s.stockinventoryid=i.id LEFT JOIN stored_items as items ON i.storeditemid=items.id LEFT JOIN stored_suppliers as p ON i.supplierid=p.id LEFT JOIN stored_categories as c ON items.categoryid=c.id' . ($report ? ' LEFT JOIN locations as l ON s.locationid=l.id' : '');
         $placeholders = [];
         if ($storeditemid !== null) {
             if (empty($placeholders)) {
@@ -107,7 +108,8 @@ class StockModel extends DbConfig
      * Returns an array of stock records, optionally including special reporting values
      * @return array|bool Returns false on failure, or an array of stock records
      */
-    public function getCosts(){
+    public function getCosts()
+    {
 
         $sql = 'SELECT s.*, i.name AS name, COALESCE(items.cost, "0") AS cost, COALESCE(p.name, "Misc") AS supplier FROM stock_inventory as s LEFT JOIN stored_items as i ON i.id=s.storeditemid LEFT JOIN stock_items as items ON s.id=items.stockinventoryid LEFT JOIN stored_suppliers as p ON s.supplierid=p.id ORDER BY s.supplierid';
         $placeholders = [];
@@ -120,12 +122,13 @@ class StockModel extends DbConfig
      * @param $supplierid
      * @return bool|int Returns false on failure, or number of records
      */
-    public function getByItemId($storeditemid, $supplierid){
+    public function getByItemId($storeditemid, $supplierid)
+    {
         if ($storeditemid === null || $supplierid === null) {
             return false;
         }
-        $sql          = "SELECT * FROM stock_inventory WHERE storeditemid=:storeditemid AND supplierid=:supplierid;";
-        $placeholders = [":storeditemid"=>$storeditemid, ":supplierid"=>$supplierid];
+        $sql = "SELECT * FROM stock_inventory WHERE storeditemid=:storeditemid AND supplierid=:supplierid;";
+        $placeholders = [":storeditemid" => $storeditemid, ":supplierid" => $supplierid];
 
         return $this->select($sql, $placeholders);
     }
@@ -135,12 +138,13 @@ class StockModel extends DbConfig
      * @param $itemid
      * @return bool|int Returns false on failure, or number of records deleted
      */
-    public function removeByItemId($itemid){
+    public function removeByItemId($itemid)
+    {
         if ($itemid === null) {
             return false;
         }
-        $sql          = "DELETE FROM stock_inventory WHERE id=:itemid;";
-        $placeholders = [":id"=>$itemid];
+        $sql = "DELETE FROM stock_inventory WHERE id=:itemid;";
+        $placeholders = [":id" => $itemid];
 
         return $this->delete($sql, $placeholders);
     }
@@ -150,12 +154,13 @@ class StockModel extends DbConfig
      * @param $supplierid
      * @return bool|int Returns false on failure, or number of records deleted
      */
-    public function removeBySupplierId($supplierid){
+    public function removeBySupplierId($supplierid)
+    {
         if ($supplierid === null) {
             return false;
         }
-        $sql          = "DELETE FROM stock_inventory WHERE supplierid=:supplierid;";
-        $placeholders = [":supplierid"=>$supplierid];
+        $sql = "DELETE FROM stock_inventory WHERE supplierid=:supplierid;";
+        $placeholders = [":supplierid" => $supplierid];
 
         return $this->delete($sql, $placeholders);
     }

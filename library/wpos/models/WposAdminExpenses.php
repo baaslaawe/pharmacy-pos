@@ -1,4 +1,5 @@
 <?php
+
 /**
  * JsonData is part of Wallace Point of Sale system (WPOS) API
  *
@@ -25,15 +26,6 @@
 class WposAdminExpenses
 {
     /**
-     * @var ExpensesModel
-     */
-     private $expMdl;
-    /**
-    /**
-     * @var ExpenseItemsModel
-     */
-     private $expItemMdl;
-    /**
      * @var int deviceId
      */
     var $devid;
@@ -41,11 +33,19 @@ class WposAdminExpenses
      * @var int locationId
      */
     var $locid;
-
     /**
      * @var mixed JSON object
      */
     var $data;
+    /**
+     * @var ExpensesModel
+     */
+    private $expMdl;
+    /**
+     * /**
+     * @var ExpenseItemsModel
+     */
+    private $expItemMdl;
 
     /**
      * Decodes any provided JSON string
@@ -78,12 +78,23 @@ class WposAdminExpenses
         }
         $qresult = $this->expMdl->create($this->data->name);
         if ($qresult === false) {
-            $result['error'] = "Could not add the expense: ".$this->expMdl->errorInfo;
+            $result['error'] = "Could not add the expense: " . $this->expMdl->errorInfo;
         } else {
             $result['data'] = $this->getExpenseRecord($qresult);
             // log data
             Logger::write("Expense added with id:" . $this->data->id, "EXPENSE", json_encode($this->data));
         }
+        return $result;
+    }
+
+    /**
+     * Returns expenses array by ID
+     * @param $id
+     * @return mixed
+     */
+    private function getExpenseRecord($id)
+    {
+        $result = $this->expMdl->get($id)[0];
         return $result;
     }
 
@@ -101,7 +112,7 @@ class WposAdminExpenses
         }
         $qresult = $this->expItemMdl->create($this->data->expenseid, $this->data->ref, $this->data->amount, $this->data->notes, $this->data->status, $this->data->locationid, $this->data->userid, $this->data->dt);
         if ($qresult === false) {
-            $result['error'] = "Could not add the expense item: ".$this->expItemMdl->errorInfo;
+            $result['error'] = "Could not add the expense item: " . $this->expItemMdl->errorInfo;
         } else {
             $result['data'] = $this->getExpenseRecord($this->data->expenseid);
             // log data
@@ -116,11 +127,11 @@ class WposAdminExpenses
      */
     public function getExpenses($result)
     {
-        if(isset($this->data->refs)){
+        if (isset($this->data->refs)) {
             $expenses = $this->expItemMdl->getByRef($this->data->refs);
-        } else if(isset($this->data->stime)) {
+        } else if (isset($this->data->stime)) {
             $expenses = $this->expMdl->get(null, $this->data->stime, $this->data->etime, true);
-        }else {
+        } else {
             $expenses = $this->expMdl->get();
         }
         if (is_array($expenses)) {
@@ -170,7 +181,7 @@ class WposAdminExpenses
         }
         $qresult = $this->expMdl->edit($this->data->id, $this->data->name);
         if ($qresult === false) {
-            $result['error'] = "Could not edit the expense: ".$this->expMdl->errorInfo;
+            $result['error'] = "Could not edit the expense: " . $this->expMdl->errorInfo;
         } else {
             $result['data'] = $this->getExpenseRecord($this->data->id);
             // log data
@@ -186,23 +197,14 @@ class WposAdminExpenses
      */
     public function updateExpenseItem($result)
     {
-        $qresult = $this->expItemMdl->edit($this->data->id,$this->data->expenseid, $this->data->ref, $this->data->amount, $this->data->notes, $this->data->status, $this->data->locationid, $this->data->userid, $this->data->dt);
+        $qresult = $this->expItemMdl->edit($this->data->id, $this->data->expenseid, $this->data->ref, $this->data->amount, $this->data->notes, $this->data->status, $this->data->locationid, $this->data->userid, $this->data->dt);
         if ($qresult === false) {
-            $result['error'] = "Could not edit the expense: ".$this->expMdl->errorInfo;
+            $result['error'] = "Could not edit the expense: " . $this->expMdl->errorInfo;
         } else {
             $result['data'] = $this->getExpenseRecord($this->data->id);
             // log data
             Logger::write("Expense updated with id:" . $this->data->id, "EXPENSE", json_encode($this->data));
         }
-        return $result;
-    }
-    /**
-     * Returns expenses array by ID
-     * @param $id
-     * @return mixed
-     */
-    private function getExpenseRecord($id){
-        $result = $this->expMdl->get($id)[0];
         return $result;
     }
 
@@ -217,8 +219,8 @@ class WposAdminExpenses
         if (!is_numeric($this->data->id)) {
             if (isset($this->data->id)) {
                 $ids = explode(",", $this->data->id);
-                foreach ($ids as $id){
-                    if (!is_numeric($id)){
+                foreach ($ids as $id) {
+                    if (!is_numeric($id)) {
                         $result['error'] = "A valid comma separated list of ids must be supplied";
                         return $result;
                     }
@@ -229,9 +231,9 @@ class WposAdminExpenses
             }
         }
 
-        $qresult = $this->expMdl->remove(isset($ids)?$ids:$this->data->id);
+        $qresult = $this->expMdl->remove(isset($ids) ? $ids : $this->data->id);
         if ($qresult === false) {
-            $result['error'] = "Could not delete the expense: ".$this->expMdl->errorInfo;
+            $result['error'] = "Could not delete the expense: " . $this->expMdl->errorInfo;
         } else {
             $result['data'] = true;
             // log data
@@ -251,8 +253,8 @@ class WposAdminExpenses
         if (!is_numeric($this->data->id)) {
             if (isset($this->data->id)) {
                 $ids = explode(",", $this->data->id);
-                foreach ($ids as $id){
-                    if (!is_numeric($id)){
+                foreach ($ids as $id) {
+                    if (!is_numeric($id)) {
                         $result['error'] = "A valid comma separated list of ids must be supplied";
                         return $result;
                     }
@@ -263,9 +265,9 @@ class WposAdminExpenses
             }
         }
 
-        $qresult = $this->expItemMdl->remove(isset($ids)?$ids:$this->data->id);
+        $qresult = $this->expItemMdl->remove(isset($ids) ? $ids : $this->data->id);
         if ($qresult === false) {
-            $result['error'] = "Could not delete the expense: ".$this->expMdl->errorInfo;
+            $result['error'] = "Could not delete the expense: " . $this->expMdl->errorInfo;
         } else {
             $result['data'] = true;
             // log data

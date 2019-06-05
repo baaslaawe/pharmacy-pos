@@ -1,6 +1,8 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."library/autoload.php";
+require $_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "library/autoload.php";
+
 use Ifsnop\Mysqldump as IMysqldump;
+
 /**
  * WposAdminUtilities is part of Wallace Point of Sale system (WPOS) API
  *
@@ -23,22 +25,28 @@ use Ifsnop\Mysqldump as IMysqldump;
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 12/04/14 3:44 PM
  */
-class WposAdminUtilities {
+class WposAdminUtilities
+{
+
+    private static $taxTable = null;
+
+    // UTIL FUNCTIONS
+    private $currencyVals = null;
 
     /**
      * Init, setting provided data
      * @param null $data
      */
-    function __construct($data = null){
+    function __construct($data = null)
+    {
         // parse the data and put it into an object
-        if ($data!==null){
+        if ($data !== null) {
             $this->data = $data;
         } else {
             $this->data = new stdClass();
         }
     }
 
-    // UTIL FUNCTIONS
     /**
      * Format the provided JS timestamp into the config specified format
      * @param $timestamp
@@ -46,8 +54,9 @@ class WposAdminUtilities {
      * @param bool $includetime
      * @return bool|string
      */
-    public static function getDateFromTimeStamp($timestamp, $dateformat= null, $includetime = true){
-        if ($dateformat==null){
+    public static function getDateFromTimeStamp($timestamp, $dateformat = null, $includetime = true)
+    {
+        if ($dateformat == null) {
             $confMdl = new ConfigModel();
             $conf = $confMdl->get('general');
             $dateformat = $conf['dateformat'];
@@ -55,72 +64,12 @@ class WposAdminUtilities {
         // divide from javascript timestamp into unix epoch
         $timestamp = $timestamp / 1000;
         // get date format
-        $timestr=date($dateformat, $timestamp);
+        $timestr = date($dateformat, $timestamp);
 
         if ($includetime)
-            $timestr.=' '.date('H:i:s', $timestamp);
+            $timestr .= ' ' . date('H:i:s', $timestamp);
 
         return $timestr;
-    }
-
-    /**
-     * Sets the values used for currency formatting
-     * @param $format
-     */
-    public function setCurrencyFormat($format){
-        $this->currencyVals = explode('~', $format);
-    }
-
-    private $currencyVals = null;
-    /**
-     * Formats currency for display, includes provided currency symbol or default
-     * @param $value
-     * @return string
-     */
-    public function currencyFormat($value){
-        if ($this->currencyVals==null){
-            $confMdl = new ConfigModel();
-            $conf = $confMdl->get('general');
-            $this->currencyVals = explode('~', $conf['currencyformat']);
-        }
-        $formatted = number_format($value, $this->currencyVals[1], $this->currencyVals[2], $this->currencyVals[3]);
-        if ($this->currencyVals[4]==0){
-            return $this->currencyVals[0].$formatted;
-        } else {
-            return $formatted.$this->currencyVals[0];
-        }
-    }
-
-    /**
-     * Get a random token
-     * @param $min
-     * @param $max
-     * @return mixed
-     */
-    private static function crypto_rand_secure($min, $max) {
-        $range = $max - $min;
-        if ($range < 0) return $min; // not so random...
-        $log = log($range, 2);
-        $bytes = (int) ($log / 8) + 1; // length in bytes
-        $bits = (int) $log + 1; // length in bits
-        $filter = (int) (1 << $bits) - 1; // set all lower bits to 1
-        do {
-            $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
-            $rnd = $rnd & $filter; // discard irrelevant bits
-        } while ($rnd >= $range);
-        return $min + $rnd;
-    }
-
-    private static $taxTable = null;
-    /**
-     * Gets tax information as a static variable
-     * @return null
-     */
-    public static function getTaxTable(){
-        if (self::$taxTable==null){
-            self::$taxTable = WposPosData::getTaxes([])['data'];
-        }
-        return self::$taxTable;
     }
 
     /**
@@ -132,7 +81,8 @@ class WposAdminUtilities {
      * @param $itemtotal
      * @return stdClass
      */
-    public static function calculateTax($taxruleid, $locationid, $itemtotal){
+    public static function calculateTax($taxruleid, $locationid, $itemtotal)
+    {
         $tax = new stdClass();
         $tax->total = 0;
         $tax->values = new stdClass();
@@ -146,32 +96,44 @@ class WposAdminUtilities {
         $taxitems = self::getTaxTable()['items'];
         $taxablemulti = $rule->inclusive ? self::getTaxableTotal($rule, $locationid) : 0;
         // check in locations, if location rule present get tax totals
-        if (isset($rule->locations->{$locationid})){
-            foreach ($rule->locations->{$locationid} as $itemkey){
-                if (array_key_exists($itemkey, $taxitems)){
+        if (isset($rule->locations->{$locationid})) {
+            foreach ($rule->locations->{$locationid} as $itemkey) {
+                if (array_key_exists($itemkey, $taxitems)) {
                     $tempitem = $taxitems[$itemkey];
                     if (!isset($tax->values->{$tempitem['id']})) $tax->values->{$tempitem['id']} = 0;
-                    $tempval = $rule->inclusive ? self::getIncludedTax($tempitem['multiplier'], $taxablemulti, $itemtotal) : round($tempitem['multiplier']*$itemtotal, 2);
+                    $tempval = $rule->inclusive ? self::getIncludedTax($tempitem['multiplier'], $taxablemulti, $itemtotal) : round($tempitem['multiplier'] * $itemtotal, 2);
                     $tax->values->{$tempitem['id']} += $tempval;
                     $tax->total += $tempval;
-                    if ($rule->mode=="single")
+                    if ($rule->mode == "single")
                         return $tax;
                 }
             }
         }
         // get base tax totals
-        foreach ($rule->base as $itemkey){
-            if (array_key_exists($itemkey ,$taxitems)){
+        foreach ($rule->base as $itemkey) {
+            if (array_key_exists($itemkey, $taxitems)) {
                 $tempitem = $taxitems[$itemkey];
                 if (!isset($tax->values->{$tempitem['id']})) $tax->values->{$tempitem['id']} = 0;
-                $tempval = $rule->inclusive ? self::getIncludedTax($tempitem['multiplier'], $taxablemulti, $itemtotal) : round($tempitem['multiplier']*$itemtotal, 2);
+                $tempval = $rule->inclusive ? self::getIncludedTax($tempitem['multiplier'], $taxablemulti, $itemtotal) : round($tempitem['multiplier'] * $itemtotal, 2);
                 $tax->values->{$tempitem['id']} += $tempval;
                 $tax->total += $tempval;
-                if ($rule->mode=="single")
+                if ($rule->mode == "single")
                     return $tax;
             }
         }
         return $tax;
+    }
+
+    /**
+     * Gets tax information as a static variable
+     * @return null
+     */
+    public static function getTaxTable()
+    {
+        if (self::$taxTable == null) {
+            self::$taxTable = WposPosData::getTaxes([])['data'];
+        }
+        return self::$taxTable;
     }
 
     /**
@@ -180,22 +142,23 @@ class WposAdminUtilities {
      * @param $locationid
      * @return float
      */
-    private static function getTaxableTotal($rule, $locationid){
+    private static function getTaxableTotal($rule, $locationid)
+    {
         $taxitems = self::getTaxTable()['items'];
         $taxable = 0;
-        if (isset($rule->locations->{$locationid})){
-            foreach ($rule->locations->{$locationid} as $itemkey){
+        if (isset($rule->locations->{$locationid})) {
+            foreach ($rule->locations->{$locationid} as $itemkey) {
                 if (array_key_exists($itemkey, $taxitems)) {
                     $taxable += floatval($taxitems[$itemkey]['multiplier']);
-                    if ($rule->mode=="single")
+                    if ($rule->mode == "single")
                         round($taxable, 2);
                 }
             }
         }
-        foreach ($rule->base as $itemkey){
-            if (array_key_exists($itemkey , $taxitems)) {
+        foreach ($rule->base as $itemkey) {
+            if (array_key_exists($itemkey, $taxitems)) {
                 $taxable += floatval($taxitems[$itemkey]['multiplier']);
-                if ($rule->mode=="single")
+                if ($rule->mode == "single")
                     round($taxable, 2);
             }
         }
@@ -209,10 +172,11 @@ class WposAdminUtilities {
      * @param $value
      * @return float
      */
-    private static function getIncludedTax($multiplier, $taxablemulti, $value){
+    private static function getIncludedTax($multiplier, $taxablemulti, $value)
+    {
         $value = floatval($value);
-        $taxable = $value-($value/($taxablemulti+1));
-        return round(($taxable/$taxablemulti)*$multiplier, 2);
+        $taxable = $value - ($value / ($taxablemulti + 1));
+        return round(($taxable / $taxablemulti) * $multiplier, 2);
     }
 
     /**
@@ -220,27 +184,50 @@ class WposAdminUtilities {
      * @param int $length
      * @return string
      */
-    public static function getToken($length=32){
+    public static function getToken($length = 32)
+    {
         $token = "";
         $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
-        $codeAlphabet.= "0123456789";
-        for($i=0;$i<$length;$i++){
-            $token .= $codeAlphabet[self::crypto_rand_secure(0,strlen($codeAlphabet))];
+        $codeAlphabet .= "abcdefghijklmnopqrstuvwxyz";
+        $codeAlphabet .= "0123456789";
+        for ($i = 0; $i < $length; $i++) {
+            $token .= $codeAlphabet[self::crypto_rand_secure(0, strlen($codeAlphabet))];
         }
         return $token;
+    }
+
+    /**
+     * Get a random token
+     * @param $min
+     * @param $max
+     * @return mixed
+     */
+    private static function crypto_rand_secure($min, $max)
+    {
+        $range = $max - $min;
+        if ($range < 0) return $min; // not so random...
+        $log = log($range, 2);
+        $bytes = (int)($log / 8) + 1; // length in bytes
+        $bits = (int)$log + 1; // length in bits
+        $filter = (int)(1 << $bits) - 1; // set all lower bits to 1
+        do {
+            $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+            $rnd = $rnd & $filter; // discard irrelevant bits
+        } while ($rnd >= $range);
+        return $min + $rnd;
     }
 
     /**
      * Get remote address using x-forwarded for if available
      * @return string
      */
-    public static function getRemoteAddress(){
-        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)){
-            return  $_SERVER["HTTP_X_FORWARDED_FOR"];
-        }else if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+    public static function getRemoteAddress()
+    {
+        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+            return $_SERVER["HTTP_X_FORWARDED_FOR"];
+        } else if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
             return $_SERVER["REMOTE_ADDR"];
-        }else if (array_key_exists('HTTP_CLIENT_IP', $_SERVER)) {
+        } else if (array_key_exists('HTTP_CLIENT_IP', $_SERVER)) {
             return $_SERVER["HTTP_CLIENT_IP"];
         }
     }
@@ -250,10 +237,11 @@ class WposAdminUtilities {
      * @param bool $download
      * @throws Exception
      */
-    public static function backUpDatabase($download=true){
+    public static function backUpDatabase($download = true)
+    {
         $conf = DbConfig::getConf();
-        $dump = new IMysqldump\Mysqldump('mysql:host='.$conf['host'].';dbname='.$conf['db'], $conf['user'], $conf['pass']);
-        $fname = $_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT'].'docs/backup/dbbackup-'.date("Y-m-d_H-i-s").'.sql';
+        $dump = new IMysqldump\Mysqldump('mysql:host=' . $conf['host'] . ';dbname=' . $conf['db'], $conf['user'], $conf['pass']);
+        $fname = $_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . 'docs/backup/dbbackup-' . date("Y-m-d_H-i-s") . '.sql';
         $dump->start($fname);
         if ($download) {
             header('Content-Description: File Transfer');
@@ -273,9 +261,39 @@ class WposAdminUtilities {
     }
 
     /**
+     * Sets the values used for currency formatting
+     * @param $format
+     */
+    public function setCurrencyFormat($format)
+    {
+        $this->currencyVals = explode('~', $format);
+    }
+
+    /**
+     * Formats currency for display, includes provided currency symbol or default
+     * @param $value
+     * @return string
+     */
+    public function currencyFormat($value)
+    {
+        if ($this->currencyVals == null) {
+            $confMdl = new ConfigModel();
+            $conf = $confMdl->get('general');
+            $this->currencyVals = explode('~', $conf['currencyformat']);
+        }
+        $formatted = number_format($value, $this->currencyVals[1], $this->currencyVals[2], $this->currencyVals[3]);
+        if ($this->currencyVals[4] == 0) {
+            return $this->currencyVals[0] . $formatted;
+        } else {
+            return $formatted . $this->currencyVals[0];
+        }
+    }
+
+    /**
      * Archive a range of sales records
      */
-    function archiveSalesRecords(){
+    function archiveSalesRecords()
+    {
         // TODO
     }
 

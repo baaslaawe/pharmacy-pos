@@ -40,18 +40,18 @@ $auth = new Auth();
 // Check for auth request
 if ($_REQUEST['a'] == "auth" || $_REQUEST['a'] == "authrenew") {
     $data = json_decode($_REQUEST['data']);
-    if ($_REQUEST['a'] == "auth"){
+    if ($_REQUEST['a'] == "auth") {
         $authres = $auth->login($data->username, $data->password, isset($data->getsessiontokens));
     } else {
         $authres = $auth->renewTokenSession($data->username, $data->auth_hash);
     }
     if ($data !== false) {
-        if($authres === -1) {
+        if ($authres === -1) {
             $result['errorCode'] = "authdenied";
             $result['error'] = "Your account has been disabled, please contact your system administrator!";
-        } else if($authres === true) {
+        } else if ($authres === true) {
             $result['data'] = $auth->getUser();
-            if ($result['data']==null){
+            if ($result['data'] == null) {
                 $result['error'] = "Could not retrieve user data from php session.";
             }
         } else {
@@ -83,8 +83,8 @@ if (!$auth->isLoggedIn()) {
     returnResult($result);
 }
 // Decode JSON data if provided
-if (isset($_REQUEST['data']) && $_REQUEST['data']!=""){
-    if (($requests=json_decode($_REQUEST['data']))==false){
+if (isset($_REQUEST['data']) && $_REQUEST['data'] != "") {
+    if (($requests = json_decode($_REQUEST['data'])) == false) {
         $result['error'] = "Could not parse the provided json request";
         returnResult($result);
     }
@@ -92,23 +92,23 @@ if (isset($_REQUEST['data']) && $_REQUEST['data']!=""){
     $requests = new stdClass();
 }
 // Route the provided requests
-if ($_REQUEST['a']!=="multi"){
+if ($_REQUEST['a'] !== "multi") {
     // route a single api call
     $result = routeApiCall($_REQUEST['a'], $requests, $result);
 } else {
     // run a multi api call
-    if (empty($requests)){
+    if (empty($requests)) {
         $result['error'] = "No API request data provided";
         returnResult($result);
     }
-    $result['data']=array();
+    $result['data'] = array();
     // loop through each request, stop & return the first error if encountered
-    foreach ($requests as $action=>$data){
-        if ($data==null) {
+    foreach ($requests as $action => $data) {
+        if ($data == null) {
             $data = new stdClass();
         }
         $tempresult = routeApiCall($action, $data, $result);
-        if ($tempresult['error']=="OK"){
+        if ($tempresult['error'] == "OK") {
             // set data and move to the next request
             $result['data'][$action] = $tempresult['data'];
         } else {
@@ -127,7 +127,8 @@ returnResult($result);
  * @param $result
  * @return array|mixed
  */
-function routeApiCall($action, $data, $result) {
+function routeApiCall($action, $data, $result)
+{
     global $auth;
     $notinprev = false;
     // Check for action in unprotected area (does not require permission)
@@ -267,7 +268,7 @@ function routeApiCall($action, $data, $result) {
     }
     // Check in permission protected API calls
     switch ($action) {
-    // admin only
+        // admin only
         // device setup
         case "devices/setup":
             $setup = new WposPosSetup($data);
@@ -352,13 +353,13 @@ function routeApiCall($action, $data, $result) {
             $result = $expMdl->deleteExpenses($result);
             break;
 
-            //expenses item
+        //expenses item
         case "expenses/items/delete":
             $expMdl = new WposAdminExpenses($data);
             $result = $expMdl->deleteExpenseItem($result);
             break;
 
-            // Stock
+        // Stock
         case "stock/get":
             $jsondata = new WposPosData();
             $result = $jsondata->getStock($result);
@@ -861,21 +862,23 @@ function routeApiCall($action, $data, $result) {
             $result = $tempMdl->editTemplate($result);
             break;
         case "templates/restore":
-            WposTemplates::restoreDefaults((isset($data->filename)?$data->filename:null));
+            WposTemplates::restoreDefaults((isset($data->filename) ? $data->filename : null));
             break;
 
         default:
-        $result["error"] = "Action not defined: ".$action;
-        break;
+            $result["error"] = "Action not defined: " . $action;
+            break;
     }
 
     return $result;
 }
+
 /**
  * Encodes and returns the json result object
  * @param $result
  */
-function returnResult($result){
+function returnResult($result)
+{
     if (($resstr = json_encode($result)) === false) {
         echo(json_encode(["error" => "Failed to encode the reponse data into json"]));
     } else {

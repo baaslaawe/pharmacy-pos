@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ExpensesModel is part of Wallace Point of Sale system (WPOS) API
  *
@@ -17,7 +18,6 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 18/04/16 4:24 PM
@@ -44,8 +44,8 @@ class ExpensesModel extends DbConfig
      */
     public function create($name)
     {
-        $sql          = "INSERT INTO expenses (`name`, `dt`) VALUES (:name, now());";
-        $placeholders = [":name"=>$name];
+        $sql = "INSERT INTO expenses (`name`, `dt`) VALUES (:name, now());";
+        $placeholders = [":name" => $name];
 
         return $this->insert($sql, $placeholders);
     }
@@ -57,7 +57,8 @@ class ExpensesModel extends DbConfig
      * @param bool $report
      * @return array|bool Returns false on an unexpected failure or an array of selected rows
      */
-    public function get($Id = null, $stime = null, $etime = null, $report= false) {
+    public function get($Id = null, $stime = null, $etime = null, $report = false)
+    {
         $sql = "SELECT e.*, COUNT(i.id) as enum, COALESCE(SUM(i.amount), 0) as total, COALESCE(GROUP_CONCAT(ref SEPARATOR ','),'') as refs FROM expenses as e LEFT OUTER JOIN expenses_items as i ON e.id=i.expenseid";
         $placeholders = [];
         if ($Id !== null) {
@@ -79,7 +80,7 @@ class ExpensesModel extends DbConfig
         }
 
         if ($report || $Id !== null || ($stime == null && $etime == null)) {
-            $sql.=" GROUP BY e.id";
+            $sql .= " GROUP BY e.id";
         }
         return $this->select($sql, $placeholders);
     }
@@ -93,7 +94,7 @@ class ExpensesModel extends DbConfig
     {
 
         $sql = "UPDATE expenses SET name=:name WHERE id=:id;";
-        $placeholders = [":id"=>$id, ":name"=>$name];
+        $placeholders = [":id" => $id, ":name" => $name];
 
         return $this->update($sql, $placeholders);
     }
@@ -106,7 +107,7 @@ class ExpensesModel extends DbConfig
     {
         $placeholders = [];
         $sql = "DELETE FROM expenses WHERE";
-        if (is_numeric($id)){
+        if (is_numeric($id)) {
             $sql .= " `id`=:id;";
             $placeholders[":id"] = $id;
         } else if (is_array($id)) {

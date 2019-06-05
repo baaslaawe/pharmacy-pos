@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Test Data is part of Wallace Point of Sale system (WPOS) API
  *
@@ -17,20 +18,21 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 19/07/14 5:14 PM
  */
-class TestData {
+class TestData
+{
 
     private $items;
     private $users;
     private $devices;
-    private $paymentMethods = ['eftpos','credit','mpesa','deposit','cash'];
+    private $paymentMethods = ['eftpos', 'credit', 'mpesa', 'deposit', 'cash'];
     private $wposSales;
 
-    public function generateTestData($purge=false){
+    public function generateTestData($purge = false)
+    {
         if ($purge)
             $this->purgeRecords();
         echo("Purged Data and restored.<br/>");
@@ -43,222 +45,11 @@ class TestData {
             $this->resetDocuments();
     }
 
-    public function resetDocuments(){
-        exec("rm -r ".$_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs/*");
-        exec("cp -rp ".$_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs-template/* ".$_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs");
-        exec("chmod -R 777 ".$_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."docs");
-    }
-
-    public function generate($numtransactions, $type='sale'){
-        // get dependant record
-        $this->getRecords();
-        // set cur time
-        $curprocessdt = time() * 1000;
-        if (date('D', $curprocessdt)>16){
-            $curprocessdt = strtotime(date("Y-m-d", ($curprocessdt/1000))." 17:00:00")*1000;
-        }
-        $initprocessdt = $curprocessdt;
-
-        for ($i = 0; $i < $numtransactions; $i++) {
-            // contruct JSON test data
-            $saleobj = new stdClass();
-            $saleobj->processdt = $curprocessdt;
-            // pick a random device if  pos sale
-            if ($type=='sale'){
-                $device = $this->devices[rand(0, sizeof($this->devices) - 1)];
-                $saleobj->devid = $device['id'];
-                $saleobj->locid = $device['locationid'];
-            }
-            $saleobj->ref = $curprocessdt . "-" . ($type=='sale'?$device['id']:0) . "-" . rand(1000, 9999);
-            // pick a random user
-            $saleobj->userid = $this->users[rand(0, sizeof($this->users) - 1)]['id'];
-            // add misc data
-            $saleobj->custid = "";
-            $saleobj->custemail = "";
-            $saleobj->notes = "";
-            $saleobj->discount = 0;
-            $saleobj->discountval = 0;
-            // add random items
-            $numitems = (rand(1, 100)>75?(rand(1, 100)>95?rand(7,10):rand(4,6)):rand(1,3));
-            $totalitemqty = 0;
-            $total = 0.00;
-            $cost = 0.00;
-            $totaltax = 0.00;
-            $taxes = [];
-            $items = [];
-            // loop through num items time
-            for ($inum=0; $inum<$numitems; $inum++){
-                $item = $this->items[rand(0, sizeof($this->items) - 1)];
-                // If price is 0 or "" pick a random price
-                if ($item['price']=="" || $item['price']==0){
-                    $item['price']=rand(1, 100);
-                }
-                // select random qty and get item total
-                $randqty = rand(1, 100);
-                $qty = ($randqty>80?($randqty>95?3:2):1);
-                $totalitemqty+= $qty;
-                $itemtotal = round(($item['price']*$qty), 2);
-                $itemcost = round(($item['cost']*$qty), 2);
-
-                // work out tax and add totals
-                $itemtax = WposAdminUtilities::calculateTax($item['taxid'], isset($saleobj->locid)?$saleobj->locid:0, $itemtotal);
-                if (!$itemtax->inclusive){
-                    $itemtotal += $itemtax->total;
-                };
-                $total+=$itemtotal;
-                $cost+=$itemcost;
-                $totaltax+= $itemtax->total;
-                foreach ($itemtax->values as $key=>$value){
-                    if (isset($taxes[$key])){
-                        $taxes[$key]+= $value;
-                    } else {
-                        $taxes[$key]= $value;
-                    }
-                }
-
-                $itemObj = new stdClass();
-                $itemObj->ref=$inum+1;
-                $itemObj->sitemid=$item['id'];
-                $itemObj->qty=$qty;
-                $itemObj->name=$item['name'];
-                $itemObj->desc=$item['description'];
-                $itemObj->cost=$item['cost'];
-                $itemObj->unit=$item['price'];
-                $itemObj->taxid=$item['taxid'];
-                $itemObj->tax=$itemtax;
-                $itemObj->price=$itemtotal;
-                $items[] = $itemObj;
-            }
-            $saleobj->items = $items;
-            $subtotal = $total - $totaltax;
-            // if method cash round the total & add rounding amount, no cash payments for invoices
-            if ($type=='sale'){
-                $paymethod = $this->paymentMethods[rand(0, sizeof($this->paymentMethods) -1)];
-            } else {
-                $paymethod = $this->paymentMethods[rand(0, sizeof($this->paymentMethods) -2)];
-            }
-            if ($type=='sale' && $paymethod=="cash"){
-                // round to nearest five cents
-                $temptotal = $total;
-                $total = round($total / 0.05) * 0.05;
-                $saleobj->rounding = number_format($total - $temptotal , 2, '.', '');
-                //if (floatval($saleobj->rounding)!=0)
-                    //echo($temptotal." ".$total."<br/>");
-            } else {
-                $saleobj->rounding = 0.00;
-            }
-            // add payment to the sale
-            if ($type=='sale'){ // leave a few invoices unpaid.
-                $payment = new stdClass(); $payment->method=$paymethod; $payment->amount=number_format($total, 2, '.', '');
-                if ($paymethod=="cash"){
-                    $tender = (round($total)%5 === 0) ? round($total) : round(($total+5/2)/5)*5;
-                    $payment->tender=number_format($tender, 2, '.', '');
-                    $payment->change=number_format($tender-$total, 2, '.', '');
-                }
-                $saleobj->payments = [$payment];
-            } else if ($type=='invoice'){
-                if ($i<2 || $i==60){
-                    $saleobj->payments = [];
-                } else {
-                    $payment = new stdClass(); $payment->method=($paymethod=='cash'?'eftpos':$paymethod); $payment->amount=number_format($total, 2, '.', '');
-                    $saleobj->payments = [$payment];
-
-                }
-            }
-
-            // add totals and tax
-            $saleobj->numitems = $totalitemqty;
-            $saleobj->taxdata = $taxes;
-            $saleobj->tax = number_format($totaltax, 2, '.', '');
-            $saleobj->cost = number_format($cost, 2, '.', '');
-            $saleobj->subtotal = number_format($subtotal, 2, '.', '');
-            $saleobj->total = number_format($total, 2, '.', '');
-
-            // randomly add a void/refund to the sale
-            if ($type=='sale' && (rand(1, 30) == 1)) {
-                $voidobj = new stdClass();
-                // pick another random device
-                $device = $this->devices[rand(0, sizeof($this->devices) - 1)];
-                $voidobj->deviceid = $device['id'];
-                $voidobj->locationid = $device['locationid'];
-                // pick another random user
-                $voidobj->userid = $this->users[rand(0, sizeof($this->users) - 1)]['id'];
-                // set sometime in the future but do not set before the initial date (now).
-                $voidobj->processdt = (($curprocessdt+rand(30, 60*24))>$initprocessdt?$initprocessdt:$curprocessdt+rand(30, 60*24));
-
-                if ((rand(1, 2) == 1)) {
-                    // add reason
-                    $voidobj->reason = "Faulty Item";
-                    // refund, add additional data
-                    $voidobj->method = $this->paymentMethods[rand(0, sizeof($this->paymentMethods) - 1)];
-                    // pick item to return
-                    $retitem = $items[rand(0, sizeof($items) - 1)];
-                    $itemdata = new stdClass();
-                    $itemdata->numreturned = 1;
-                    $itemdata->ref = $retitem->ref;
-                    $voidobj->items = [$itemdata];
-                    $voidobj->amount = $retitem->unit;
-                    // put in array before adding to saleobj
-                    $saleobj->refunddata = [$voidobj];
-                } else {
-                    // add reason
-                    $voidobj->reason = "Mistake";
-                    // void
-                    $saleobj->voiddata = $voidobj;
-                }
-            }
-            // process the sale
-            if ($type=='sale'){
-                $this->wposSales = new WposPosSale($saleobj);
-                $this->wposSales->setNoBroadcast();
-                $saleobj->custid = 0;
-                $result = $this->wposSales->insertTransaction(["errorCode" => "OK", "error" => "OK", "data" => ""]);
-                if ($result['error']!="OK")
-                    die("Failed to add devices: ".$result['error']);
-            } else {
-                // add invoice only fields
-                $saleobj->duedt = $curprocessdt + 1209600000;
-                $saleobj->custid = rand(1, 2);
-                $saleobj->channel = "manual";
-
-                $this->wposSales = new WposInvoices($saleobj, null, true);
-                $result = $this->wposSales->createInvoice(["errorCode" => "OK", "error" => "OK", "data" => ""]);
-                if ($result['error']!="OK")
-                    die("Failed to add devices: ".$result['error']);
-            }
-            // decrement by a random time between 2-40 minutes
-            if ($type=='sale'){
-                $curprocessdt = $curprocessdt - (rand(2, 40) * 60 * 1000);
-            } else {
-                $curprocessdt = $curprocessdt - (rand(40, 280) * 60 * 1000);
-            }
-            // if it's before shop open time, decrement to the last days closing time.
-            $hour = date("H", $curprocessdt/1000);
-            if ($hour<9){
-                $curprocessdt = strtotime(date("Y-m-d", ($curprocessdt/1000)-86400)." 17:00:00")*1000;
-            }
-        }
-        return;
-    }
-
-    private function getRecords()
+    private function purgeRecords()
     {
-        // get items
-        $itemMdl = new StoredItemsModel();
-        $this->items = $itemMdl->get();
-        // get items
-        $authMdl = new AuthModel();
-        $this->users = $authMdl->get(null, null, null, false);
-        // get locations
-        $devMdl = new WposPosData();
-        $this->devices = $devMdl->getPosDevices([])['data'];
-    }
-
-    // Purge all records and set demo data
-    private function purgeRecords(){
         $dbMdl = new DbConfig();
-        $sql = file_get_contents($_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT']."library/installer/schemas/install.sql");
-        if ($sql!=false){
+        $sql = file_get_contents($_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "library/installer/schemas/install.sql");
+        if ($sql != false) {
             $dbMdl->_db->exec("TRUNCATE TABLE sales; ALTER TABLE sales AUTO_INCREMENT = 1;");
             $dbMdl->_db->exec("TRUNCATE TABLE sale_items; ALTER TABLE sale_items AUTO_INCREMENT = 1;");
             $dbMdl->_db->exec("TRUNCATE TABLE sale_payments; ALTER TABLE sale_payments AUTO_INCREMENT = 1;");
@@ -284,21 +75,22 @@ class TestData {
         }
     }
 
-    private function insertDemoRecords(){
+    private function insertDemoRecords()
+    {
         $suppliers = json_decode('[{"id": 1, "name":"Joe\'s Fruit&Veg Supplies", "dt":"0"},
                         {"id": 2, "name":"Elecsys Electronic Distibution", "dt":"0"},
                         {"id": 3, "name":"Fitwear Clothing Wholesale", "dt":"0"},
                         {"id": 4, "name":"Yumbox Packaged Goods", "dt":"0"},
                         {"id": 5, "name":"No Place Like Home-warehouse", "dt":"0"}]');
 
-        if ($suppliers==false){
+        if ($suppliers == false) {
             die("Failed to add suppliers");
         } else {
             $supMdl = new SuppliersModel();
-            foreach($suppliers as $supplier){
+            foreach ($suppliers as $supplier) {
                 $result = $supMdl->create($supplier->name);
-                if ($result===false)
-                    die("Failed to add suppliers: ".$supMdl->errorInfo);
+                if ($result === false)
+                    die("Failed to add suppliers: " . $supMdl->errorInfo);
             }
             echo("Inserted Suppliers.<br/>");
         }
@@ -334,28 +126,28 @@ class TestData {
                     {"id": 29,"categoryid": 3,"supplierid": 2,"code": "PS4","qty": 1,"name": "Sony Playstation 4","description": "","taxid": "2","cost": "405.00","price": "600.00", "type":"general", "modifiers":[]},
                     {"id": 30,"categoryid": 3,"supplierid": 2,"code": "XBOX","qty": 1,"name": "Xbox","description": "","taxid": "2","cost": "420.00","price": "600.00", "type":"general", "modifiers":[]}]');
 
-        if ($items==false){
+        if ($items == false) {
             die("Failed to add items");
         } else {
             $itemMdl = new StoredItemsModel();
-            foreach($items as $item){
+            foreach ($items as $item) {
                 $result = $itemMdl->create($item);
-                if ($result===false)
-                    die("Failed to add items: ".$itemMdl->errorInfo);
+                if ($result === false)
+                    die("Failed to add items: " . $itemMdl->errorInfo);
             }
             echo("Inserted Items.<br/>");
         }
 
         $categories = json_decode('[{"id": 1,"name": "Food","dt": "2016-04-18 04:54:21"}, {"id": 2,"name": "Homwares","dt": "2016-04-18 04:54:31"}, {"id": 3,"name": "Electronics","dt": "2016-04-18 04:56:32"}, {"id": 4,"name": "Clothing","dt": "2016-04-18 04:57:01"}]');
 
-        if ($categories==false){
+        if ($categories == false) {
             die("Failed to add categories");
         } else {
             $catMdl = new CategoriesModel();
-            foreach($categories as $category){
+            foreach ($categories as $category) {
                 $result = $catMdl->create($category->name);
-                if ($result===false)
-                    die("Failed to add categories: ".$catMdl->errorInfo);
+                if ($result === false)
+                    die("Failed to add categories: " . $catMdl->errorInfo);
             }
             echo("Inserted Categories.<br/>");
         }
@@ -365,14 +157,14 @@ class TestData {
                         {"id": 3, "name":"Adelaide", "dt":"1970-01-01 00:00:00"},
                         {"id": 4, "name":"Perth", "dt":"1970-01-01 00:00:00"}]');
 
-        if ($locations==false){
+        if ($locations == false) {
             die("Failed to add locations");
         } else {
             $locMdl = new LocationsModel();
-            foreach($locations as $location){
+            foreach ($locations as $location) {
                 $result = $locMdl->create($location->name);
-                if ($result===false)
-                    die("Failed to add locations: ".$locMdl->errorInfo);
+                if ($result === false)
+                    die("Failed to add locations: " . $locMdl->errorInfo);
             }
             echo("Inserted Locations.<br/>");
         }
@@ -384,14 +176,14 @@ class TestData {
                         {"id": 5, "name":"Register 1", "locationid":3, "type":"general_register", "ordertype":"", "orderdisplay":"", "dt":"1970-01-01 00:00:00"},
                         {"id": 6, "name":"Register 1", "locationid":4, "type":"general_register", "ordertype":"", "orderdisplay":"", "dt":"1970-01-01 00:00:00"}]');
 
-        if ($devices===false){
+        if ($devices === false) {
             die("Failed to add devices");
         } else {
             $devMdl = new DevicesModel();
-            foreach($devices as $device){
+            foreach ($devices as $device) {
                 $result = $devMdl->create($device);
-                if ($result===false)
-                    die("Failed to add devices: ".$devMdl->errorInfo);
+                if ($result === false)
+                    die("Failed to add devices: " . $devMdl->errorInfo);
             }
             echo("Inserted Devices.<br/>");
         }
@@ -399,17 +191,236 @@ class TestData {
         $customers = json_decode('[{"id":1,"name":"Jo Doe", "email":"jdoe@domainname.com", "address":"10 Fake St", "phone":"99999999", "mobile":"111111111", "suburb":"Faketown", "state":"NSW", "postcode":"2000", "country":"Australia", "notes":"", "dt":"1970-01-01 00:00:00"},
                         {"id": 2, "name":"Jane Doe", "email":"jdoe@domainname.com", "address":"10 Fake St", "phone":"99999999", "mobile":"111111111", "suburb":"Faketown", "state":"NSW", "postcode":"2000", "country":"Australia", "notes":"", "dt":"1970-01-01 00:00:00"}]');
 
-        if ($customers===false){
+        if ($customers === false) {
             die("Failed to add customers");
         } else {
             $devMdl = new CustomerModel();
-            foreach($customers as $cust){
+            foreach ($customers as $cust) {
                 $result = $devMdl->create($cust->email, $cust->name, $cust->phone, $cust->mobile, $cust->address, $cust->suburb, $cust->postcode, $cust->state, $cust->country);
-                if ($result===false)
-                    die("Failed to add customers: ".$devMdl->errorInfo);
+                if ($result === false)
+                    die("Failed to add customers: " . $devMdl->errorInfo);
             }
             echo("Inserted Customers.<br/>");
         }
 
+    }
+
+    public function generate($numtransactions, $type = 'sale')
+    {
+        // get dependant record
+        $this->getRecords();
+        // set cur time
+        $curprocessdt = time() * 1000;
+        if (date('D', $curprocessdt) > 16) {
+            $curprocessdt = strtotime(date("Y-m-d", ($curprocessdt / 1000)) . " 17:00:00") * 1000;
+        }
+        $initprocessdt = $curprocessdt;
+
+        for ($i = 0; $i < $numtransactions; $i++) {
+            // contruct JSON test data
+            $saleobj = new stdClass();
+            $saleobj->processdt = $curprocessdt;
+            // pick a random device if  pos sale
+            if ($type == 'sale') {
+                $device = $this->devices[rand(0, sizeof($this->devices) - 1)];
+                $saleobj->devid = $device['id'];
+                $saleobj->locid = $device['locationid'];
+            }
+            $saleobj->ref = $curprocessdt . "-" . ($type == 'sale' ? $device['id'] : 0) . "-" . rand(1000, 9999);
+            // pick a random user
+            $saleobj->userid = $this->users[rand(0, sizeof($this->users) - 1)]['id'];
+            // add misc data
+            $saleobj->custid = "";
+            $saleobj->custemail = "";
+            $saleobj->notes = "";
+            $saleobj->discount = 0;
+            $saleobj->discountval = 0;
+            // add random items
+            $numitems = (rand(1, 100) > 75 ? (rand(1, 100) > 95 ? rand(7, 10) : rand(4, 6)) : rand(1, 3));
+            $totalitemqty = 0;
+            $total = 0.00;
+            $cost = 0.00;
+            $totaltax = 0.00;
+            $taxes = [];
+            $items = [];
+            // loop through num items time
+            for ($inum = 0; $inum < $numitems; $inum++) {
+                $item = $this->items[rand(0, sizeof($this->items) - 1)];
+                // If price is 0 or "" pick a random price
+                if ($item['price'] == "" || $item['price'] == 0) {
+                    $item['price'] = rand(1, 100);
+                }
+                // select random qty and get item total
+                $randqty = rand(1, 100);
+                $qty = ($randqty > 80 ? ($randqty > 95 ? 3 : 2) : 1);
+                $totalitemqty += $qty;
+                $itemtotal = round(($item['price'] * $qty), 2);
+                $itemcost = round(($item['cost'] * $qty), 2);
+
+                // work out tax and add totals
+                $itemtax = WposAdminUtilities::calculateTax($item['taxid'], isset($saleobj->locid) ? $saleobj->locid : 0, $itemtotal);
+                if (!$itemtax->inclusive) {
+                    $itemtotal += $itemtax->total;
+                };
+                $total += $itemtotal;
+                $cost += $itemcost;
+                $totaltax += $itemtax->total;
+                foreach ($itemtax->values as $key => $value) {
+                    if (isset($taxes[$key])) {
+                        $taxes[$key] += $value;
+                    } else {
+                        $taxes[$key] = $value;
+                    }
+                }
+
+                $itemObj = new stdClass();
+                $itemObj->ref = $inum + 1;
+                $itemObj->sitemid = $item['id'];
+                $itemObj->qty = $qty;
+                $itemObj->name = $item['name'];
+                $itemObj->desc = $item['description'];
+                $itemObj->cost = $item['cost'];
+                $itemObj->unit = $item['price'];
+                $itemObj->taxid = $item['taxid'];
+                $itemObj->tax = $itemtax;
+                $itemObj->price = $itemtotal;
+                $items[] = $itemObj;
+            }
+            $saleobj->items = $items;
+            $subtotal = $total - $totaltax;
+            // if method cash round the total & add rounding amount, no cash payments for invoices
+            if ($type == 'sale') {
+                $paymethod = $this->paymentMethods[rand(0, sizeof($this->paymentMethods) - 1)];
+            } else {
+                $paymethod = $this->paymentMethods[rand(0, sizeof($this->paymentMethods) - 2)];
+            }
+            if ($type == 'sale' && $paymethod == "cash") {
+                // round to nearest five cents
+                $temptotal = $total;
+                $total = round($total / 0.05) * 0.05;
+                $saleobj->rounding = number_format($total - $temptotal, 2, '.', '');
+                //if (floatval($saleobj->rounding)!=0)
+                //echo($temptotal." ".$total."<br/>");
+            } else {
+                $saleobj->rounding = 0.00;
+            }
+            // add payment to the sale
+            if ($type == 'sale') { // leave a few invoices unpaid.
+                $payment = new stdClass();
+                $payment->method = $paymethod;
+                $payment->amount = number_format($total, 2, '.', '');
+                if ($paymethod == "cash") {
+                    $tender = (round($total) % 5 === 0) ? round($total) : round(($total + 5 / 2) / 5) * 5;
+                    $payment->tender = number_format($tender, 2, '.', '');
+                    $payment->change = number_format($tender - $total, 2, '.', '');
+                }
+                $saleobj->payments = [$payment];
+            } else if ($type == 'invoice') {
+                if ($i < 2 || $i == 60) {
+                    $saleobj->payments = [];
+                } else {
+                    $payment = new stdClass();
+                    $payment->method = ($paymethod == 'cash' ? 'eftpos' : $paymethod);
+                    $payment->amount = number_format($total, 2, '.', '');
+                    $saleobj->payments = [$payment];
+
+                }
+            }
+
+            // add totals and tax
+            $saleobj->numitems = $totalitemqty;
+            $saleobj->taxdata = $taxes;
+            $saleobj->tax = number_format($totaltax, 2, '.', '');
+            $saleobj->cost = number_format($cost, 2, '.', '');
+            $saleobj->subtotal = number_format($subtotal, 2, '.', '');
+            $saleobj->total = number_format($total, 2, '.', '');
+
+            // randomly add a void/refund to the sale
+            if ($type == 'sale' && (rand(1, 30) == 1)) {
+                $voidobj = new stdClass();
+                // pick another random device
+                $device = $this->devices[rand(0, sizeof($this->devices) - 1)];
+                $voidobj->deviceid = $device['id'];
+                $voidobj->locationid = $device['locationid'];
+                // pick another random user
+                $voidobj->userid = $this->users[rand(0, sizeof($this->users) - 1)]['id'];
+                // set sometime in the future but do not set before the initial date (now).
+                $voidobj->processdt = (($curprocessdt + rand(30, 60 * 24)) > $initprocessdt ? $initprocessdt : $curprocessdt + rand(30, 60 * 24));
+
+                if ((rand(1, 2) == 1)) {
+                    // add reason
+                    $voidobj->reason = "Faulty Item";
+                    // refund, add additional data
+                    $voidobj->method = $this->paymentMethods[rand(0, sizeof($this->paymentMethods) - 1)];
+                    // pick item to return
+                    $retitem = $items[rand(0, sizeof($items) - 1)];
+                    $itemdata = new stdClass();
+                    $itemdata->numreturned = 1;
+                    $itemdata->ref = $retitem->ref;
+                    $voidobj->items = [$itemdata];
+                    $voidobj->amount = $retitem->unit;
+                    // put in array before adding to saleobj
+                    $saleobj->refunddata = [$voidobj];
+                } else {
+                    // add reason
+                    $voidobj->reason = "Mistake";
+                    // void
+                    $saleobj->voiddata = $voidobj;
+                }
+            }
+            // process the sale
+            if ($type == 'sale') {
+                $this->wposSales = new WposPosSale($saleobj);
+                $this->wposSales->setNoBroadcast();
+                $saleobj->custid = 0;
+                $result = $this->wposSales->insertTransaction(["errorCode" => "OK", "error" => "OK", "data" => ""]);
+                if ($result['error'] != "OK")
+                    die("Failed to add devices: " . $result['error']);
+            } else {
+                // add invoice only fields
+                $saleobj->duedt = $curprocessdt + 1209600000;
+                $saleobj->custid = rand(1, 2);
+                $saleobj->channel = "manual";
+
+                $this->wposSales = new WposInvoices($saleobj, null, true);
+                $result = $this->wposSales->createInvoice(["errorCode" => "OK", "error" => "OK", "data" => ""]);
+                if ($result['error'] != "OK")
+                    die("Failed to add devices: " . $result['error']);
+            }
+            // decrement by a random time between 2-40 minutes
+            if ($type == 'sale') {
+                $curprocessdt = $curprocessdt - (rand(2, 40) * 60 * 1000);
+            } else {
+                $curprocessdt = $curprocessdt - (rand(40, 280) * 60 * 1000);
+            }
+            // if it's before shop open time, decrement to the last days closing time.
+            $hour = date("H", $curprocessdt / 1000);
+            if ($hour < 9) {
+                $curprocessdt = strtotime(date("Y-m-d", ($curprocessdt / 1000) - 86400) . " 17:00:00") * 1000;
+            }
+        }
+        return;
+    }
+
+    // Purge all records and set demo data
+
+    private function getRecords()
+    {
+        // get items
+        $itemMdl = new StoredItemsModel();
+        $this->items = $itemMdl->get();
+        // get items
+        $authMdl = new AuthModel();
+        $this->users = $authMdl->get(null, null, null, false);
+        // get locations
+        $devMdl = new WposPosData();
+        $this->devices = $devMdl->getPosDevices([])['data'];
+    }
+
+    public function resetDocuments()
+    {
+        exec("rm -r " . $_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs/*");
+        exec("cp -rp " . $_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs-template/* " . $_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs");
+        exec("chmod -R 777 " . $_SERVER['DOCUMENT_ROOT'] . $_SERVER['APP_ROOT'] . "docs");
     }
 }

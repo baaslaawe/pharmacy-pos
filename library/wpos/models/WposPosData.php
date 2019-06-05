@@ -1,4 +1,5 @@
 <?php
+
 /**
  * JsonData is part of Wallace Point of Sale system (WPOS) API
  *
@@ -42,10 +43,10 @@ class WposPosData
     /**
      * Decodes any provided JSON string
      */
-    public function __construct($jsondata=null)
+    public function __construct($jsondata = null)
     {
-        if ($jsondata!==null){
-            if (is_string($jsondata)){
+        if ($jsondata !== null) {
+            if (is_string($jsondata)) {
                 $this->data = json_decode($jsondata);
             } else {
                 $this->data = $jsondata;
@@ -56,12 +57,51 @@ class WposPosData
     /**
      * @param array $result
      *
+     * @return array Returns an array of tax objects
+     */
+    public static function getTaxes($result = [])
+    {
+        $taxItemsMdl = new TaxItemsModel();
+        $taxItemsArr = $taxItemsMdl->get();
+
+        if (is_array($taxItemsArr)) {
+            $taxItems = [];
+            foreach ($taxItemsArr as $taxItem) {
+                $taxItems[$taxItem['id']] = $taxItem;
+            }
+            $result['data'] = [];
+            $result['data']['items'] = $taxItems;
+
+            $taxRulesMdl = new TaxRulesModel();
+            $taxRulesArr = $taxRulesMdl->get();
+            if (is_array($taxRulesArr)) {
+                $taxRules = [];
+                foreach ($taxRulesArr as $taxRule) {
+                    $ruleData = json_decode($taxRule['data']);
+                    $ruleData->id = $taxRule['id'];
+                    $taxRules[$taxRule['id']] = $ruleData;
+                }
+
+                $result['data']['rules'] = $taxRules;
+            } else {
+                $result['error'] = "Tax data could not be retrieved: " . $taxRulesMdl->errorInfo;
+            }
+        } else {
+            $result['error'] = "Tax data could not be retrieved: " . $taxItemsMdl->errorInfo;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $result
+     *
      * @return array of customer records
      */
     public function getCustomers($result)
     {
         $customersMdl = new CustomerModel();
-        $customers    = $customersMdl->get();
+        $customers = $customersMdl->get();
         $contacts = $customersMdl->getContacts();
         if (is_array($customers)) {
             $cdata = [];
@@ -70,8 +110,8 @@ class WposPosData
                 $cdata[$customer['id']] = $customer;
             }
             // add custoner contacts
-            foreach ($contacts as $contact){
-                if (isset($cdata[$contact['customerid']])){
+            foreach ($contacts as $contact) {
+                if (isset($cdata[$contact['customerid']])) {
                     $cdata[$contact['customerid']]['contacts'][$contact['id']] = $contact;
                 }
             }
@@ -87,22 +127,22 @@ class WposPosData
      * @param array $result current result array
      * @return array API result array
      */
-    public function getPOSSubscription($result){
+    public function getPOSSubscription($result)
+    {
         $result['data'] = new stdClass();
         $configMdl = new ConfigModel();
         $data = $configMdl->get();
-        if ($data===false){
+        if ($data === false) {
             return false;
         }
         $settings = [];
-        foreach ($data as $setting){
+        foreach ($data as $setting) {
             $settings[$setting['name']] = json_decode($setting['data']);
         }
         $result['data']->subscription = $settings['subscription'];
 
         return $result;
     }
-
 
     /**
      * @param array $result
@@ -112,7 +152,7 @@ class WposPosData
     public function getItems($result)
     {
         $storedItemsMdl = new StoredItemsModel();
-        $storedItems    = $storedItemsMdl->get();
+        $storedItems = $storedItemsMdl->get();
         if (is_array($storedItems)) {
             $items = [];
             foreach ($storedItems as $storedItem) {
@@ -134,14 +174,14 @@ class WposPosData
      */
     public function getPosDevices($result)
     {
-        $devMdl  = new DevicesModel();
+        $devMdl = new DevicesModel();
         $devices = $devMdl->get();
         if (is_array($devices)) {
             $data = [];
             foreach ($devices as $device) {
-                $data[$device['id']] =  $device;
+                $data[$device['id']] = $device;
             }
-            $data[0] = ["id"=> 0, "name"=>"Admin dash", "locationname"=>"Admin dash", "locationid"=>0];
+            $data[0] = ["id" => 0, "name" => "Admin dash", "locationname" => "Admin dash", "locationid" => 0];
             $result['data'] = $data;
         } else {
             $result['error'] = $devMdl->errorInfo;
@@ -157,14 +197,14 @@ class WposPosData
      */
     public function getPosLocations($result)
     {
-        $locMdl    = new LocationsModel();
+        $locMdl = new LocationsModel();
         $locations = $locMdl->get();
         if (is_array($locations)) {
             $data = [];
             foreach ($locations as $location) {
                 $data[$location['id']] = $location;
             }
-            $data[0] = ["id"=> 0, "name"=>"Admin dash"];
+            $data[0] = ["id" => 0, "name" => "Admin dash"];
             $result['data'] = $data;
         } else {
             $result['error'] = $locMdl->errorInfo;
@@ -177,13 +217,14 @@ class WposPosData
      * @param $result
      * @return mixed an array of users without their password hash
      */
-    public function getUsers($result){
+    public function getUsers($result)
+    {
         $authMdl = new AuthModel();
         $users = $authMdl->get();
         $data = [];
-        foreach ($users as $user){
+        foreach ($users as $user) {
             unset($user['password']);
-            $user['permissions']=json_decode($user['permissions']);
+            $user['permissions'] = json_decode($user['permissions']);
             $data[$user['id']] = $user;
         }
         $result['data'] = $data;
@@ -196,20 +237,22 @@ class WposPosData
      * @param $result
      * @return mixed
      */
-    public function getSales($result){
-        if (!isset($this->data->stime) && !isset($this->data->etime)){
+    public function getSales($result)
+    {
+        if (!isset($this->data->stime) && !isset($this->data->etime)) {
             // time not set, retrieving POS records, get config.
             $WposConfig = new WposAdminSettings();
             $config = $WposConfig->getSettingsObject("pos");
 
             // set the sale range based on the config setting
-            $etime = time()*1000;
-            $stime = strtotime("-1 ".(isset($config->salerange)?$config->salerange:"week"))*1000;
+            $etime = time() * 1000;
+            $stime = strtotime("-1 " . (isset($config->salerange) ? $config->salerange : "week")) * 1000;
 
             // determine which devices transactions to include based on config
-            if (isset($this->data->deviceid)){
-                switch ($config->saledevice){
-                    case "device": break; // no need to do anything, id already set
+            if (isset($this->data->deviceid)) {
+                switch ($config->saledevice) {
+                    case "device":
+                        break; // no need to do anything, id already set
                     case "all":
                         unset($this->data->deviceid); // unset the device id to get all sales
                         break;
@@ -226,7 +269,7 @@ class WposPosData
 
         // Get all transactions within the specified timeframe/devices
         $salesMdl = new SalesModel();
-        $dbSales  = $salesMdl->getRangeWithRefunds($stime, $etime, (isset($this->data->deviceid)?$this->data->deviceid:null));
+        $dbSales = $salesMdl->getRangeWithRefunds($stime, $etime, (isset($this->data->deviceid) ? $this->data->deviceid : null));
 
         if (is_array($dbSales)) {
             $sales = [];
@@ -243,7 +286,6 @@ class WposPosData
         return $result;
     }
 
-
     /**
      * Searches sales for the given reference.
      * @param $searchdata
@@ -253,11 +295,11 @@ class WposPosData
     public function searchSales($searchdata, $result)
     {
         $salesMdl = new SalesModel();
-        $dbSales  = $salesMdl->get(0, 0, $searchdata->ref, null, null, null, null, true);
+        $dbSales = $salesMdl->get(0, 0, $searchdata->ref, null, null, null, null, true);
         if (is_array($dbSales)) {
             $sales = [];
             foreach ($dbSales as $sale) {
-                $jsonObj             = json_decode($sale['data'], true);
+                $jsonObj = json_decode($sale['data'], true);
                 $sales[$sale['ref']] = $jsonObj;
             }
             $result['data'] = $sales;
@@ -269,54 +311,13 @@ class WposPosData
     }
 
     /**
-     * @param array $result
-     *
-     * @return array Returns an array of tax objects
-     */
-    public static function getTaxes($result=[])
-    {
-        $taxItemsMdl = new TaxItemsModel();
-        $taxItemsArr    = $taxItemsMdl->get();
-
-        if (is_array($taxItemsArr)) {
-            $taxItems = [];
-            foreach ($taxItemsArr as $taxItem) {
-                $taxItems[$taxItem['id']] = $taxItem;
-            }
-            $result['data'] = [];
-            $result['data']['items'] = $taxItems;
-
-            $taxRulesMdl = new TaxRulesModel();
-            $taxRulesArr   = $taxRulesMdl->get();
-            if (is_array($taxRulesArr)) {
-                $taxRules = [];
-                foreach ($taxRulesArr as $taxRule) {
-                    $ruleData = json_decode($taxRule['data']);
-                    $ruleData->id = $taxRule['id'];
-                    $taxRules[$taxRule['id']] = $ruleData;
-                }
-
-                $result['data']['rules'] = $taxRules;
-            } else {
-                $result['error'] = "Tax data could not be retrieved: ".$taxRulesMdl->errorInfo;
-            }
-        } else {
-            $result['error'] = "Tax data could not be retrieved: ".$taxItemsMdl->errorInfo;
-        }
-
-        return $result;
-    }
-
-
-
-    /**
      * @param $result
      * @return mixed Returns an array of suppliers
      */
     public function getSuppliers($result)
     {
         $suppliersMdl = new SuppliersModel();
-        $suppliers    = $suppliersMdl->get();
+        $suppliers = $suppliersMdl->get();
         if (is_array($suppliers)) {
             $supplierdata = [];
             foreach ($suppliers as $supplier) {
@@ -358,7 +359,7 @@ class WposPosData
     public function getStock($result)
     {
         $stockMdl = new StockModel();
-        $stocks    = $stockMdl->get();
+        $stocks = $stockMdl->get();
         if (is_array($stocks)) {
             $stockdata = [];
             foreach ($stocks as $stock) {

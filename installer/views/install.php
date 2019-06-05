@@ -1,23 +1,23 @@
 <div style="text-align: center;">
-<?php
+    <?php
     if ($_REQUEST['doupgrade']) {
         ?>
         <ul class="breadcrumb">
             <li>Check Requirements</li>
             <li><strong>Upgrade</strong></li>
         </ul>
-<?php
+        <?php
     } else {
-?>
+        ?>
         <ul class="breadcrumb">
             <li>Check Requirements</li>
             <li>Configure Database</li>
             <li>Initial Setup</li>
             <li><strong>Install System</strong></li>
         </ul>
-<?php
+        <?php
     }
-?>
+    ?>
 </div>
 <div style="text-align: center;">
     <div id="install_view">
@@ -31,12 +31,12 @@
     <iframe id="installframe" style="width: 100%; height: 200px; overflow: auto;"></iframe>
 </div>
 <script>
-    $(function(){
+    $(function () {
         var frame = $("#installframe");
-        frame.load(function(){
+        frame.load(function () {
             $("#install_view").addClass('hide');
             $("#complete_view").removeClass('hide');
         });
-        frame.attr('src', "<?php echo("/installer?".(isset($_REQUEST['doupgrade'])?"upgrade":"install")); ?>");
+        frame.attr('src', "<?php echo("/installer?" . (isset($_REQUEST['doupgrade']) ? "upgrade" : "install")); ?>");
     });
 </script>

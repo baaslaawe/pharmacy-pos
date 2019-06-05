@@ -3,8 +3,12 @@
     <h1 style="display: inline-block;">
         Customers
     </h1>
-    <button onclick="WPOS.customers.openAddCustomerDialog();" id="addbtn" class="btn btn-primary btn-sm pull-right"><i class="icon-pencil align-top bigger-125"></i>Add</button>
-    <button class="btn btn-success btn-sm pull-right" style="margin-right: 10px;" onclick="exportCustomers();"><i class="icon-cloud-download align-top bigger-125"></i>Export CSV</button>
+    <button onclick="WPOS.customers.openAddCustomerDialog();" id="addbtn" class="btn btn-primary btn-sm pull-right"><i
+                class="icon-pencil align-top bigger-125"></i>Add
+    </button>
+    <button class="btn btn-success btn-sm pull-right" style="margin-right: 10px;" onclick="exportCustomers();"><i
+                class="icon-cloud-download align-top bigger-125"></i>Export CSV
+    </button>
 </div><!-- /.page-header -->
 
 <div class="row">
@@ -18,28 +22,29 @@
                     Manage your customer base
                 </div>
 
-                    <table id="customertable" class="table table-striped table-bordered table-hover dt-responsive" style="width: 100%;">
-                        <thead>
-                        <tr>
-                            <th data-priority="0" class="center">
-                                <label>
-                                    <input type="checkbox" class="ace" />
-                                    <span class="lbl"></span>
-                                </label>
-                            </th>
-                            <th data-priority="2" >ID</th>
-                            <th data-priority="3" >Name</th>
-                            <th data-priority="4" >Email</th>
-                            <th data-priority="5" >Phone</th>
-                            <th data-priority="7" >Address</th>
-                            <th data-priority="1" >Actions</th>
-                        </tr>
-                        </thead>
+                <table id="customertable" class="table table-striped table-bordered table-hover dt-responsive"
+                       style="width: 100%;">
+                    <thead>
+                    <tr>
+                        <th data-priority="0" class="center">
+                            <label>
+                                <input type="checkbox" class="ace"/>
+                                <span class="lbl"></span>
+                            </label>
+                        </th>
+                        <th data-priority="2">ID</th>
+                        <th data-priority="3">Name</th>
+                        <th data-priority="4">Email</th>
+                        <th data-priority="5">Phone</th>
+                        <th data-priority="7">Address</th>
+                        <th data-priority="1">Actions</th>
+                    </tr>
+                    </thead>
 
-                        <tbody>
+                    <tbody>
 
-                        </tbody>
-                    </table>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -49,26 +54,34 @@
 <!-- inline scripts related to this page -->
 <script type="text/javascript">
     var datatable;
-    $(function() {
+    $(function () {
         WPOS.customers.loadCustomers();
         var data = WPOS.customers.getCustomers();
         var itemarray = [];
-        for (var key in data){
+        for (var key in data) {
             itemarray.push(data[key]);
         }
         datatable = $('#customertable').dataTable({
             "bProcessing": true,
             "aaData": itemarray,
-            "aaSorting": [[ 1, "asc" ]],
-            "aLengthMenu": [ 10, 25, 50, 100, 200],
+            "aaSorting": [[1, "asc"]],
+            "aLengthMenu": [10, 25, 50, 100, 200],
             "aoColumns": [
-                { mData:null, sDefaultContent:'<div style="text-align: center"><label><input class="ace dt-select-cb" type="checkbox"><span class="lbl"></span></label><div>', bSortable: false },
-                { "mData":"id" },
-                { "mData":"name" },
-                { "mData":"email" },
-                { "mData":"mobile" },
-                { "mData":"address" },
-                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="WPOS.customers.openCustomerDialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a>'+(WPOS.loggeduser.isadmin==='1'? '<a class="red" onclick="WPOS.customers.deleteCustomer($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a>':'')+'</div>', bSortable: false }
+                {
+                    mData: null,
+                    sDefaultContent: '<div style="text-align: center"><label><input class="ace dt-select-cb" type="checkbox"><span class="lbl"></span></label><div>',
+                    bSortable: false
+                },
+                {"mData": "id"},
+                {"mData": "name"},
+                {"mData": "email"},
+                {"mData": "mobile"},
+                {"mData": "address"},
+                {
+                    mData: null,
+                    sDefaultContent: '<div class="action-buttons"><a class="green" onclick="WPOS.customers.openCustomerDialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a>' + (WPOS.loggeduser.isadmin === '1' ? '<a class="red" onclick="WPOS.customers.deleteCustomer($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a>' : '') + '</div>',
+                    bSortable: false
+                }
             ],
             "columns": [
                 {},
@@ -81,14 +94,14 @@
                 {type: "string"},
                 {}
             ],
-            "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+            "fnInfoCallback": function (oSettings, iStart, iEnd, iMax, iTotal, sPre) {
                 // Add selected row count to footer
                 var selected = this.api().rows('.selected').count();
-                return sPre+(selected>0 ? '<br/>'+selected+' row(s) selected':'');
+                return sPre + (selected > 0 ? '<br/>' + selected + ' row(s) selected' : '');
             }
         });
 
-        datatable.find("tbody").on('click', '.dt-select-cb', function(e){
+        datatable.find("tbody").on('click', '.dt-select-cb', function (e) {
             var row = $(this).parents().eq(3);
             if (row.hasClass('selected')) {
                 row.removeClass('selected');
@@ -99,10 +112,10 @@
             e.stopPropagation();
         });
 
-        $('table.dataTable th input:checkbox').on('change' , function(){
+        $('table.dataTable th input:checkbox').on('change', function () {
             var that = this;
             $(this).closest('table.dataTable').find('tr > td:first-child input:checkbox')
-                .each(function(){
+                .each(function () {
                     var row = $(this).parents().eq(3);
                     if ($(that).is(":checked")) {
                         row.addClass('selected');
@@ -118,30 +131,35 @@
         // hide loader
         WPOS.util.hideLoader();
     });
-    function reloadCustomerData(){
+
+    function reloadCustomerData() {
         WPOS.customers.loadCustomers();
         reloadCustomerTable();
     }
-    function reloadCustomerTable(){
+
+    function reloadCustomerTable() {
         var itemarray = [];
         var data = WPOS.customers.getCustomers();
-        for (var key in data){
+        for (var key in data) {
             itemarray.push(data[key]);
         }
         datatable.fnClearTable(false);
         datatable.fnAddData(itemarray, false);
         datatable.api().draw(false);
     }
-    function exportCustomers(){
 
-        var filename = "customers-"+WPOS.util.getDateFromTimestamp(new Date());
+    function exportCustomers() {
+
+        var filename = "customers-" + WPOS.util.getDateFromTimestamp(new Date());
         filename = filename.replace(" ", "");
         var customers = WPOS.customers.getCustomers();
 
         var data = {};
-        var ids = datatable.api().rows('.selected').data().map(function(row){ return row.id }).join(',').split(',');
+        var ids = datatable.api().rows('.selected').data().map(function (row) {
+            return row.id
+        }).join(',').split(',');
 
-        if (ids && ids.length > 0 && ids[0]!='') {
+        if (ids && ids.length > 0 && ids[0] != '') {
             for (var i = 0; i < ids.length; i++) {
                 var id = ids[i];
                 if (customers.hasOwnProperty(id))

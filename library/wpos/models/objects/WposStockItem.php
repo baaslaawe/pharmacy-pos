@@ -26,8 +26,9 @@ class WposStockItem extends stdClass
      * Set any provided data
      * @param $data
      */
-    function __construct($data){
-        foreach ($data as $key=>$value){
+    function __construct($data)
+    {
+        foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $value;
             }

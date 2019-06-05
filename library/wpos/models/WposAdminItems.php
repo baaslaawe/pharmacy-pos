@@ -22,8 +22,47 @@
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 24/12/13 2:05 PM
  */
-class WposAdminItems {
+class WposAdminItems
+{
     private $data;
+    private $defaultPermissions = [
+        "sections" => ['access' => "no", 'dashboard' => "none", 'reports' => 0, 'graph' => 0, 'realtime' => 0, 'sales' => 0, 'items' => 0, 'stock' => 0, 'categories' => 0, 'suppliers' => 0, 'customers' => 0],
+        "apicalls" => []
+    ];
+    // STORED ITEMS
+    /**
+     * Maps permissions with their corresponding section name and API actions
+     * @var array
+     */
+    private $permissionMap = [
+        "readapicalls" => [
+            "dashboard" => ['stats/general', 'stats/takings', 'stats/itemselling', 'stats/locations', 'stats/devices', 'graph/general'],
+            "reports" => ['stats/general', 'stats/takings', 'stats/itemselling', 'stats/categoryselling', 'stats/supplyselling', 'stats/stock', 'stats/devices', 'stats/locations', 'stats/users', 'stats/tax'],
+            "graph" => ['graph/general', 'graph/takings', 'graph/devices', 'graph/locations'],
+            "realtime" => ['stats/general', 'graph/general'],
+            "sales" => [],
+            "invoices" => ['invoices/get', 'invoices/print'],
+            "items" => ['suppliers/get', 'categories/get'],
+            "stock" => ['stock/get', 'stock/history'],
+            "categories" => ['categories/get'],
+            "suppliers" => ['suppliers/get'],
+            "customers" => [],
+        ],
+        "editapicalls" => [
+            "dashboard" => [],
+            "reports" => [],
+            "graph" => [],
+            "realtime" => [],
+            "sales" => ['sales/delete', 'sales/deletevoid', 'sales/adminvoid'],
+            "invoices" => ['invoices/add', 'invoices/edit', 'invoices/delete', 'invoices/items/add', 'invoices/items/edit', 'invoices/items/delete',
+                'invoices/payments/add', 'invoices/payments/edit', 'invoices/payments/delete', 'invoices/generate', 'invoices/email'],
+            "items" => ['items/add', 'items/edit', 'items/delete'],
+            "stock" => ['stock/add', 'stock/set', 'stock/transfer'],
+            "categories" => ['categories/add', 'categories/edit', 'categories/delete'],
+            "suppliers" => ['suppliers/add', 'suppliers/edit', 'suppliers/delete'],
+            "customers" => ['customers/add', 'customers/edit', 'customers/delete', 'customers/contacts/add', 'customers/contacts/edit', 'customers/contacts/delete', 'customers/setaccess', 'customers/setpassword', 'customers/sendreset'],
+        ]
+    ];
 
     /**
      * Set any provided data
@@ -32,13 +71,13 @@ class WposAdminItems {
     function __construct($data)
     {
         // parse the data and put it into an object
-        if ($data!==false){
+        if ($data !== false) {
             $this->data = $data;
         } else {
             $this->data = new stdClass();
         }
     }
-    // STORED ITEMS
+
     /**
      * Add a stored item into the system
      * @param $result
@@ -94,7 +133,7 @@ class WposAdminItems {
         // update the item
         $qresult = $itemMdl->edit($this->data->id, $this->data);
         if ($qresult === false) {
-            $result['error'] = "Could not edit the item: ".$itemMdl->errorInfo;
+            $result['error'] = "Could not edit the item: " . $itemMdl->errorInfo;
         } else {
             $result['data'] = $this->data;
             // broadcast the item
@@ -118,8 +157,8 @@ class WposAdminItems {
         if (!is_numeric($this->data->id)) {
             if (isset($this->data->id)) {
                 $ids = explode(",", $this->data->id);
-                foreach ($ids as $id){
-                    if (!is_numeric($id)){
+                foreach ($ids as $id) {
+                    if (!is_numeric($id)) {
                         $result['error'] = "A valid comma separated list of ids must be supplied";
                         return $result;
                     }
@@ -131,9 +170,9 @@ class WposAdminItems {
         }
         // remove the item
         $itemMdl = new StoredItemsModel();
-        $qresult = $itemMdl->remove(isset($ids)?$ids:$this->data->id);
+        $qresult = $itemMdl->remove(isset($ids) ? $ids : $this->data->id);
         if ($qresult === false) {
-            $result['error'] = "Could not delete the item: ".$itemMdl->errorInfo;
+            $result['error'] = "Could not delete the item: " . $itemMdl->errorInfo;
         } else {
             $result['data'] = true;
             // broadcast the item; supplying the id only indicates deletion
@@ -158,13 +197,7 @@ class WposAdminItems {
         return $result;
     }
 
-    private function getIdForName($arr, $value){
-        foreach($arr as $key => $item) {
-            if ($item['name'] === $value)
-                return $item['id'];
-        }
-        return false;
-    }
+    // ITEM CATEGORIES
 
     /**
      * Import items
@@ -173,7 +206,7 @@ class WposAdminItems {
      */
     public function importItemsStart($result)
     {
-        if (!isset($_SESSION['import_data']) || !is_array($_SESSION['import_data'])){
+        if (!isset($_SESSION['import_data']) || !is_array($_SESSION['import_data'])) {
             $result['error'] = "Import data was not received.";
             EventStream::sendStreamData($result);
             return $result;
@@ -188,44 +221,44 @@ class WposAdminItems {
 
         $categories = $catMdl->get();
         $taxRules = $taxMdl->get();
-        foreach ($taxRules as $key=>$rule){
+        foreach ($taxRules as $key => $rule) {
             $data = json_decode($rule['data'], true);
             $data['id'] = $rule['id'];
             $taxRules[$rule['id']] = $data;
         }
 
-        if ($categories===false || $taxRules===false){
-            $result['error'] = "Could not load categories or tax rules: ".$catMdl->errorInfo. ' '.$taxMdl->errorInfo;
+        if ($categories === false || $taxRules === false) {
+            $result['error'] = "Could not load categories or tax rules: " . $catMdl->errorInfo . ' ' . $taxMdl->errorInfo;
             EventStream::sendStreamData($result);
             return $result;
         }
 
-        EventStream::sendStreamData(['status'=>"Validating Items..."]);
+        EventStream::sendStreamData(['status' => "Validating Items..."]);
         $validator = new JsonValidate(null, '{"name":"","description":"", "category_name":"", "tax_name": "", "reorderPoint":1}');
         $count = 1;
-        foreach ($items as $key=>$item){
-            EventStream::sendStreamData(['status'=>"Validating Items...", 'progress'=>$count]);
+        foreach ($items as $key => $item) {
+            EventStream::sendStreamData(['status' => "Validating Items...", 'progress' => $count]);
 
             $validator->validate($item);
 
             // Match category
-            if (!$item->category_name || $item->category_name=="None" || $item->category_name=="Misc"){
+            if (!$item->category_name || $item->category_name == "None" || $item->category_name == "Misc") {
                 $id = 0;
             } else {
                 $id = $this->getIdForName($categories, $item->category_name);
             }
-            if ($id===false){
-                if ((isset($options->add_categories) && $options->add_categories===true)){
-                    EventStream::sendStreamData(['status'=>"Adding category..."]);
+            if ($id === false) {
+                if ((isset($options->add_categories) && $options->add_categories === true)) {
+                    EventStream::sendStreamData(['status' => "Adding category..."]);
                     $id = $catMdl->create($item->category_name);
-                    if (!is_numeric($id)){
-                        $result['error'] = "Could not add new category " . $item->category_name . " on line ".$count." of the CSV: ".$catMdl->errorInfo;
+                    if (!is_numeric($id)) {
+                        $result['error'] = "Could not add new category " . $item->category_name . " on line " . $count . " of the CSV: " . $catMdl->errorInfo;
                         EventStream::sendStreamData($result);
                         return $result;
                     }
-                    $categories[] = ['id'=>$id, 'name'=>$item->category_name];
+                    $categories[] = ['id' => $id, 'name' => $item->category_name];
                 } else {
-                    $result['error'] = "Could not find category id for name " . $item->category_name . " on line ".$count." of the CSV";
+                    $result['error'] = "Could not find category id for name " . $item->category_name . " on line " . $count . " of the CSV";
                     EventStream::sendStreamData($result);
                     return $result;
                 }
@@ -234,13 +267,13 @@ class WposAdminItems {
             unset($item->category_name);
 
             // Match tax id with name
-            if (!$item->tax_name){
+            if (!$item->tax_name) {
                 $id = 1;
             } else {
                 $id = $this->getIdForName($taxRules, $item->tax_name);
             }
-            if ($id===false){
-                $result['error'] = "Could not find tax rule id for name ".$item->tax_name." on line ".$count." of the CSV";
+            if ($id === false) {
+                $result['error'] = "Could not find tax rule id for name " . $item->tax_name . " on line " . $count . " of the CSV";
                 EventStream::sendStreamData($result);
                 return $result;
             }
@@ -248,11 +281,11 @@ class WposAdminItems {
             unset($item->tax_name);
 
             // Map Stock type from a string to a boolean value
-            strtoupper($item->stockType) == "INVENTORY" ? $item->stockType = '1': $item->stockType = '0';
+            strtoupper($item->stockType) == "INVENTORY" ? $item->stockType = '1' : $item->stockType = '0';
 
             $dupitems = $itemMdl->getDuplicate($item);
             if ($dupitems > 0) {
-                $result['error'] = "An item ".$item->name." already exists on line ".$count;
+                $result['error'] = "An item " . $item->name . " already exists on line " . $count;
                 EventStream::sendStreamData($result);
                 return $result;
             }
@@ -262,17 +295,17 @@ class WposAdminItems {
             $count++;
         }
 
-        EventStream::sendStreamData(['status'=>"Importing Items..."]);
+        EventStream::sendStreamData(['status' => "Importing Items..."]);
         $result['data'] = [];
         $count = 1;
-        foreach ($items as $item){
-            EventStream::sendStreamData(['progress'=>$count]);
+        foreach ($items as $item) {
+            EventStream::sendStreamData(['progress' => $count]);
 
             $itemObj = new WposStoredItem($item);
             $id = $itemMdl->create($itemObj);
 
-            if ($id===false){
-                $result['error'] = "Failed to add the item on line ".$count." of the CSV: ".$itemMdl->errorInfo;
+            if ($id === false) {
+                $result['error'] = "Failed to add the item on line " . $count . " of the CSV: " . $itemMdl->errorInfo;
                 EventStream::sendStreamData($result);
                 return $result;
             }
@@ -289,7 +322,15 @@ class WposAdminItems {
         return $result;
     }
 
-    // ITEM CATEGORIES
+    private function getIdForName($arr, $value)
+    {
+        foreach ($arr as $key => $item) {
+            if ($item['name'] === $value)
+                return $item['id'];
+        }
+        return false;
+    }
+
     /**
      * Add a new category
      * @param $result
@@ -305,7 +346,7 @@ class WposAdminItems {
         $catMdl = new CategoriesModel();
         $qresult = $catMdl->create($this->data->name);
         if ($qresult === false) {
-            $result['error'] = "Could not add the category: ".$catMdl->errorInfo;
+            $result['error'] = "Could not add the category: " . $catMdl->errorInfo;
         } else {
             $result['data'] = $this->getCategoryRecord($qresult);
             // broadcast update
@@ -316,6 +357,19 @@ class WposAdminItems {
         }
         return $result;
     }
+
+    /**
+     * Returns category array by ID
+     * @param $id
+     * @return mixed
+     */
+    private function getCategoryRecord($id)
+    {
+        $supMdl = new CategoriesModel();
+        $result = $supMdl->get($id)[0];
+        return $result;
+    }
+    // SUPPLIERS
 
     /**
      * Update a category
@@ -332,7 +386,7 @@ class WposAdminItems {
         $catMdl = new CategoriesModel();
         $qresult = $catMdl->edit($this->data->id, $this->data->name);
         if ($qresult === false) {
-            $result['error'] = "Could not edit the category: ".$catMdl->errorInfo;
+            $result['error'] = "Could not edit the category: " . $catMdl->errorInfo;
         } else {
             $result['data'] = $this->getCategoryRecord($this->data->id);
             // broadcast update
@@ -341,17 +395,6 @@ class WposAdminItems {
             // log data
             Logger::write("Category updated with id:" . $this->data->id, "CATEGORY", json_encode($this->data));
         }
-        return $result;
-    }
-
-    /**
-     * Returns category array by ID
-     * @param $id
-     * @return mixed
-     */
-    private function getCategoryRecord($id){
-        $supMdl = new CategoriesModel();
-        $result = $supMdl->get($id)[0];
         return $result;
     }
 
@@ -366,8 +409,8 @@ class WposAdminItems {
         if (!is_numeric($this->data->id)) {
             if (isset($this->data->id)) {
                 $ids = explode(",", $this->data->id);
-                foreach ($ids as $id){
-                    if (!is_numeric($id)){
+                foreach ($ids as $id) {
+                    if (!is_numeric($id)) {
                         $result['error'] = "A valid comma separated list of ids must be supplied";
                         return $result;
                     }
@@ -378,9 +421,9 @@ class WposAdminItems {
             }
         }
         $catMdl = new CategoriesModel();
-        $qresult = $catMdl->remove(isset($ids)?$ids:$this->data->id);
+        $qresult = $catMdl->remove(isset($ids) ? $ids : $this->data->id);
         if ($qresult === false) {
-            $result['error'] = "Could not delete the category: ".$catMdl->errorInfo;
+            $result['error'] = "Could not delete the category: " . $catMdl->errorInfo;
         } else {
             $result['data'] = true;
             // broadcast update
@@ -391,7 +434,7 @@ class WposAdminItems {
         }
         return $result;
     }
-    // SUPPLIERS
+
     /**
      * Add a new supplier
      * @param $result
@@ -407,7 +450,7 @@ class WposAdminItems {
         $supMdl = new SuppliersModel();
         $qresult = $supMdl->create($this->data->name);
         if ($qresult === false) {
-            $result['error'] = "Could not add the supplier: ".$supMdl->errorInfo;
+            $result['error'] = "Could not add the supplier: " . $supMdl->errorInfo;
         } else {
             $result['data'] = $this->getSupplierRecord($qresult);
             // log data
@@ -415,6 +458,20 @@ class WposAdminItems {
         }
         return $result;
     }
+
+    /**
+     * Returns supplier array by ID
+     * @param $id
+     * @return mixed
+     */
+    private function getSupplierRecord($id)
+    {
+        $supMdl = new SuppliersModel();
+        $result = $supMdl->get($id)[0];
+        return $result;
+    }
+
+    // USERS
 
     /**
      * Update a supplier
@@ -431,24 +488,13 @@ class WposAdminItems {
         $supMdl = new SuppliersModel();
         $qresult = $supMdl->edit($this->data->id, $this->data->name);
         if ($qresult === false) {
-            $result['error'] = "Could not edit the supplier: ".$supMdl->errorInfo;
+            $result['error'] = "Could not edit the supplier: " . $supMdl->errorInfo;
         } else {
             $result['data'] = $this->getSupplierRecord($this->data->id);
 
             // log data
             Logger::write("Suppliers updated with id:" . $this->data->id, "SUPPLIER", json_encode($this->data));
         }
-        return $result;
-    }
-
-    /**
-     * Returns supplier array by ID
-     * @param $id
-     * @return mixed
-     */
-    private function getSupplierRecord($id){
-        $supMdl = new SuppliersModel();
-        $result = $supMdl->get($id)[0];
         return $result;
     }
 
@@ -463,8 +509,8 @@ class WposAdminItems {
         if (!is_numeric($this->data->id)) {
             if (isset($this->data->id)) {
                 $ids = explode(",", $this->data->id);
-                foreach ($ids as $id){
-                    if (!is_numeric($id)){
+                foreach ($ids as $id) {
+                    if (!is_numeric($id)) {
                         $result['error'] = "A valid comma separated list of ids must be supplied";
                         return $result;
                     }
@@ -475,9 +521,9 @@ class WposAdminItems {
             }
         }
         $supMdl = new SuppliersModel();
-        $qresult = $supMdl->remove(isset($ids)?$ids:$this->data->id);
+        $qresult = $supMdl->remove(isset($ids) ? $ids : $this->data->id);
         if ($qresult === false) {
-            $result['error'] = "Could not delete the supplier: ".$supMdl->errorInfo;
+            $result['error'] = "Could not delete the supplier: " . $supMdl->errorInfo;
         } else {
             $result['data'] = true;
 
@@ -486,44 +532,6 @@ class WposAdminItems {
         }
         return $result;
     }
-    // USERS
-    private $defaultPermissions = [
-        "sections" => ['access' => "no", 'dashboard' => "none", 'reports' => 0, 'graph' => 0, 'realtime' => 0, 'sales' => 0, 'items' => 0, 'stock' => 0, 'categories' => 0, 'suppliers' => 0, 'customers' => 0],
-        "apicalls" => []
-    ];
-    /**
-     * Maps permissions with their corresponding section name and API actions
-     * @var array
-     */
-    private $permissionMap = [
-        "readapicalls" => [
-            "dashboard" => ['stats/general', 'stats/takings', 'stats/itemselling', 'stats/locations', 'stats/devices', 'graph/general'],
-            "reports" => ['stats/general', 'stats/takings', 'stats/itemselling','stats/categoryselling', 'stats/supplyselling', 'stats/stock', 'stats/devices', 'stats/locations', 'stats/users', 'stats/tax'],
-            "graph" => ['graph/general', 'graph/takings', 'graph/devices', 'graph/locations'],
-            "realtime" => ['stats/general', 'graph/general'],
-            "sales" => [],
-            "invoices"=> ['invoices/get', 'invoices/print'],
-            "items" => ['suppliers/get', 'categories/get'],
-            "stock" => ['stock/get', 'stock/history'],
-            "categories" => ['categories/get'],
-            "suppliers" => ['suppliers/get'],
-            "customers" => [],
-        ],
-        "editapicalls" => [
-            "dashboard" => [],
-            "reports" => [],
-            "graph" => [],
-            "realtime" => [],
-            "sales" => ['sales/delete', 'sales/deletevoid', 'sales/adminvoid'],
-            "invoices"=> ['invoices/add' ,'invoices/edit', 'invoices/delete', 'invoices/items/add', 'invoices/items/edit', 'invoices/items/delete',
-                'invoices/payments/add','invoices/payments/edit','invoices/payments/delete','invoices/generate','invoices/email'],
-            "items" => ['items/add', 'items/edit', 'items/delete'],
-            "stock" => ['stock/add', 'stock/set', 'stock/transfer'],
-            "categories" => ['categories/add', 'categories/edit', 'categories/delete'],
-            "suppliers" => ['suppliers/add', 'suppliers/edit', 'suppliers/delete'],
-            "customers" => ['customers/add', 'customers/edit', 'customers/delete', 'customers/contacts/add', 'customers/contacts/edit', 'customers/contacts/delete', 'customers/setaccess', 'customers/setpassword', 'customers/sendreset'],
-        ]
-    ];
 
     /**
      * Add user
@@ -699,6 +707,7 @@ class WposAdminItems {
         return $result;
     }
     // Tax items
+
     /**
      * Add a new tax rule
      * @param $result
@@ -714,7 +723,7 @@ class WposAdminItems {
         $taxRuleMdl = new TaxRulesModel();
         $qresult = $taxRuleMdl->create($this->data);
         if ($qresult === false) {
-            $result['error'] = "Could not add the tax rule: ".$taxRuleMdl->errorInfo;
+            $result['error'] = "Could not add the tax rule: " . $taxRuleMdl->errorInfo;
         } else {
             $this->data->id = $qresult;
             $result['data'] = $this->data;
@@ -723,6 +732,15 @@ class WposAdminItems {
             Logger::write("Tax rule added with id:" . $this->data->id, "TAX", json_encode($this->data));
         }
         return $result;
+    }
+
+    private function broadcastTaxUpdate()
+    {
+        $taxconfig = WposPosData::getTaxes();
+        if (!isset($taxconfig['error'])) {
+            $socket = new WposSocketIO();
+            $socket->sendConfigUpdate($taxconfig['data'], "tax");
+        }
     }
 
     /**
@@ -737,14 +755,14 @@ class WposAdminItems {
             $result['error'] = $errors;
             return $result;
         }
-        if ($this->data->id==1){
+        if ($this->data->id == 1) {
             $result['error'] = "The No Tax rule cannot be edited";
             return $result;
         }
         $taxRuleMdl = new TaxRulesModel();
         $qresult = $taxRuleMdl->edit($this->data->id, $this->data);
         if ($qresult === false) {
-            $result['error'] = "Could not edit the tax rule: ".$taxRuleMdl->errorInfo;
+            $result['error'] = "Could not edit the tax rule: " . $taxRuleMdl->errorInfo;
         } else {
             $result['data'] = $this->data;
             $this->broadcastTaxUpdate();
@@ -766,14 +784,14 @@ class WposAdminItems {
             $result['error'] = "A valid id must be supplied";
             return $result;
         }
-        if ($this->data->id==1){
+        if ($this->data->id == 1) {
             $result['error'] = "The No Tax rule cannot be deleted";
             return $result;
         }
         $taxRuleMdl = new TaxRulesModel();
         $qresult = $taxRuleMdl->remove($this->data->id);
         if ($qresult === false) {
-            $result['error'] = "Could not delete the tax rule: ".$taxRuleMdl->errorInfo;
+            $result['error'] = "Could not delete the tax rule: " . $taxRuleMdl->errorInfo;
         } else {
             $result['data'] = true;
             $this->broadcastTaxUpdate();
@@ -783,13 +801,6 @@ class WposAdminItems {
         return $result;
     }
 
-    /**
-     * @param $value
-     * @return float
-     */
-    public static function calculateTaxMultiplier($value){
-        return ($value/100);
-    }
     /**
      * Add a new tax rule
      * @param $result
@@ -806,7 +817,7 @@ class WposAdminItems {
         $taxItemMdl = new TaxItemsModel();
         $qresult = $taxItemMdl->create($this->data->name, $this->data->altname, $this->data->type, $this->data->value, $this->data->multiplier);
         if ($qresult === false) {
-            $result['error'] = "Could not add the tax item: ".$taxItemMdl->errorInfo;
+            $result['error'] = "Could not add the tax item: " . $taxItemMdl->errorInfo;
         } else {
             $this->data->id = $qresult;
             $result['data'] = $this->data;
@@ -815,6 +826,15 @@ class WposAdminItems {
             Logger::write("Tax item added with id:" . $this->data->id, "TAX", json_encode($this->data));
         }
         return $result;
+    }
+
+    /**
+     * @param $value
+     * @return float
+     */
+    public static function calculateTaxMultiplier($value)
+    {
+        return ($value / 100);
     }
 
     /**
@@ -833,7 +853,7 @@ class WposAdminItems {
         $taxItemMdl = new TaxItemsModel();
         $qresult = $taxItemMdl->edit($this->data->id, $this->data->name, $this->data->altname, $this->data->type, $this->data->value, $this->data->multiplier);
         if ($qresult === false) {
-            $result['error'] = "Could not edit the tax item: ".$taxItemMdl->errorInfo;
+            $result['error'] = "Could not edit the tax item: " . $taxItemMdl->errorInfo;
         } else {
             $result['data'] = $this->data;
             $this->broadcastTaxUpdate();
@@ -858,7 +878,7 @@ class WposAdminItems {
         $taxItemMdl = new TaxItemsModel();
         $qresult = $taxItemMdl->remove($this->data->id);
         if ($qresult === false) {
-            $result['error'] = "Could not delete the tax item: ".$taxItemMdl->errorInfo;
+            $result['error'] = "Could not delete the tax item: " . $taxItemMdl->errorInfo;
         } else {
             $result['data'] = true;
             $this->broadcastTaxUpdate();
@@ -866,13 +886,5 @@ class WposAdminItems {
             Logger::write("Tax item deleted with id:" . $this->data->id, "TAX");
         }
         return $result;
-    }
-
-    private function broadcastTaxUpdate(){
-        $taxconfig = WposPosData::getTaxes();
-        if (!isset($taxconfig['error'])){
-            $socket = new WposSocketIO();
-            $socket->sendConfigUpdate($taxconfig['data'], "tax");
-        }
     }
 }

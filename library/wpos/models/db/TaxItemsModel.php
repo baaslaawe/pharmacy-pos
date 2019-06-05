@@ -19,7 +19,6 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 11/23/13 10:36 PM
@@ -50,8 +49,8 @@ class TaxItemsModel extends DbConfig
      */
     public function create($name, $altname, $type, $value, $multiplier)
     {
-        $sql          = "INSERT INTO tax_items (name, altname, type, value, multiplier) VALUES (:name, :altname, :type, :value, :multiplier);";
-        $placeholders = [":name"=>$name, ":altname"=>$altname, ":type"=>$type, ":value"=>$value, ":multiplier"=>$multiplier];
+        $sql = "INSERT INTO tax_items (name, altname, type, value, multiplier) VALUES (:name, :altname, :type, :value, :multiplier);";
+        $placeholders = [":name" => $name, ":altname" => $altname, ":type" => $type, ":value" => $value, ":multiplier" => $multiplier];
 
         return $this->insert($sql, $placeholders);
     }
@@ -63,20 +62,20 @@ class TaxItemsModel extends DbConfig
      */
     public function get($taxId = null, $name = null)
     {
-        $sql          = 'SELECT * FROM tax_items';
+        $sql = 'SELECT * FROM tax_items';
         $placeholders = [];
         if ($taxId !== null) {
             if (empty($placeholders)) {
                 $sql .= ' WHERE';
             }
-            $sql .= ' id = '.$taxId;
+            $sql .= ' id = ' . $taxId;
             $placeholders[] = $taxId;
         }
         if ($name !== null) {
             if (empty($placeholders)) {
                 $sql .= ' WHERE';
             }
-            $sql .= ' name = '.$name;
+            $sql .= ' name = ' . $name;
             $placeholders[] = $name;
         }
 
@@ -94,8 +93,8 @@ class TaxItemsModel extends DbConfig
     public function edit($id, $name, $altname, $type, $value, $multiplier)
     {
 
-        $sql          = "UPDATE tax_items SET name= :name, altname= :altname, type= :type, value= :value, multiplier= :multiplier WHERE id= :id;";
-        $placeholders = [":id"=>$id, ":name"=>$name, ":altname"=>$altname, ":type"=>$type, ":value"=>$value, ":multiplier"=>$multiplier];
+        $sql = "UPDATE tax_items SET name= :name, altname= :altname, type= :type, value= :value, multiplier= :multiplier WHERE id= :id;";
+        $placeholders = [":id" => $id, ":name" => $name, ":altname" => $altname, ":type" => $type, ":value" => $value, ":multiplier" => $multiplier];
 
         return $this->update($sql, $placeholders);
     }
@@ -109,8 +108,8 @@ class TaxItemsModel extends DbConfig
         if ($id === null) {
             return false;
         }
-        $sql          = "DELETE FROM tax_items WHERE id= :id;";
-        $placeholders = [":id"=>$id];
+        $sql = "DELETE FROM tax_items WHERE id= :id;";
+        $placeholders = [":id" => $id];
 
         return $this->delete($sql, $placeholders);
     }

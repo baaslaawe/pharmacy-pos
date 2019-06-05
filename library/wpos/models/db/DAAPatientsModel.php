@@ -35,9 +35,9 @@ class DAAPatientsModel extends DbConfig
     {
         $sql = "INSERT INTO daa_patients (saleid, saleitemid, customerid) VALUES (:saleid, :saleitemid, :customerid)";
         $placeholders = [
-            ':saleid'       => $saleid,
-            ':saleitemid'   => $saleitemid,
-            ':customerid'   => $customerid
+            ':saleid' => $saleid,
+            ':saleitemid' => $saleitemid,
+            ':customerid' => $customerid
         ];
 
         return $this->insert($sql, $placeholders);
@@ -54,7 +54,7 @@ class DAAPatientsModel extends DbConfig
     public function get($stime, $etime)
     {
         $sql = 'SELECT p.id, c.name as customer, d.name as drug, d.qty as qty FROM daa_patients as p LEFT JOIN sale_items as d on p.saleitemid=d.id LEFT JOIN customers as c on c.id=p.customerid LEFT JOIN sales as s on d.saleid=s.id WHERE (s.processdt>= :stime AND s.processdt<= :etime) ';
-        $placeholders = [":stime"=>$stime, ":etime"=>$etime];
+        $placeholders = [":stime" => $stime, ":etime" => $etime];
         return $this->select($sql, $placeholders);
     }
 
@@ -66,9 +66,10 @@ class DAAPatientsModel extends DbConfig
      * @param null $ttype
      * @return array|bool Returns an array of stored items and their totals for a corresponding period, items that are not stored are added into the Misc group (ie id=0). Returns false on failure
      */
-    public function getStoredItemTotals($stime, $etime, $group = 0, $novoids = true, $ttype=null){
+    public function getStoredItemTotals($stime, $etime, $group = 0, $novoids = true, $ttype = null)
+    {
 
-        if ($group==2){
+        if ($group == 2) {
             $groupcol = "supplierid";
             $grouptable = "stored_suppliers";
         } else {
@@ -76,16 +77,16 @@ class DAAPatientsModel extends DbConfig
             $grouptable = "stored_categories";
         }
 
-        $sql = "SELECT ".($group>0?'si.'.$groupcol.' AS groupid, p.name AS name':'i.storeditemid AS groupid, i.name AS name').", COALESCE(SUM(i.qty), 0) AS itemnum, COALESCE(SUM(s.total-s.discount), 0) AS itemtotal, COALESCE(SUM(s.discount), 0) AS discounttotal, COALESCE(SUM(i.tax_total), 0) AS taxtotal, COALESCE(SUM(i.refundqty), 0) AS refnum, COALESCE(SUM(i.unit*i.refundqty), 0) AS reftotal, COALESCE(GROUP_CONCAT(DISTINCT s.ref SEPARATOR ','),'') as refs";
-        $sql.= ' FROM sale_items AS i LEFT JOIN sales AS s ON i.saleid=s.id'.($group>0 ? ' LEFT JOIN stored_items AS si ON i.storeditemid=si.id LEFT JOIN '.$grouptable.' AS p ON si.'.$groupcol.'=p.id' : '').' WHERE (s.processdt>= :stime AND s.processdt<= :etime) '.($novoids?'AND s.status!=3':'');
-        $placeholders = [":stime"=>$stime, ":etime"=>$etime];
+        $sql = "SELECT " . ($group > 0 ? 'si.' . $groupcol . ' AS groupid, p.name AS name' : 'i.storeditemid AS groupid, i.name AS name') . ", COALESCE(SUM(i.qty), 0) AS itemnum, COALESCE(SUM(s.total-s.discount), 0) AS itemtotal, COALESCE(SUM(s.discount), 0) AS discounttotal, COALESCE(SUM(i.tax_total), 0) AS taxtotal, COALESCE(SUM(i.refundqty), 0) AS refnum, COALESCE(SUM(i.unit*i.refundqty), 0) AS reftotal, COALESCE(GROUP_CONCAT(DISTINCT s.ref SEPARATOR ','),'') as refs";
+        $sql .= ' FROM sale_items AS i LEFT JOIN sales AS s ON i.saleid=s.id' . ($group > 0 ? ' LEFT JOIN stored_items AS si ON i.storeditemid=si.id LEFT JOIN ' . $grouptable . ' AS p ON si.' . $groupcol . '=p.id' : '') . ' WHERE (s.processdt>= :stime AND s.processdt<= :etime) ' . ($novoids ? 'AND s.status!=3' : '');
+        $placeholders = [":stime" => $stime, ":etime" => $etime];
 
-        if ($ttype!=null){
+        if ($ttype != null) {
             $sql .= ' AND s.type=:type';
             $placeholders[':type'] = $ttype;
         }
 
-        $sql.= ' GROUP BY groupid, name';
+        $sql .= ' GROUP BY groupid, name';
 
         return $this->select($sql, $placeholders);
     }

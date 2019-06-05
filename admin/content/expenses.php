@@ -3,7 +3,9 @@
     <h1 style="margin-right: 20px; display: inline-block;">
         Expenses
     </h1>
-    <button onclick="$('#addexpensesdialog').dialog('open');" id="addbtn" class="btn btn-primary btn-sm pull-right"><i class="icon-pencil align-top bigger-125"></i>Add</button>
+    <button onclick="$('#addexpensesdialog').dialog('open');" id="addbtn" class="btn btn-primary btn-sm pull-right"><i
+                class="icon-pencil align-top bigger-125"></i>Add
+    </button>
 </div><!-- /.page-header -->
 
 <div class="row">
@@ -17,12 +19,13 @@
                     Manage your business expenses
                 </div>
 
-                <table id="expensestable" class="table table-striped table-bordered table-hover dt-responsive" style="width: 100%;">
+                <table id="expensestable" class="table table-striped table-bordered table-hover dt-responsive"
+                       style="width: 100%;">
                     <thead>
                     <tr>
                         <th data-priority="0" class="center noexport">
                             <label>
-                                <input type="checkbox" class="ace" />
+                                <input type="checkbox" class="ace"/>
                                 <span class="lbl"></span>
                             </label>
                         </th>
@@ -78,7 +81,8 @@
                 <label for="expensedateadd">Date: </label>
             </td>
             <td>
-                <input type="text" style="width: 100%;" class="form-control" id="expensedateadd" onclick="$(this).blur();"/>
+                <input type="text" style="width: 100%;" class="form-control" id="expensedateadd"
+                       onclick="$(this).blur();"/>
             </td>
         </tr>
         <tr>
@@ -109,7 +113,8 @@
                 <label for="expensedateedit">Date: </label>
             </td>
             <td>
-                <input type="text" style="width: 100%;" class="form-control" id="expensedateedit" onclick="$(this).blur();"/>
+                <input type="text" style="width: 100%;" class="form-control" id="expensedateedit"
+                       onclick="$(this).blur();"/>
             </td>
         </tr>
         <tr>
@@ -131,12 +136,13 @@
                 Expenses items
             </div>
 
-            <table id="expenseshisttable" class="table table-striped table-bordered table-hover dt-responsive" style="width: 100%;">
+            <table id="expenseshisttable" class="table table-striped table-bordered table-hover dt-responsive"
+                   style="width: 100%;">
                 <thead>
                 <tr>
                     <th data-priority="0" class="center noexport">
                         <label>
-                            <input type="checkbox" class="ace" />
+                            <input type="checkbox" class="ace"/>
                             <span class="lbl"></span>
                         </label>
                     </th>
@@ -163,24 +169,34 @@
     var expenseitems = null;
     var datatable;
     var itemsarray = [], expensestable, initialized = false;
-    $(function() {
+    $(function () {
         expenses = WPOS.getJsonData("expenses/get");
         var suparray = [];
         var supitem;
-        for (var key in expenses){
+        for (var key in expenses) {
             supitem = expenses[key];
             suparray.push(supitem);
         }
         datatable = $('#expensestable').dataTable({
             "bProcessing": true,
             "aaData": suparray,
-            "aaSorting": [[ 2, "asc" ]],
+            "aaSorting": [[2, "asc"]],
             "aoColumns": [
-                { mData:null, sDefaultContent:'<div style="text-align: center"><label><input class="ace dt-select-cb" type="checkbox"><span class="lbl"></span></label><div>', bSortable: false, sClass:"noexport" },
-                { "mData":"id" },
-                { "mData":"name" },
-                { "mData": "total"},
-                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="blue" onclick="openaddexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-plus bigger-130"></i></a><a class="green" onclick="openexpensehistorydialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-time bigger-130"></i></a><a class="red" onclick="removeExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
+                {
+                    mData: null,
+                    sDefaultContent: '<div style="text-align: center"><label><input class="ace dt-select-cb" type="checkbox"><span class="lbl"></span></label><div>',
+                    bSortable: false,
+                    sClass: "noexport"
+                },
+                {"mData": "id"},
+                {"mData": "name"},
+                {"mData": "total"},
+                {
+                    mData: null,
+                    sDefaultContent: '<div class="action-buttons"><a class="green" onclick="openeditexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-pencil bigger-130"></i></a><a class="blue" onclick="openaddexpensedialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-plus bigger-130"></i></a><a class="green" onclick="openexpensehistorydialog($(this).closest(\'tr\').find(\'td\').eq(1).text());"><i class="icon-time bigger-130"></i></a><a class="red" onclick="removeExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>',
+                    "bSortable": false,
+                    sClass: "noexport"
+                }
             ],
             "columns": [
                 {},
@@ -189,14 +205,14 @@
                 {type: "numeric"},
                 {}
             ],
-            "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+            "fnInfoCallback": function (oSettings, iStart, iEnd, iMax, iTotal, sPre) {
                 // Add selected row count to footer
                 var selected = this.api().rows('.selected').count();
-                return sPre+(selected>0 ? '<br/>'+selected+' row(s) selected <span class="action-buttons"><a class="red" onclick="removeSelectedExpenses();"><i class="icon-trash bigger-130"></i></a></span>':'');
+                return sPre + (selected > 0 ? '<br/>' + selected + ' row(s) selected <span class="action-buttons"><a class="red" onclick="removeSelectedExpenses();"><i class="icon-trash bigger-130"></i></a></span>' : '');
             }
         });
 
-        datatable.find("tbody").on('click', '.dt-select-cb', function(e){
+        datatable.find("tbody").on('click', '.dt-select-cb', function (e) {
             var row = $(this).parents().eq(3);
             if (row.hasClass('selected')) {
                 row.removeClass('selected');
@@ -207,10 +223,10 @@
             e.stopPropagation();
         });
 
-        $('table.dataTable th input:checkbox').on('change' , function(){
+        $('table.dataTable th input:checkbox').on('change', function () {
             var that = this;
             $(this).closest('table.dataTable').find('tr > td:first-child input:checkbox')
-                .each(function(){
+                .each(function () {
                     var row = $(this).parents().eq(3);
                     if ($(that).is(":checked")) {
                         row.addClass('selected');
@@ -224,7 +240,7 @@
         });
 
         // dialogs
-        $( "#addexpensesdialog" ).removeClass('hide').dialog({
+        $("#addexpensesdialog").removeClass('hide').dialog({
             resizable: false,
             width: 'auto',
             modal: true,
@@ -234,26 +250,26 @@
             buttons: [
                 {
                     html: "<i class='icon-save bigger-110'></i>&nbsp; Save",
-                    "class" : "btn btn-success btn-xs",
-                    click: function() {
+                    "class": "btn btn-success btn-xs",
+                    click: function () {
                         saveExpense(true);
                     }
                 }
                 ,
                 {
                     html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
-                    "class" : "btn btn-xs",
-                    click: function() {
-                        $( this ).dialog( "close" );
+                    "class": "btn btn-xs",
+                    click: function () {
+                        $(this).dialog("close");
                     }
                 }
             ],
-            create: function( event, ui ) {
+            create: function (event, ui) {
                 // Set maxWidth
                 $(this).css("maxWidth", "375px");
             }
         });
-        $( "#editexpensedialog" ).removeClass('hide').dialog({
+        $("#editexpensedialog").removeClass('hide').dialog({
             resizable: false,
             width: 'auto',
             modal: true,
@@ -263,26 +279,26 @@
             buttons: [
                 {
                     html: "<i class='icon-save bigger-110'></i>&nbsp; Update",
-                    "class" : "btn btn-success btn-xs",
-                    click: function() {
+                    "class": "btn btn-success btn-xs",
+                    click: function () {
                         saveExpense(false);
                     }
                 }
                 ,
                 {
                     html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
-                    "class" : "btn btn-xs",
-                    click: function() {
-                        $( this ).dialog( "close" );
+                    "class": "btn btn-xs",
+                    click: function () {
+                        $(this).dialog("close");
                     }
                 }
             ],
-            create: function( event, ui ) {
+            create: function (event, ui) {
                 // Set maxWidth
                 $(this).css("maxWidth", "375px");
             }
         });
-        $( "#addexpensedialog" ).removeClass('hide').dialog({
+        $("#addexpensedialog").removeClass('hide').dialog({
             resizable: false,
             width: 'auto',
             modal: true,
@@ -292,26 +308,26 @@
             buttons: [
                 {
                     html: "<i class='icon-save bigger-110'></i>&nbsp; Add",
-                    "class" : "btn btn-success btn-xs",
-                    click: function() {
+                    "class": "btn btn-success btn-xs",
+                    click: function () {
                         addExpense(true);
                     }
                 }
                 ,
                 {
                     html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
-                    "class" : "btn btn-xs",
-                    click: function() {
-                        $( this ).dialog( "close" );
+                    "class": "btn btn-xs",
+                    click: function () {
+                        $(this).dialog("close");
                     }
                 }
             ],
-            create: function( event, ui ) {
+            create: function (event, ui) {
                 // Set maxWidth
                 $(this).css("maxWidth", "375px");
             }
         });
-        $( "#expenseshistdialog" ).removeClass('hide').dialog({
+        $("#expenseshistdialog").removeClass('hide').dialog({
             resizable: false,
             width: '900px',
             maxWidth: '900px',
@@ -322,18 +338,18 @@
             buttons: [
                 {
                     html: "<i class='icon-remove bigger-110'></i>&nbsp; Close",
-                    "class" : "btn btn-xs",
-                    click: function() {
-                        $( this ).dialog( "close" );
+                    "class": "btn btn-xs",
+                    click: function () {
+                        $(this).dialog("close");
                     }
                 }
             ],
-            create: function( event, ui ) {
+            create: function (event, ui) {
                 // Set maxWidth
                 $(this).css("maxWidth", "900px");
             }
         });
-        $( "#editexpenseitemdialog" ).removeClass('hide').dialog({
+        $("#editexpenseitemdialog").removeClass('hide').dialog({
             resizable: false,
             width: 'auto',
             modal: true,
@@ -343,21 +359,21 @@
             buttons: [
                 {
                     html: "<i class='icon-save bigger-110'></i>&nbsp; Update",
-                    "class" : "btn btn-success btn-xs",
-                    click: function() {
+                    "class": "btn btn-success btn-xs",
+                    click: function () {
                         addExpense(false);
                     }
                 }
                 ,
                 {
                     html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
-                    "class" : "btn btn-xs",
-                    click: function() {
-                        $( this ).dialog( "close" );
+                    "class": "btn btn-xs",
+                    click: function () {
+                        $(this).dialog("close");
                     }
                 }
             ],
-            create: function( event, ui ) {
+            create: function (event, ui) {
                 // Set maxWidth
                 $(this).css("maxWidth", "375px");
             }
@@ -369,24 +385,46 @@
     function initTables() {
         if (initialized) return;
         var supitem;
-        for (var key in expenseitems){
+        for (var key in expenseitems) {
             supitem = expenseitems[key];
             itemsarray.push(supitem);
         }
         expensestable = $('#expenseshisttable').dataTable({
             "bProcessing": true,
             "aaData": itemsarray,
-            "aaSorting": [[ 7, "asc" ]],
+            "aaSorting": [[7, "asc"]],
             "aoColumns": [
-                { mData:null, sDefaultContent:'<div style="text-align: center"><label><input class="ace dt-select-cb" type="checkbox"><span class="lbl"></span></label><div>', bSortable: false, sClass:"noexport" },
-                { "mData":"id" },
-                { "mData":"expense" },
-                { "mData":function(data,type,val){return (data.locationid!=='0'?(WPOS.locations.hasOwnProperty(data.locationid)?WPOS.locations[data.locationid].name:'Unknown'):'Warehouse');} },
-                { "mData":function(data,type,val){return (data.userid!=='0'?(WPOS.users.hasOwnProperty(data.userid)?WPOS.users[data.userid].username:'Unknown'):'Admin');} },
-                { "mData": "amount"},
-                { "mData": "notes"},
-                { "mData": function(data,type,val){return (moment(parseInt(data.dt)).format('DD/MM/YYYY H:mm:ss'));} },
-                { mData:null, sDefaultContent:'<div class="action-buttons"><a class="green" onclick="openeditexpenseitemdialog($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-edit bigger-130"></i></a> &nbsp; &nbsp;<a class="red" onclick="deleteExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>', "bSortable": false, sClass: "noexport" }
+                {
+                    mData: null,
+                    sDefaultContent: '<div style="text-align: center"><label><input class="ace dt-select-cb" type="checkbox"><span class="lbl"></span></label><div>',
+                    bSortable: false,
+                    sClass: "noexport"
+                },
+                {"mData": "id"},
+                {"mData": "expense"},
+                {
+                    "mData": function (data, type, val) {
+                        return (data.locationid !== '0' ? (WPOS.locations.hasOwnProperty(data.locationid) ? WPOS.locations[data.locationid].name : 'Unknown') : 'Warehouse');
+                    }
+                },
+                {
+                    "mData": function (data, type, val) {
+                        return (data.userid !== '0' ? (WPOS.users.hasOwnProperty(data.userid) ? WPOS.users[data.userid].username : 'Unknown') : 'Admin');
+                    }
+                },
+                {"mData": "amount"},
+                {"mData": "notes"},
+                {
+                    "mData": function (data, type, val) {
+                        return (moment(parseInt(data.dt)).format('DD/MM/YYYY H:mm:ss'));
+                    }
+                },
+                {
+                    mData: null,
+                    sDefaultContent: '<div class="action-buttons"><a class="green" onclick="openeditexpenseitemdialog($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-edit bigger-130"></i></a> &nbsp; &nbsp;<a class="red" onclick="deleteExpense($(this).closest(\'tr\').find(\'td\').eq(1).text())"><i class="icon-trash bigger-130"></i></a></div>',
+                    "bSortable": false,
+                    sClass: "noexport"
+                }
             ],
             "columns": [
                 {},
@@ -400,14 +438,14 @@
                 {type: "numeric"},
                 {}
             ],
-            "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+            "fnInfoCallback": function (oSettings, iStart, iEnd, iMax, iTotal, sPre) {
                 // Add selected row count to footer
                 var selected = this.api().rows('.selected').count();
-                return sPre+(selected>0 ? '<br/>'+selected+' row(s) selected <span class="action-buttons"><a class="red" onclick="removeSelectedItems();"><i class="icon-trash bigger-130"></i></a></span>':'');
+                return sPre + (selected > 0 ? '<br/>' + selected + ' row(s) selected <span class="action-buttons"><a class="red" onclick="removeSelectedItems();"><i class="icon-trash bigger-130"></i></a></span>' : '');
             }
         });
 
-        expensestable.find("tbody").on('click', '.dt-select-cb', function(e){
+        expensestable.find("tbody").on('click', '.dt-select-cb', function (e) {
             var row = $(this).parents().eq(3);
             if (row.hasClass('selected')) {
                 row.removeClass('selected');
@@ -421,10 +459,10 @@
             $(this).focus();
         });
 
-        $('table.dataTable th input:checkbox').on('change' , function(){
+        $('table.dataTable th input:checkbox').on('change', function () {
             var that = this;
             $(this).closest('table.dataTable').find('tr > td:first-child input:checkbox')
-                .each(function(){
+                .each(function () {
                     var row = $(this).parents().eq(3);
                     if ($(that).is(":checked")) {
                         row.addClass('selected');
@@ -438,32 +476,38 @@
         });
         initialized = true;
     }
+
     // updating records
-    function openeditexpensedialog(id){
+    function openeditexpensedialog(id) {
         var item = expenses[id];
         $("#expenseid").val(item.id);
         $("#expensename").val(item.name);
         $("#editexpensedialog").dialog("open");
     }
+
     // add specific expenses
-    function openaddexpensedialog(id){
+    function openaddexpensedialog(id) {
         var item = expenses[id];
         $("#expenseidadd").val(item.id);
         $("#expensenameadd").text(item.name);
         // Add expense datepickers
-        $("#expensedateadd").datepicker({dateFormat:"dd/mm/yy"});
+        $("#expensedateadd").datepicker({dateFormat: "dd/mm/yy"});
         $("#expensedateadd").datepicker('setDate', new Date());
         $("#addexpensedialog").dialog("open");
     }
+
     // show expenses
-    function openexpensehistorydialog(id){
+    function openexpensehistorydialog(id) {
         WPOS.util.showLoader();
-        expenseitems = WPOS.sendJsonData("expenses/history", JSON.stringify({expenseid: id, locationid: JSON.parse(localStorage.getItem('wpos_config')).locationid}));
-        if (!initialized){
+        expenseitems = WPOS.sendJsonData("expenses/history", JSON.stringify({
+            expenseid: id,
+            locationid: JSON.parse(localStorage.getItem('wpos_config')).locationid
+        }));
+        if (!initialized) {
             initTables();
         } else {
             var supitem, itemsarray = [];
-            for (var key in expenseitems){
+            for (var key in expenseitems) {
                 supitem = expenseitems[key];
                 itemsarray.push(supitem);
             }
@@ -481,7 +525,7 @@
         $("#expenseamountedit").val(item.amount);
         $("#expensenameedit").text(item.expense);
         $("#expensenotesedit").val(item.notes);
-        $("#expensedateedit").datepicker({dateFormat:"dd/mm/yy"});
+        $("#expensedateedit").datepicker({dateFormat: "dd/mm/yy"});
         $("#expensedateedit").datepicker('setDate', new Date(parseInt(item.dt)));
         $("#editexpenseitemdialog").dialog("open");
     }
@@ -490,14 +534,14 @@
         // show loader
         WPOS.util.showLoader();
         var item = {}, result, processdt;
-        if(isNewItem) {
+        if (isNewItem) {
             processdt = $("#expensedateadd").datepicker("getDate");
             processdt.setHours(new Date().getHours());
             processdt.setMinutes(new Date().getMinutes());
             processdt.setSeconds(new Date().getSeconds());
             processdt.setMilliseconds(new Date().getMilliseconds());
             item.dt = processdt.getTime();
-            item.ref = (new Date()).getTime()+"-1-"+Math.floor((Math.random() * 10000) + 1);
+            item.ref = (new Date()).getTime() + "-1-" + Math.floor((Math.random() * 10000) + 1);
             item.expenseid = $('#expenseidadd').val();
             item.amount = $('#expenseamountadd').val();
             item.locationid = JSON.parse(localStorage.getItem('wpos_config')).locationid;
@@ -505,7 +549,7 @@
             item.notes = $('#expensenoteadd').val();
             item.status = 1;
             result = WPOS.sendJsonData("expenses/item/add", JSON.stringify(item));
-            if (result!==false){
+            if (result !== false) {
                 expenses[result.id] = result;
                 reloadTable();
                 $('#expenseamountadd').val('');
@@ -522,7 +566,7 @@
             item.amount = $('#expenseamountedit').val();
             item.notes = $('#expensenotesedit').val();
             result = WPOS.sendJsonData("expenses/item/edit", JSON.stringify(item));
-            if (result!==false){
+            if (result !== false) {
                 openexpensehistorydialog(item.expenseid);
                 reloadData();
                 $("#editexpenseitemdialog").dialog("close");
@@ -532,16 +576,16 @@
         WPOS.util.hideLoader();
     }
 
-    function saveExpense(isnewitem){
+    function saveExpense(isnewitem) {
         // show loader
         WPOS.util.showLoader();
         var item = {}, result;
-        if (isnewitem){
+        if (isnewitem) {
             // adding a new category
             var name_field = $("#newexpensename");
             item.name = name_field.val();
             result = WPOS.sendJsonData("expenses/add", JSON.stringify(item));
-            if (result!==false){
+            if (result !== false) {
                 expenses[result.id] = result;
                 reloadTable();
                 name_field.val('');
@@ -552,7 +596,7 @@
             item.id = $("#expenseid").val();
             item.name = $("#expensename").val();
             result = WPOS.sendJsonData("expenses/edit", JSON.stringify(item));
-            if (result!==false){
+            if (result !== false) {
                 expenses[result.id] = result;
                 reloadTable();
                 $("#editexpensedialog").dialog("close");
@@ -561,12 +605,13 @@
         // hide loader
         WPOS.util.hideLoader();
     }
-    function removeExpense(id){
+
+    function removeExpense(id) {
         var answer = confirm("Are you sure you want to delete this expense?");
-        if (answer){
+        if (answer) {
             // show loader
             WPOS.util.hideLoader();
-            if (WPOS.sendJsonData("expenses/delete", '{"id":'+id+'}')){
+            if (WPOS.sendJsonData("expenses/delete", '{"id":' + id + '}')) {
                 delete expenses[id];
                 reloadTable();
             }
@@ -575,12 +620,12 @@
         }
     }
 
-    function deleteExpense(id){
+    function deleteExpense(id) {
         var answer = confirm("Are you sure you want to delete this expense?");
-        if (answer){
+        if (answer) {
             // show loader
             WPOS.util.hideLoader();
-            if (WPOS.sendJsonData("expenses/items/delete", '{"id":'+id+'}')){
+            if (WPOS.sendJsonData("expenses/items/delete", '{"id":' + id + '}')) {
                 openexpensehistorydialog(expenseitems[id].expenseid);
                 reloadData();
             }
@@ -589,15 +634,17 @@
         }
     }
 
-    function removeSelectedExpenses(){
-        var ids = datatable.api().rows('.selected').data().map(function(row){ return row.id });
+    function removeSelectedExpenses() {
+        var ids = datatable.api().rows('.selected').data().map(function (row) {
+            return row.id
+        });
 
-        var answer = confirm("Are you sure you want to delete "+ids.length+" selected items?");
-        if (answer){
+        var answer = confirm("Are you sure you want to delete " + ids.length + " selected items?");
+        if (answer) {
             // show loader
             WPOS.util.hideLoader();
-            if (WPOS.sendJsonData("expenses/delete", '{"id":"'+ids.join(",")+'"}')){
-                for (var i=0; i<ids.length; i++){
+            if (WPOS.sendJsonData("expenses/delete", '{"id":"' + ids.join(",") + '"}')) {
+                for (var i = 0; i < ids.length; i++) {
                     delete expenses[ids[i]];
                 }
                 reloadTable();
@@ -607,14 +654,16 @@
         }
     }
 
-    function removeSelectedItems(){
-        var ids = expensestable.api().rows('.selected').data().map(function(row){ return row.id });
+    function removeSelectedItems() {
+        var ids = expensestable.api().rows('.selected').data().map(function (row) {
+            return row.id
+        });
 
-        var answer = confirm("Are you sure you want to delete "+ids.length+" selected items?");
-        if (answer){
+        var answer = confirm("Are you sure you want to delete " + ids.length + " selected items?");
+        if (answer) {
             // show loader
             WPOS.util.hideLoader();
-            if (WPOS.sendJsonData("expenses/items/delete", '{"id":"'+ids.join(",")+'"}')){
+            if (WPOS.sendJsonData("expenses/items/delete", '{"id":"' + ids.join(",") + '"}')) {
                 reloadTable();
             }
             // hide loader
@@ -622,14 +671,15 @@
         }
     }
 
-    function reloadData(){
+    function reloadData() {
         expenses = WPOS.getJsonData("expenses/get");
         reloadTable();
     }
-    function reloadTable(){
+
+    function reloadTable() {
         var suparray = [];
         var tempsup;
-        for (var key in expenses){
+        for (var key in expenses) {
             tempsup = expenses[key];
             suparray.push(tempsup);
         }

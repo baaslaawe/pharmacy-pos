@@ -9,19 +9,19 @@
 <div>
     <h4>Database</h4>
     <?php
-        if (isset($errormessage)){
-    ?>
-            <div class="alert alert-danger">
-                <button class="close" data-dismiss="alert" type="button"></button>
-                <strong>
-                    <i class="ace-icon fa fa-times"></i>
-                    Oh snap!
-                </strong>
-                <?php echo($errormessage); ?>
-                <br>
-            </div>
-    <?php
-        }
+    if (isset($errormessage)) {
+        ?>
+        <div class="alert alert-danger">
+            <button class="close" data-dismiss="alert" type="button"></button>
+            <strong>
+                <i class="ace-icon fa fa-times"></i>
+                Oh snap!
+            </strong>
+            <?php echo($errormessage); ?>
+            <br>
+        </div>
+        <?php
+    }
     ?>
     <form role="form" class="form-horizontal" method="post">
         <input name="checkdb" type="hidden" value="1">
@@ -36,7 +36,8 @@
         <div class="form-group">
             <label for="form-field-1" class="col-sm-3 control-label no-padding-right"> Port </label>
             <div class="col-sm-9">
-                <input name="port" type="text" class="col-xs-10 col-sm-5" placeholder="Port" value="<?php echo(isset($_REQUEST['port'])?$_REQUEST['port']:"3306"); ?>">
+                <input name="port" type="text" class="col-xs-10 col-sm-5" placeholder="Port"
+                       value="<?php echo(isset($_REQUEST['port']) ? $_REQUEST['port'] : "3306"); ?>">
             </div>
         </div>
         <div class="space-4"></div>
@@ -63,7 +64,9 @@
         </div>
         <hr/>
         <div style="height: 40px;">
-            <button type="button" class="pull-left btn btn-primary" onclick="document.location.href='/installer?screen=1';">Back</button>
+            <button type="button" class="pull-left btn btn-primary"
+                    onclick="document.location.href='/installer?screen=1';">Back
+            </button>
             <button type="submit" class="pull-right btn btn-primary">Next</button>
         </div>
     </form>

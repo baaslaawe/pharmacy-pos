@@ -9,7 +9,9 @@
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
 
-if ( class_exists( 'DOMPDF' , false ) ) { return; }
+if (class_exists('DOMPDF', false)) {
+    return;
+}
 
 PHP_VERSION >= 5.0 or die("DOMPDF requires PHP 5.0+");
 
@@ -32,20 +34,20 @@ define("DOMPDF_LIB_DIR", DOMPDF_DIR . "/lib");
  * Some installations don't have $_SERVER['DOCUMENT_ROOT']
  * http://fyneworks.blogspot.com/2007/08/php-documentroot-in-iis-windows-servers.html
  */
-if( !isset($_SERVER['DOCUMENT_ROOT']) ) {
-  $path = "";
-  
-  if ( isset($_SERVER['SCRIPT_FILENAME']) )
-    $path = $_SERVER['SCRIPT_FILENAME'];
-  elseif ( isset($_SERVER['PATH_TRANSLATED']) )
-    $path = str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']);
-    
-  $_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($path, 0, 0-strlen($_SERVER['PHP_SELF'])));
+if (!isset($_SERVER['DOCUMENT_ROOT'])) {
+    $path = "";
+
+    if (isset($_SERVER['SCRIPT_FILENAME']))
+        $path = $_SERVER['SCRIPT_FILENAME'];
+    elseif (isset($_SERVER['PATH_TRANSLATED']))
+        $path = str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']);
+
+    $_SERVER['DOCUMENT_ROOT'] = str_replace('\\', '/', substr($path, 0, 0 - strlen($_SERVER['PHP_SELF'])));
 }
 
 /** Include the custom config file if it exists */
-if ( file_exists(DOMPDF_DIR . "/dompdf_config.custom.inc.php") ){
-  require_once(DOMPDF_DIR . "/dompdf_config.custom.inc.php");
+if (file_exists(DOMPDF_DIR . "/dompdf_config.custom.inc.php")) {
+    require_once(DOMPDF_DIR . "/dompdf_config.custom.inc.php");
 }
 
 //FIXME: Some function definitions rely on the constants defined by DOMPDF. However, might this location prove problematic?
@@ -88,7 +90,7 @@ def("DOMPDF_FONT_DIR", DOMPDF_DIR . "/lib/fonts/");
  *
  * This directory contains the cached font metrics for the fonts used by DOMPDF.
  * This directory can be the same as DOMPDF_FONT_DIR
- * 
+ *
  * Note: This directory must exist and be writable by the webserver process.
  */
 def("DOMPDF_FONT_CACHE", DOMPDF_FONT_DIR);
@@ -112,7 +114,7 @@ def("DOMPDF_TEMP_DIR", sys_get_temp_dir());
  * should be an absolute path.
  * This is only checked on command line call by dompdf.php, but not by
  * direct class use like:
- * $dompdf = new DOMPDF();	$dompdf->load_html($htmldata); $dompdf->render(); $pdfdata = $dompdf->output();
+ * $dompdf = new DOMPDF();    $dompdf->load_html($htmldata); $dompdf->render(); $pdfdata = $dompdf->output();
  */
 def("DOMPDF_CHROOT", realpath(DOMPDF_DIR));
 
@@ -289,7 +291,7 @@ def("DOMPDF_ENABLE_REMOTE", false);
  * The debug output log
  * @var string
  */
-def("DOMPDF_LOG_OUTPUT_FILE", DOMPDF_FONT_DIR."log.htm");
+def("DOMPDF_LOG_OUTPUT_FILE", DOMPDF_FONT_DIR . "log.htm");
 
 /**
  * A ratio applied to the fonts height to be more like browsers' line height
@@ -330,8 +332,8 @@ require_once(DOMPDF_LIB_DIR . "/html5lib/Parser.php");
  * Load autoloader
  */
 if (DOMPDF_ENABLE_AUTOLOAD) {
-  require_once(DOMPDF_INC_DIR . "/autoload.inc.php");
-  require_once(DOMPDF_LIB_DIR . "/php-font-lib/classes/Font.php");
+    require_once(DOMPDF_INC_DIR . "/autoload.inc.php");
+    require_once(DOMPDF_LIB_DIR . "/php-font-lib/classes/Font.php");
 }
 
 /**

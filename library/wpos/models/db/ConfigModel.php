@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ConfigModel is part of Wallace Point of Sale system (WPOS) API
  *
@@ -26,7 +27,8 @@ class ConfigModel extends DbConfig
 
     protected $_columns = ['id', 'name', 'data'];
 
-    public function __construct(){
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -37,12 +39,12 @@ class ConfigModel extends DbConfig
      * @return bool|string Returns false on an unexpected failure, returns -1 if a unique constraint in the database fails, or the new rows id if the insert is successful
      */
     public function create($name, $data)
-{
-    $sql = "INSERT INTO `config` (`name`, `data`) VALUES (:name, :data)";
-    $placeholders = [":name"=>$name, ":data"=>$data];
+    {
+        $sql = "INSERT INTO `config` (`name`, `data`) VALUES (:name, :data)";
+        $placeholders = [":name" => $name, ":data" => $data];
 
-    return $this->insert($sql, $placeholders);
-}
+        return $this->insert($sql, $placeholders);
+    }
 
     /**
      * @param null $name config entry name
@@ -50,19 +52,19 @@ class ConfigModel extends DbConfig
      * @return array|bool Returns false on an unexpected failure or the number of rows affected by the update operation
      */
     public function get($name = null)
-{
-    $sql = 'SELECT * FROM `config`';
-    $placeholders = [];
-    if ($name !== null) {
-        if (empty($placeholders)) {
-            $sql .= ' WHERE';
+    {
+        $sql = 'SELECT * FROM `config`';
+        $placeholders = [];
+        if ($name !== null) {
+            if (empty($placeholders)) {
+                $sql .= ' WHERE';
+            }
+            $sql .= ' name= :name';
+            $placeholders[':name'] = $name;
         }
-        $sql .= ' name= :name';
-        $placeholders[':name'] = $name;
-    }
 
-    return $this->select($sql, $placeholders);
-}
+        return $this->select($sql, $placeholders);
+    }
 
     /**
      * @param $name
@@ -70,10 +72,11 @@ class ConfigModel extends DbConfig
      *
      * @return array|bool  Returns false on an unexpected failure or the number of rows affected by the update operation
      */
-    public function edit($name, $data){
+    public function edit($name, $data)
+    {
 
         $sql = 'UPDATE `config` SET `data`= :data WHERE `name`= :name';
-        $placeholders = [":name"=>$name, ":data"=>$data];
+        $placeholders = [":name" => $name, ":data" => $data];
 
         return $this->update($sql, $placeholders);
 

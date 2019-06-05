@@ -23,16 +23,16 @@
 function WPOSCustomers() {
     var customers = {};
     var curcustid = 0;
-    this.openAddCustomerDialog = function(){
+    this.openAddCustomerDialog = function () {
         if (!uiinit) initUI();
         $('#addcustdialog').dialog('open');
     };
-    this.openCustomerDialog = function(id) {
+    this.openCustomerDialog = function (id) {
         if (!uiinit) initUI();
-        if (customers.hasOwnProperty(id)==false){
+        if (customers.hasOwnProperty(id) == false) {
             // try to load the customer record
             WPOS.util.showLoader();
-            if (loadCustomer(id)==false){
+            if (loadCustomer(id) == false) {
                 WPOS.util.hideLoader();
                 return;
             }
@@ -49,12 +49,13 @@ function WPOSCustomers() {
         $("#custstate").val(cust.state);
         $("#custcountry").val(cust.country);
         $("#custnotes").val(cust.notes);
-        $("#custdisbtn").text((cust.disabled==1?"Enable":"Disable")+" Customer Access");
+        $("#custdisbtn").text((cust.disabled == 1 ? "Enable" : "Disable") + " Customer Access");
         curcustid = id;
         populateContactsTable();
         $("#editcustdialog").dialog("open");
         WPOS.util.hideLoader();
     };
+
     function populateContactsTable() {
         var curcontact = customers[curcustid].contacts;
         var conttable = $("#contactstable");
@@ -68,38 +69,40 @@ function WPOSCustomers() {
             conttable.html('<tr><td colspan="3" style="text-align: center;">No customer contacts</td></tr>');
         }
     }
+
     // TODO: enable API to load single customer
-    function loadCustomer(id){
+    function loadCustomer(id) {
         var customer = WPOS.sendJsonData("customers/get", JSON.stringify({id: id}));
-        if (!customer.hasOwnProperty(id)){
+        if (!customer.hasOwnProperty(id)) {
             swal({
                 type: 'error',
                 title: 'Oops...',
                 text: 'Could not load the selected customer.'
-              });
-              
+            });
+
             return false;
         }
         customers[id] = customer[id];
         return true;
     }
-    this.setCustomers = function(custdata){
+
+    this.setCustomers = function (custdata) {
         customers = custdata;
     };
-    this.loadCustomers = function(){
+    this.loadCustomers = function () {
         customers = WPOS.getJsonData("customers/get");
     };
-    this.getCustomers = function(){
+    this.getCustomers = function () {
         return customers;
     };
-    this.getCustomer = function(id){
-        if (!customers.hasOwnProperty(id)){
-            if (loadCustomer(id)===false)
+    this.getCustomer = function (id) {
+        if (!customers.hasOwnProperty(id)) {
+            if (loadCustomer(id) === false)
                 return false;
         }
         return customers[id];
     };
-    this.saveCustomer = function(isnewcustomer) {
+    this.saveCustomer = function (isnewcustomer) {
         // show loader
         WPOS.util.showLoader();
         var customer = {};
@@ -145,36 +148,36 @@ function WPOSCustomers() {
         WPOS.util.hideLoader();
     };
 
-    this.setOnlineAccess = function(){
+    this.setOnlineAccess = function () {
         var customer = customers[curcustid];
-        var disable = customer.disabled==1?0:1;
-        var answer = confirm('Are you sure you want to '+(disable==1?'disable':'enable')+' this customer from accessing their online account?');
-        if (answer){
-            var result = WPOS.sendJsonData("customers/setaccess", JSON.stringify({id:curcustid, disabled: disable}));
-            if (result!==false){
+        var disable = customer.disabled == 1 ? 0 : 1;
+        var answer = confirm('Are you sure you want to ' + (disable == 1 ? 'disable' : 'enable') + ' this customer from accessing their online account?');
+        if (answer) {
+            var result = WPOS.sendJsonData("customers/setaccess", JSON.stringify({id: curcustid, disabled: disable}));
+            if (result !== false) {
                 customers[curcustid].disabled = disable;
-                $("#custdisbtn").text((disable==1?"Enable":"Disable")+" Customer Access");
+                $("#custdisbtn").text((disable == 1 ? "Enable" : "Disable") + " Customer Access");
             }
         }
     };
 
-    this.setOnlinePassword = function(){
+    this.setOnlinePassword = function () {
         var customer = customers[curcustid];
         var newpass = $("#newcustpass").val();
-        if (newpass==""){
+        if (newpass == "") {
             swal({
                 type: 'error',
                 title: 'Oops...',
                 text: 'Please enter a new password.'
-              });
-              
+            });
+
             return;
         }
         var answer = confirm('Are you sure you want to set this users password and activate their account?');
-        if (answer){
+        if (answer) {
             var hash = WPOS.util.SHA256(newpass);
-            var result = WPOS.sendJsonData("customers/setpassword", JSON.stringify({id:curcustid, hash: hash}));
-            if (result!==false){
+            var result = WPOS.sendJsonData("customers/setpassword", JSON.stringify({id: curcustid, hash: hash}));
+            if (result !== false) {
                 customers['disabled'] = 0;
                 $("#custdisbtn").text("Disable Customer Access");
                 $("#newcustpass").val('');
@@ -182,14 +185,14 @@ function WPOSCustomers() {
         }
     };
 
-    this.sendResetEmail = function(){
+    this.sendResetEmail = function () {
         var answer = confirm('Are you sure you want to send a password reset to this user?');
-        if (answer){
-            var result = WPOS.sendJsonData("customers/sendreset", JSON.stringify({id:curcustid}));
+        if (answer) {
+            var result = WPOS.sendJsonData("customers/sendreset", JSON.stringify({id: curcustid}));
         }
     };
 
-    this.deleteCustomer= function(id) {
+    this.deleteCustomer = function (id) {
         var answer = confirm("Are you sure you want to delete this customer? We recommend backing up data before making deletions.");
         if (answer) {
             // show loader
@@ -203,12 +206,12 @@ function WPOSCustomers() {
         }
     };
 
-    function reloadCustomerTables(){
+    function reloadCustomerTables() {
         // Reload customer table if displayed
-        if (typeof(reloadCustomerTable)=="function") reloadCustomerTable();
+        if (typeof (reloadCustomerTable) == "function") reloadCustomerTable();
     }
 
-    this.openEditContactDialog = function(contactid) {
+    this.openEditContactDialog = function (contactid) {
         var contdialog = $("#custcontactdialog");
         if (contactid == null) {
             contdialog.dialog('option', "title", "Add Contact");
@@ -232,7 +235,7 @@ function WPOSCustomers() {
         contdialog.dialog("open");
     };
 
-    this.saveContactItem = function() {
+    this.saveContactItem = function () {
         var contact = {};
         contact.customerid = curcustid;
         contact.name = $("#contname").val();
@@ -256,7 +259,7 @@ function WPOSCustomers() {
         }
     };
 
-    this.removeContactItem = function(id) {
+    this.removeContactItem = function (id) {
         var answer = confirm("Are you sure you want to delete this contact? We recommend backing up data before making deletions.");
         if (answer) {
             // show loader
@@ -271,10 +274,11 @@ function WPOSCustomers() {
     };
 
     var uiinit = false;
-    function initUI(){
+
+    function initUI() {
         uiinit = true;
 
-        $( "#addcustdialog" ).removeClass('hide').dialog({
+        $("#addcustdialog").removeClass('hide').dialog({
             resizable: false,
             width: 'auto',
             modal: true,
@@ -284,26 +288,26 @@ function WPOSCustomers() {
             buttons: [
                 {
                     html: "<i class='icon-save bigger-110'></i>&nbsp; Save",
-                    "class" : "btn btn-success btn-xs",
-                    click: function() {
+                    "class": "btn btn-success btn-xs",
+                    click: function () {
                         WPOS.customers.saveCustomer(true);
                     }
                 }
                 ,
                 {
                     html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
-                    "class" : "btn btn-xs",
-                    click: function() {
-                        $( this ).dialog( "close" );
+                    "class": "btn btn-xs",
+                    click: function () {
+                        $(this).dialog("close");
                     }
                 }
             ],
-            create: function( event, ui ) {
+            create: function (event, ui) {
                 // Set maxWidth
                 $(this).css("maxWidth", "400px");
             }
         });
-        $( "#editcustdialog" ).removeClass('hide').dialog({
+        $("#editcustdialog").removeClass('hide').dialog({
             resizable: false,
             width: 'auto',
             modal: true,
@@ -313,26 +317,26 @@ function WPOSCustomers() {
             buttons: [
                 {
                     html: "<i class='icon-save bigger-110'></i>&nbsp; Update",
-                    "class" : "btn btn-success btn-xs",
-                    click: function() {
+                    "class": "btn btn-success btn-xs",
+                    click: function () {
                         WPOS.customers.saveCustomer(false);
                     }
                 }
                 ,
                 {
                     html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
-                    "class" : "btn btn-xs",
-                    click: function() {
-                        $( this ).dialog( "close" );
+                    "class": "btn btn-xs",
+                    click: function () {
+                        $(this).dialog("close");
                     }
                 }
             ],
-            create: function( event, ui ) {
+            create: function (event, ui) {
                 // Set maxWidth
                 $(this).css("maxWidth", "400px");
             }
         });
-        $( "#custcontactdialog" ).removeClass('hide').dialog({
+        $("#custcontactdialog").removeClass('hide').dialog({
             resizable: false,
             width: 'auto',
             modal: true,
@@ -342,21 +346,21 @@ function WPOSCustomers() {
             buttons: [
                 {
                     html: "<i class='icon-save bigger-110'></i>&nbsp; Save",
-                    "class" : "btn btn-success btn-xs",
-                    click: function() {
+                    "class": "btn btn-success btn-xs",
+                    click: function () {
                         WPOS.customers.saveContactItem();
                     }
                 }
                 ,
                 {
                     html: "<i class='icon-remove bigger-110'></i>&nbsp; Cancel",
-                    "class" : "btn btn-xs",
-                    click: function() {
-                        $( this ).dialog( "close" );
+                    "class": "btn btn-xs",
+                    click: function () {
+                        $(this).dialog("close");
                     }
                 }
             ],
-            create: function( event, ui ) {
+            create: function (event, ui) {
                 // Set maxWidth
                 $(this).css("maxWidth", "400px");
             }

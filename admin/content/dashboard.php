@@ -47,7 +47,8 @@
                             </div>
 
                             <div id="refundtotal" class="stat stat-important">-</div>
-                        </div><br/>
+                        </div>
+                        <br/>
 
                         <div class="infobox infobox-red infobox-voids">
                             <div class="infobox-icon">
@@ -137,8 +138,9 @@
                                 <i class="icon-angle-down icon-on-right bigger-110"></i>
                             </button>
 
-                            <ul id="grangevalues" class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
-                                <li onclick="setGraph($(this));" class="active" >
+                            <ul id="grangevalues"
+                                class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
+                                <li onclick="setGraph($(this));" class="active">
                                     <a class="blue">
                                         <i class="icon-caret-right bigger-110">&nbsp;</i>
                                         <span class="grangeval">This Week</span>
@@ -238,13 +240,15 @@
                 <div class="widget-box">
                     <div class="widget-header widget-header-flat widget-header-small">
                         <i class="icon-signal"></i>
-                        <div class="widget-toolbar no-border" style="float: none; display: inline-block; vertical-align: top;">
+                        <div class="widget-toolbar no-border"
+                             style="float: none; display: inline-block; vertical-align: top;">
                             <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
                                 <span id="pietype">Payments</span>
                                 <i class="icon-angle-down icon-on-right bigger-110"></i>
                             </button>
 
-                            <ul id="pietypevalues" class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
+                            <ul id="pietypevalues"
+                                class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
                                 <li onclick="setPieType($(this));" class="active">
                                     <a class="blue">
                                         <i class="icon-caret-right bigger-110">&nbsp;</i>
@@ -274,8 +278,9 @@
                                 <i class="icon-angle-down icon-on-right bigger-110"></i>
                             </button>
 
-                            <ul id="pierangevalues" class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
-                                <li onclick="setPie($(this));" class="active" >
+                            <ul id="pierangevalues"
+                                class="dropdown-menu pull-right dropdown-125 dropdown-lighter dropdown-caret">
+                                <li onclick="setPie($(this));" class="active">
                                     <a class="blue">
                                         <i class="icon-caret-right bigger-110">&nbsp;</i>
                                         <span class="pierangeval">This Week</span>
@@ -350,11 +355,11 @@
 
 <script type="text/javascript">
 
-    var placeholder = $('#piechart-placeholder').css({'width':'90%' , 'min-height':'150px'});
+    var placeholder = $('#piechart-placeholder').css({'width': '90%', 'min-height': '150px'});
     var piedata = [];
 
-    function loadTodayStats(totals){
-        if (!totals){
+    function loadTodayStats(totals) {
+        if (!totals) {
             return false;
         }
         // populate the fields
@@ -371,15 +376,26 @@
         $("#profit").text(WPOS.util.currencyFormat(totals.profit, true));
         $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
         // Set onclicks
-        $(".infobox-sales").on('click', function(){ WPOS.transactions.openTransactionList(totals.salerefs); });
-        $(".infobox-refunds").on('click', function(){ WPOS.transactions.openTransactionList(totals.refundrefs); });
-        $(".infobox-voids").on('click', function(){ WPOS.transactions.openTransactionList(totals.voidrefs); });
-        $(".infobox-takings").on('click', function(){ WPOS.transactions.openTransactionList(totals.refs); });
-        $(".infobox-expenses").on('click', function(){ WPOS.transactions.openExpensesList(totals.expensesrefs); });
+        $(".infobox-sales").on('click', function () {
+            WPOS.transactions.openTransactionList(totals.salerefs);
+        });
+        $(".infobox-refunds").on('click', function () {
+            WPOS.transactions.openTransactionList(totals.refundrefs);
+        });
+        $(".infobox-voids").on('click', function () {
+            WPOS.transactions.openTransactionList(totals.voidrefs);
+        });
+        $(".infobox-takings").on('click', function () {
+            WPOS.transactions.openTransactionList(totals.refs);
+        });
+        $(".infobox-expenses").on('click', function () {
+            WPOS.transactions.openExpensesList(totals.expensesrefs);
+        });
         return true;
     }
-    function loadPopularItems(items){
-        if (!items){
+
+    function loadPopularItems(items) {
+        if (!items) {
             return false;
         }
         var names = [];
@@ -397,9 +413,12 @@
         for (var i in items) {
             filteredItems.push(items[i].name);// get all names
         }
-        var uniqueItems = [...new Set(filteredItems)]; //get only unque names
+        var uniqueItems = [...new
+        Set(filteredItems)
+    ]
+        ; //get only unque names
         var list = [];
-        for(var i in names) {
+        for (var i in names) {
             if (uniqueItems.indexOf(names[i].name) !== -1) {
                 list[uniqueItems.indexOf(names[i].name)] = names[i];
             }
@@ -407,15 +426,19 @@
         var sort = [];
         var order = [];
         // put indexes into array and sort
-        for (var i in list){
+        for (var i in list) {
             order.push([list[i]['soldqty'], list[i]]);
             sort.push([i, list[i].soldtotal]);
         }
-        order.sort(function(a, b){ return b[0] - a[0] });
-        sort.sort(function(a, b){ return b[1] - a[1];});
+        order.sort(function (a, b) {
+            return b[0] - a[0]
+        });
+        sort.sort(function (a, b) {
+            return b[1] - a[1];
+        });
 
-        for (i=0; (i<6 && i<sort.length); i++){
-            $('#popularitems').append('<tr><td><b>'+order[sort[i][0]][1].name+'</b></td><td><b class="blue">'+order[sort[i][0]][1].netqty+'</b></td><td><b class="green">'+WPOS.util.currencyFormat(order[sort[i][0]][1].soldtotal)+'</b></td></tr>');
+        for (i = 0; (i < 6 && i < sort.length); i++) {
+            $('#popularitems').append('<tr><td><b>' + order[sort[i][0]][1].name + '</b></td><td><b class="blue">' + order[sort[i][0]][1].netqty + '</b></td><td><b class="green">' + WPOS.util.currencyFormat(order[sort[i][0]][1].soldtotal) + '</b></td></tr>');
         }
 
         // for (i=0; (i<6 && i<sort.length); i++){
@@ -424,11 +447,15 @@
         return true;
     }
 
-    function getTodayTimeVals(){
+    function getTodayTimeVals() {
         var stime = new Date();
-        stime.setHours(0); stime.setMinutes(0); stime.setSeconds(0);
+        stime.setHours(0);
+        stime.setMinutes(0);
+        stime.setSeconds(0);
         var etime = new Date();
-        etime.setHours(23); etime.setMinutes(59); etime.setSeconds(59);
+        etime.setHours(23);
+        etime.setMinutes(59);
+        etime.setSeconds(59);
         return [stime.getTime(), etime.getTime()];
     }
 
@@ -465,46 +492,58 @@
         return [stime, etime];
     }
 
-    function getPieValues(){
+    function getPieValues() {
         // get range
         var vals = getTimeVals($("#pierange").text());
-        var stime = vals[0]; var etime = vals[1]; var type;
+        var stime = vals[0];
+        var etime = vals[1];
+        var type;
         // get type
-        switch ($("#pietype").text()){
-            case "Locations": type = "stats/locations"; break;
-            case "Devices": type = "stats/devices"; break;
-            case "Payments": type = "stats/takings"; break;
+        switch ($("#pietype").text()) {
+            case "Locations":
+                type = "stats/locations";
+                break;
+            case "Devices":
+                type = "stats/devices";
+                break;
+            case "Payments":
+                type = "stats/takings";
+                break;
         }
         return [type, stime, etime];
     }
 
-    function reloadPieChart(){
+    function reloadPieChart() {
         // show loader
         WPOS.util.showLoader();
         var vals = getPieValues();
         // fetch the data
-        var data = WPOS.sendJsonData(vals[0], JSON.stringify({"stime":vals[1], "etime":vals[2], "totals":true}));
+        var data = WPOS.sendJsonData(vals[0], JSON.stringify({"stime": vals[1], "etime": vals[2], "totals": true}));
         generatePieChart(data);
         // hide loader
         WPOS.util.hideLoader();
     }
 
-    function generatePieChart(data){
-        if (!data){
+    function generatePieChart(data) {
+        if (!data) {
             return false;
         }
         piedata = [];
         // generate pie chart data
-        for (var i in data){
-            if (i != "Totals"){
-                piedata.push({ label:(data[i].hasOwnProperty('name')?data[i].name:i), refs:data[i].refs,  data:data[i].balance});
+        for (var i in data) {
+            if (i != "Totals") {
+                piedata.push({
+                    label: (data[i].hasOwnProperty('name') ? data[i].name : i),
+                    refs: data[i].refs,
+                    data: data[i].balance
+                });
             }
         }
         $.plot(placeholder, piedata, {
             series: {
                 pie: {
                     show: true,
-                    tilt:0.8,
+                    tilt: 0.8,
                     highlight: {
                         opacity: 0.25
                     },
@@ -519,7 +558,7 @@
                 show: true,
                 position: "ne",
                 labelBoxBorderColor: null,
-                margin:[-30,15]
+                margin: [-30, 15]
             }
             ,
             grid: {
@@ -539,7 +578,7 @@
         return true;
     }
 
-    function setPie(element){
+    function setPie(element) {
         $("#pierange").text($(element).children().children('.pierangeval').text());
         $("#pierangevalues li").removeClass("active");
         $("#pierangevalues li i").addClass("invisible");
@@ -552,7 +591,7 @@
         reloadPieChart();
     }
 
-    function setPieType(element){
+    function setPieType(element) {
         $("#pietype").text($(element).children().children('.pietypeval').text());
         $("#pietypevalues li").removeClass("active");
         $("#pietypevalues li i").addClass("invisible");
@@ -565,46 +604,53 @@
         reloadPieChart();
     }
 
-    function reloadGraph(){
+    function reloadGraph() {
         // show loader
         WPOS.util.showLoader();
         var vals = getTimeVals($("#grange").text());
         // fetch the data
-        var jdata = WPOS.sendJsonData("graph/general", JSON.stringify({"stime":vals[0], "etime":vals[1], "interval":86400000}));
+        var jdata = WPOS.sendJsonData("graph/general", JSON.stringify({
+            "stime": vals[0],
+            "etime": vals[1],
+            "interval": 86400000
+        }));
         drawGraph(jdata);
         // hide loader
         WPOS.util.hideLoader();
     }
 
     // Graph functions
-    function drawGraph(jdata){
-        if (!jdata){
+    function drawGraph(jdata) {
+        if (!jdata) {
             return false;
         }
         // generate plot data
         var tempdate;
         var vals = getTimeVals($("#grange").text());
         var t = vals[0];
-        var sales = [], refunds = [], takings = [],  cost = [],  profit = [], netprofit = [], salerefs = [], refundrefs = [], takingrefs = [], expenses = [], expensesrefs = [];
+        var sales = [], refunds = [], takings = [], cost = [], profit = [], netprofit = [], salerefs = [],
+            refundrefs = [], takingrefs = [], expenses = [], expensesrefs = [];
         // create the data object
         var sorted = [];
-        for(var pointa in jdata){
+        for (var pointa in jdata) {
             sorted.push(pointa);
         }
-        sorted.sort(function(a, b){return a - b});
-        for (var s=0;s<sorted.length;s++) {
+        sorted.sort(function (a, b) {
+            return a - b
+        });
+        for (var s = 0; s < sorted.length; s++) {
             i = sorted[s];
             salerefs.push(jdata[i].salerefs);
-            sales.push([ t, jdata[i].saletotal]);
+            sales.push([t, jdata[i].saletotal]);
             refundrefs.push(jdata[i].refundrefs);
-            refunds.push([ t, jdata[i].refundtotal]);
+            refunds.push([t, jdata[i].refundtotal]);
             takingrefs.push(jdata[i].refs);
-            takings.push([ t, jdata[i].totaltakings]);
-            cost.push([ t, jdata[i].cost]);
-            profit.push([ t, jdata[i].profit]);
-            netprofit.push([ t, jdata[i].netprofit]);
-            expenses.push([ t, jdata[i].expenses]);
-            expensesrefs.push([ t, jdata[i].expensesrefs]);
+            takings.push([t, jdata[i].totaltakings]);
+            cost.push([t, jdata[i].cost]);
+            profit.push([t, jdata[i].profit]);
+            netprofit.push([t, jdata[i].netprofit]);
+            expenses.push([t, jdata[i].expenses]);
+            expensesrefs.push([t, jdata[i].expensesrefs]);
             t = t + 86400000;
         }
         // for (var i in mdata) {
@@ -625,14 +671,29 @@
         //     cost.push([ tempdate, mdata[i].cost]);
         //     profit.push([ tempdate, mdata[i].profit]);
         // }
-        var data = [{ label: "Gross profit", refs: takingrefs, data: profit, color: "#29AB87" }, { label: "Net profit", refs: takingrefs, data: netprofit, color: "#29AB87" }, { label: "Expenses", refs: expensesrefs, data: expenses, color: "#29AB15" },{ label: "Cost", refs: takingrefs, data: cost, color: "#EA3C53" },{ label: "Sales", refs:salerefs, data: sales, color: "#9ABC32" },{ label: "Refunds", refs:refundrefs, data: refunds, color: "#EDC240" },{ label: "Revenue", refs: takingrefs, data: takings, color: "#3983C2" }];
+        var data = [{label: "Gross profit", refs: takingrefs, data: profit, color: "#29AB87"}, {
+            label: "Net profit",
+            refs: takingrefs,
+            data: netprofit,
+            color: "#29AB87"
+        }, {label: "Expenses", refs: expensesrefs, data: expenses, color: "#29AB15"}, {
+            label: "Cost",
+            refs: takingrefs,
+            data: cost,
+            color: "#EA3C53"
+        }, {label: "Sales", refs: salerefs, data: sales, color: "#9ABC32"}, {
+            label: "Refunds",
+            refs: refundrefs,
+            data: refunds,
+            color: "#EDC240"
+        }, {label: "Revenue", refs: takingrefs, data: takings, color: "#3983C2"}];
         // render the graph
         $.plot("#sales-charts", data, {
             hoverable: true,
             shadowSize: 0,
             series: {
-                lines: { show: true },
-                points: { show: true }
+                lines: {show: true},
+                points: {show: true}
             },
             xaxis: {
                 mode: "time",
@@ -644,7 +705,7 @@
                 ticks: 10
             },
             grid: {
-                backgroundColor: { colors: [ "#fff", "#fff" ] },
+                backgroundColor: {colors: ["#fff", "#fff"]},
                 borderWidth: 1,
                 borderColor: '#555',
                 hoverable: true,
@@ -655,7 +716,7 @@
         return true;
     }
 
-    function setGraph(element){
+    function setGraph(element) {
         $("#grange").text($(element).children().children('.grangeval').text());
         $("#grangevalues li").removeClass("active");
         $("#grangevalues li i").addClass("invisible");
@@ -672,50 +733,52 @@
         var isExipred = true;
         data = data.subscription;
         if (data.status === 'activated')
-            isExpired =  new Date(data.expiryDate).getTime() > new Date().getTime();
-        else{
+            isExpired = new Date(data.expiryDate).getTime() > new Date().getTime();
+        else {
             data = JSON.parse(data);
-            isExpired =  new Date(data.expiryDate) > new Date();
+            isExpired = new Date(data.expiryDate) > new Date();
         }
-        isExpired ? $("#status").html('<span style="vertical-align: middle;margin-right: 5px;" class="label label-success arrowed">Activated</span> Expires on: <small>'+ new Date(data.expiryDate).toDateString() + '</small>'): $("#status").html('<span style="vertical-align: middle;" class="label label-danger arrowed">Expired</span>');
+        isExpired ? $("#status").html('<span style="vertical-align: middle;margin-right: 5px;" class="label label-success arrowed">Activated</span> Expires on: <small>' + new Date(data.expiryDate).toDateString() + '</small>') : $("#status").html('<span style="vertical-align: middle;" class="label label-danger arrowed">Expired</span>');
     }
 
-    jQuery(function($) {
+    jQuery(function ($) {
 
         // Chart hover Tooltip
         var $tooltip = $("<div class='tooltip top in'><div class='tooltip-inner'></div></div>").hide().appendTo('body');
         var previousPoint = null;
 
         var tooltip = function (event, pos, item) {
-            if(item) {
+            if (item) {
                 if (previousPoint != item.seriesIndex) {
                     previousPoint = item.seriesIndex;
                     var tip;
-                    if (item.series['percent']!=null){
-                        tip = item.series['label'] + " : " + item.series['percent'].toFixed(2)+'% ('+ WPOS.util.currencyFormat(item.series['data'][0][1])+')';
+                    if (item.series['percent'] != null) {
+                        tip = item.series['label'] + " : " + item.series['percent'].toFixed(2) + '% (' + WPOS.util.currencyFormat(item.series['data'][0][1]) + ')';
                     } else {
-                        tip = item.series['label'] + " : "+WPOS.util.currencyFormat(item.datapoint[1]);
+                        tip = item.series['label'] + " : " + WPOS.util.currencyFormat(item.datapoint[1]);
                     }
                     $tooltip.show().children(0).text(tip);
                 }
                 var left, right;
-                if ((pos.pageX + 10 + $tooltip.width())>window.innerWidth){
-                    left = ""; right = 0;
+                if ((pos.pageX + 10 + $tooltip.width()) > window.innerWidth) {
+                    left = "";
+                    right = 0;
                 } else {
-                    right = ""; left = pos.pageX + 10;
+                    right = "";
+                    left = pos.pageX + 10;
                 }
-                $tooltip.css({top:pos.pageY + 10, left: left, right: right});
+                $tooltip.css({top: pos.pageY + 10, left: left, right: right});
             } else {
                 $tooltip.hide();
                 previousPoint = null;
             }
         };
-        var clickpie = function(event, pos, item){
-            if (item==null) return;
+        var clickpie = function (event, pos, item) {
+            if (item == null) return;
             WPOS.transactions.openTransactionList(item.series['refs']);
         };
-        var clickgraph = function(event, pos, item){
-            if (item==null) return;
+        var clickgraph = function (event, pos, item) {
+            if (item == null) return;
             WPOS.transactions.openTransactionList(item.series['refs'][item.dataIndex]);
         };
         // graph tooltips
@@ -724,14 +787,19 @@
         var salechart = $('#sales-charts');
         salechart.on('plothover', tooltip);
         salechart.on('plotclick', clickgraph);
-        salechart.css({'width':'100%' , 'height':'220px'});
+        salechart.css({'width': '100%', 'height': '220px'});
 
         var tmonth = getTimeVals("This Month");
         var ttoday = getTodayTimeVals();
         var pvals = getPieValues();
         var gvals = getTimeVals($("#grange").text());
-        var req = {"stats/itemselling":{"stime":tmonth[0], "etime":tmonth[1]}, "stats/general":{"stime":ttoday[0], "etime":ttoday[1]}, "graph/general":{"stime":gvals[0], "etime":gvals[1], "interval":86400000}, "pos/subscription":{}};
-        req[pvals[0]] = {"stime":pvals[1], "etime":pvals[2], "totals":true};
+        var req = {
+            "stats/itemselling": {"stime": tmonth[0], "etime": tmonth[1]},
+            "stats/general": {"stime": ttoday[0], "etime": ttoday[1]},
+            "graph/general": {"stime": gvals[0], "etime": gvals[1], "interval": 86400000},
+            "pos/subscription": {}
+        };
+        req[pvals[0]] = {"stime": pvals[1], "etime": pvals[2], "totals": true};
         var data = WPOS.sendJsonData("multi", JSON.stringify(req));
         // Load todays stats
         loadTodayStats(data['stats/general']);

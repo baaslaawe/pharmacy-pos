@@ -19,7 +19,6 @@
  *
  * @package    wpos
  * @copyright  Copyright (c) 2014 WallaceIT. (https://wallaceit.com.au)
-
  * @link       https://wallacepos.com
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 11/23/13 10:36 PM
@@ -47,8 +46,8 @@ class TaxRulesModel extends DbConfig
      */
     public function create($data)
     {
-        $sql          = "INSERT INTO tax_rules (data) VALUES (:data);";
-        $placeholders = [":data"=>json_encode($data)];
+        $sql = "INSERT INTO tax_rules (data) VALUES (:data);";
+        $placeholders = [":data" => json_encode($data)];
 
         return $this->insert($sql, $placeholders);
     }
@@ -59,13 +58,13 @@ class TaxRulesModel extends DbConfig
      */
     public function get($taxId = null)
     {
-        $sql          = 'SELECT * FROM tax_rules';
+        $sql = 'SELECT * FROM tax_rules';
         $placeholders = [];
         if ($taxId !== null) {
             if (empty($placeholders)) {
                 $sql .= ' WHERE';
             }
-            $sql .= ' id = '.$taxId;
+            $sql .= ' id = ' . $taxId;
             $placeholders[] = $taxId;
         }
 
@@ -80,8 +79,8 @@ class TaxRulesModel extends DbConfig
     public function edit($id, $data)
     {
 
-        $sql          = "UPDATE tax_rules SET data= :data WHERE id= :id;";
-        $placeholders = [":id"=>$id, ":data"=>json_encode($data)];
+        $sql = "UPDATE tax_rules SET data= :data WHERE id= :id;";
+        $placeholders = [":id" => $id, ":data" => json_encode($data)];
 
         return $this->update($sql, $placeholders);
     }
@@ -95,8 +94,8 @@ class TaxRulesModel extends DbConfig
         if ($id === null) {
             return false;
         }
-        $sql          = "DELETE FROM tax_rules WHERE id= :id;";
-        $placeholders = [":id"=>$id];
+        $sql = "DELETE FROM tax_rules WHERE id= :id;";
+        $placeholders = [":id" => $id];
 
         return $this->delete($sql, $placeholders);
     }

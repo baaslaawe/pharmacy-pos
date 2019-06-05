@@ -1,4 +1,5 @@
 <?php
+
 /**
  * WposAdminStock is part of Wallace Point of Sale system (WPOS) API
  *
@@ -21,7 +22,8 @@
  * @author     Michael B Wallace <micwallace@gmx.com>
  * @since      File available since 12/04/14 3:44 PM
  */
-class WposAdminStock {
+class WposAdminStock
+{
     /**
      * @var stdClass provided params
      */
@@ -35,17 +37,18 @@ class WposAdminStock {
      */
     private $stockMdl;
     /**
-         * @var StockItemsModel
-         */
-        private $stockItemsMdl;
+     * @var StockItemsModel
+     */
+    private $stockItemsMdl;
 
     /**
      * Decode provided input
      * @param $data
      */
-    function __construct($data=null){
+    function __construct($data = null)
+    {
         // parse the data and put it into an object
-        if ($data!==null){
+        if ($data !== null) {
             $this->data = $data;
         } else {
             $this->data = new stdClass();
@@ -75,7 +78,7 @@ class WposAdminStock {
      */
     public function importItemsStart($result)
     {
-        if (!isset($_SESSION['import_data']) || !is_array($_SESSION['import_data'])){
+        if (!isset($_SESSION['import_data']) || !is_array($_SESSION['import_data'])) {
             $result['error'] = "Import data was not received.";
             EventStream::sendStreamData($result);
             return $result;
@@ -95,26 +98,25 @@ class WposAdminStock {
         $categories = $catMdl->get();
         $suppliers = $supMdl->get();
         $taxRules = $taxMdl->get();
-        foreach ($taxRules as $key=>$rule){
+        foreach ($taxRules as $key => $rule) {
             $data = json_decode($rule['data'], true);
             $data['id'] = $rule['id'];
             $taxRules[$rule['id']] = $data;
         }
 
-        if ($categories===false || $suppliers===false || $taxRules===false){
-            $result['error'] = "Could not load categories, suppliers or tax rules: ".$catMdl->errorInfo." ".$supMdl->errorInfo." ".$taxMdl->errorInfo;
+        if ($categories === false || $suppliers === false || $taxRules === false) {
+            $result['error'] = "Could not load categories, suppliers or tax rules: " . $catMdl->errorInfo . " " . $supMdl->errorInfo . " " . $taxMdl->errorInfo;
             EventStream::sendStreamData($result);
             return $result;
         }
 
-        EventStream::sendStreamData(['status'=>"Validating Stock..."]);
+        EventStream::sendStreamData(['status' => "Validating Stock..."]);
         $validator = new JsonValidate(null, '{"code":"", "qty":1, "name":"", "price":-1, "wprice":-1, "tax_name":"", "category_name":"", "supplier_name":""}');
         $count = 1;
-        foreach ($items as $key=>$item){
-            EventStream::sendStreamData(['status'=>"Validating Stock...", 'progress'=>$count]);
+        foreach ($items as $key => $item) {
+            EventStream::sendStreamData(['status' => "Validating Stock...", 'progress' => $count]);
 
             $validator->validate($item);
-
 
 
             // remove currency symbol from price & cost
@@ -123,13 +125,13 @@ class WposAdminStock {
             $item->cost = preg_replace("/([^0-9\\.])/i", "", $item->cost);
 
             // Match tax id with name
-            if (!$item->tax_name){
+            if (!$item->tax_name) {
                 $id = 1;
             } else {
                 $id = $this->getIdForName($taxRules, $item->tax_name);
             }
-            if ($id===false){
-                $result['error'] = "Could not find tax rule id for name ".$item->tax_name." on line ".$count." of the CSV";
+            if ($id === false) {
+                $result['error'] = "Could not find tax rule id for name " . $item->tax_name . " on line " . $count . " of the CSV";
                 EventStream::sendStreamData($result);
                 return $result;
             }
@@ -137,18 +139,18 @@ class WposAdminStock {
             unset($item->tax_name);
 
             // Match category
-            if (!$item->category_name || $item->category_name=="None" || $item->category_name=="Misc"){
+            if (!$item->category_name || $item->category_name == "None" || $item->category_name == "Misc") {
                 $id = 0;
             } else {
                 $id = $this->getIdForName($categories, $item->category_name);
             }
-            if ($id===false){
-                if ((isset($options->add_categories) && $options->add_categories===true)){
-                    EventStream::sendStreamData(['status'=>"Adding category..."]);
+            if ($id === false) {
+                if ((isset($options->add_categories) && $options->add_categories === true)) {
+                    EventStream::sendStreamData(['status' => "Adding category..."]);
                     $id = $catMdl->create($item->category_name);
-                    $categories[] = ['id'=>$id, 'name'=>$item->category_name];
-                    if (!is_numeric($id)){
-                        $result['error'] = "Could not add new category " . $item->category_name . " on line ".$count." of the CSV: ".$catMdl->errorInfo.json_encode($categories);
+                    $categories[] = ['id' => $id, 'name' => $item->category_name];
+                    if (!is_numeric($id)) {
+                        $result['error'] = "Could not add new category " . $item->category_name . " on line " . $count . " of the CSV: " . $catMdl->errorInfo . json_encode($categories);
                         EventStream::sendStreamData($result);
                         return $result;
                     }
@@ -159,14 +161,14 @@ class WposAdminStock {
 
             // Match Item Name
             $id = $this->getIdForName($storedItems, $item->name);
-            if ($id === false || $id === null){
+            if ($id === false || $id === null) {
                 // Add item as an Inventory Item
-                if ((isset($options->add_items) && $options->add_items===true)){
-                    EventStream::sendStreamData(['status'=>"Adding Item..."]);
+                if ((isset($options->add_items) && $options->add_items === true)) {
+                    EventStream::sendStreamData(['status' => "Adding Item..."]);
                     $item->isDaa = '0';
                     $id = $storedItemsMdl->create($item);
-                    if (!is_numeric($id)){
-                        $result['error'] = "Could not add new item " . $item->name . " on line ".$count." of the CSV: ".$storedItemsMdl->errorInfo;
+                    if (!is_numeric($id)) {
+                        $result['error'] = "Could not add new item " . $item->name . " on line " . $count . " of the CSV: " . $storedItemsMdl->errorInfo;
                         EventStream::sendStreamData($result);
                         return $result;
                     }
@@ -176,36 +178,36 @@ class WposAdminStock {
             if ($storedItem !== false || $storedItem === null) {
                 $storedItem[0]['reorderPoint'] = $item->reorderPoint;
                 $sitem = $storedItem[0];
-                EventStream::sendStreamData(['status'=>$sitem['name']]);
+                EventStream::sendStreamData(['status' => $sitem['name']]);
                 $rpoint = $storedItemsMdl->edit($id, $sitem);
-                if (!is_numeric($rpoint)){
-                    $result['error'] = "Could not set reorder point " . $item->reorderPoint . " on line ".$count." of the CSV: ".$storedItemsMdl->errorInfo;
+                if (!is_numeric($rpoint)) {
+                    $result['error'] = "Could not set reorder point " . $item->reorderPoint . " on line " . $count . " of the CSV: " . $storedItemsMdl->errorInfo;
                     EventStream::sendStreamData($result);
                     return $result;
                 }
             }
 
             $item->storeditemid = $id;
-            $storedItems[] = ['id'=>$id, 'name'=>$item->name];
+            $storedItems[] = ['id' => $id, 'name' => $item->name];
             unset($item->name);
 
 
             // Match supplier
-            if (!$item->supplier_name || $item->supplier_name=="None" || $item->supplier_name=="Misc"){
+            if (!$item->supplier_name || $item->supplier_name == "None" || $item->supplier_name == "Misc") {
                 $id = 0;
             } else {
                 $id = $this->getIdForName($suppliers, $item->supplier_name);
             }
-            if ($id===false){
-                if ((isset($options->add_suppliers) && $options->add_suppliers===true)){
-                    EventStream::sendStreamData(['status'=>"Adding supplier..."]);
+            if ($id === false) {
+                if ((isset($options->add_suppliers) && $options->add_suppliers === true)) {
+                    EventStream::sendStreamData(['status' => "Adding supplier..."]);
                     $id = $supMdl->create($item->supplier_name);
-                    if (!is_numeric($id)){
-                        $result['error'] = "Could not add new supplier " . $item->supplier_name . " on line ".$count." of the CSV: ".$catMdl->errorInfo;
+                    if (!is_numeric($id)) {
+                        $result['error'] = "Could not add new supplier " . $item->supplier_name . " on line " . $count . " of the CSV: " . $catMdl->errorInfo;
                         EventStream::sendStreamData($result);
                         return $result;
                     }
-                    $suppliers[] = ['id'=>$id, 'name'=>$item->supplier_name];
+                    $suppliers[] = ['id' => $id, 'name' => $item->supplier_name];
                 }
             }
             $item->supplierid = $id;
@@ -216,11 +218,11 @@ class WposAdminStock {
             $count++;
         }
 
-        EventStream::sendStreamData(['status'=>"Importing Stock..."]);
+        EventStream::sendStreamData(['status' => "Importing Stock..."]);
         $result['data'] = [];
         $count = 1;
-        foreach ($items as $item){
-            EventStream::sendStreamData(['progress'=>$count]);
+        foreach ($items as $item) {
+            EventStream::sendStreamData(['progress' => $count]);
 
             $stockObj = new WposStockItem($item);
 
@@ -234,23 +236,23 @@ class WposAdminStock {
             } else {
                 $stockinventoryid = $dupitems[0]['id']; // Return id of the stockinventory
             }
-            if ($stockinventoryid===false){
-                $result['error'] = "Failed to add  a new supplier for  item in line " .$count." of the CSV: ".$stockMdl->errorInfo;
+            if ($stockinventoryid === false) {
+                $result['error'] = "Failed to add  a new supplier for  item in line " . $count . " of the CSV: " . $stockMdl->errorInfo;
                 EventStream::sendStreamData($result);
                 return $result;
             } else {
                 // create add the item in stock Items model
                 unset($stockObj->storeditemid);
                 $stockObj->stockinventoryid = $stockinventoryid;
-                $id=$stockItemsMdl->create($stockObj->stockinventoryid, $stockObj->amount, $stockObj->expiryDate,  $stockObj->cost,  $stockObj->price,  $stockObj->wprice,  $stockObj->code, $stockObj->inventoryNo,  json_encode($stockObj),  $stockObj->locationid, time());
-                if ($id===false){
-                    $result['error'] = "Could not add item to stock, ".json_encode($stockObj);
+                $id = $stockItemsMdl->create($stockObj->stockinventoryid, $stockObj->amount, $stockObj->expiryDate, $stockObj->cost, $stockObj->price, $stockObj->wprice, $stockObj->code, $stockObj->inventoryNo, json_encode($stockObj), $stockObj->locationid, time());
+                if ($id === false) {
+                    $result['error'] = "Could not add item to stock, " . json_encode($stockObj);
                     EventStream::sendStreamData($result);
                     return $result;
                 }
                 // create history record for imported stock
-                if ($this->histMdl->create($id, $stockObj->locationid, 'Stock Imported', $stockObj->amount)===false){
-                    $result['error'] = "Could not create stock history record".$this->histMdl->errorInfo;
+                if ($this->histMdl->create($id, $stockObj->locationid, 'Stock Imported', $stockObj->amount) === false) {
+                    $result['error'] = "Could not create stock history record" . $this->histMdl->errorInfo;
                     return $result;
                 }
             }
@@ -270,6 +272,15 @@ class WposAdminStock {
         return $result;
     }
 
+    private function getIdForName($arr, $value)
+    {
+        foreach ($arr as $key => $item) {
+            if ($item['name'] == $value)
+                return $item['id'];
+        }
+        return false;
+    }
+
     /**
      * Import items
      * @param $result
@@ -281,6 +292,7 @@ class WposAdminStock {
         unset($_SESSION['import_options']);
         return $result;
     }
+
     /**
      * This function is used by WposPosSale and WposInvoices to decrement/increment sold/voided transaction stock; it does not create a history record
      * @param $stockinventoryid
@@ -296,8 +308,9 @@ class WposAdminStock {
      * @param bool $decrement
      * @return bool
      */
-    public function incrementStockLevel($stockinventoryid, $stocklevel, $locationid, $decrement = false, $expiryDate=null, $cost=null, $price=null, $wprice=null, $code=null, $inventoryNo=null, $data=null){
-        if ($this->stockItemsMdl->incrementStockLevel($stockinventoryid, $stocklevel, $locationid, $decrement, $expiryDate, $cost, $price, $wprice, $code, $inventoryNo, $data)!==false){
+    public function incrementStockLevel($stockinventoryid, $stocklevel, $locationid, $decrement = false, $expiryDate = null, $cost = null, $price = null, $wprice = null, $code = null, $inventoryNo = null, $data = null)
+    {
+        if ($this->stockItemsMdl->incrementStockLevel($stockinventoryid, $stocklevel, $locationid, $decrement, $expiryDate, $cost, $price, $wprice, $code, $inventoryNo, $data) !== false) {
             return true;
         }
         return $this->stockItemsMdl->errorInfo;
@@ -308,51 +321,52 @@ class WposAdminStock {
      * @param $result
      * @return mixed
      */
-    public function transferStock($result){
+    public function transferStock($result)
+    {
         // validate input
         // remove the data object
         unset($this->data->data);
         $jsonval = new JsonValidate($this->data, '{"storeditemid":1, "locationid":1, "newlocationid":1, "amount":">=1"}');
-        if (($errors = $jsonval->validate())!==true){
+        if (($errors = $jsonval->validate()) !== true) {
             $result['error'] = $errors;
             return $result;
         }
-        if ($this->data->locationid == $this->data->newlocationid){
+        if ($this->data->locationid == $this->data->newlocationid) {
             $result['error'] = "Cannot transfer stock to the same location, pick a different one.";
             return $result;
         }
         // check if theres enough stock at source location
-        if (($stock=$this->stockItemsMdl->getItem($this->data->stockinventoryid, $this->data->locationid))===false){
-            $result['error'] = "Could not fetch current stock level: ".$this->stockItemsMdl->errorInfo;
+        if (($stock = $this->stockItemsMdl->getItem($this->data->stockinventoryid, $this->data->locationid)) === false) {
+            $result['error'] = "Could not fetch current stock level: " . $this->stockItemsMdl->errorInfo;
             return $result;
         }
-        if ($stock[0]['stocklevel']<$this->data->amount){
+        if ($stock[0]['stocklevel'] < $this->data->amount) {
             $result['error'] = "Not enough stock at the source location, add some first";
             return $result;
         }
 
         // remove stock amount from current location
-        if ($id=$this->stockItemsMdl->incrementStockLevel($this->data->stockinventoryid, $this->data->amount, $this->data->locationid, true, $this->data->expiryDate, $this->data->cost, $this->data->price, $this->data->wprice, $this->data->code, $this->data->inventoryNo, json_encode($this->data))===false){
-            $result['error'] = "Could not decrement stock from current location".$this->stockItemsMdl->errorInfo;
+        if ($id = $this->stockItemsMdl->incrementStockLevel($this->data->stockinventoryid, $this->data->amount, $this->data->locationid, true, $this->data->expiryDate, $this->data->cost, $this->data->price, $this->data->wprice, $this->data->code, $this->data->inventoryNo, json_encode($this->data)) === false) {
+            $result['error'] = "Could not decrement stock from current location" . $this->stockItemsMdl->errorInfo;
             return $result;
         }
         // create history record for removed stock
         if (!is_numeric($id)) {
             $id = $this->data->id;
         }
-        if ($this->createStockHistory($id, $this->data->locationid, 'Stock Transfer', -$this->data->amount, $this->data->newlocationid, 0)===false){ // stock history created with minus
+        if ($this->createStockHistory($id, $this->data->locationid, 'Stock Transfer', -$this->data->amount, $this->data->newlocationid, 0) === false) { // stock history created with minus
             $result['error'] = "Could not create stock history record";
             return $result;
         }
 
         // add stock amount to new location
         $id = $this->stockItemsMdl->incrementStockLevel($this->data->stockinventoryid, $this->data->amount, $this->data->newlocationid, false, $this->data->expiryDate, $this->data->cost, $this->data->price, $this->data->wprice, $this->data->code, $this->data->inventoryNo, json_encode($this->data));
-        if ($id===false){
+        if ($id === false) {
             $result['error'] = "Could not add stock to the new location";
             return $result;
         }
         $item = $this->stockItemsMdl->getItem($this->data->stockinventoryid, $this->data->newlocationid);
-        if ($this->createStockHistory($item[0]['id'], $this->data->newlocationid, 'Stock Transfer', $this->data->amount, $this->data->locationid, 1)===false){
+        if ($this->createStockHistory($item[0]['id'], $this->data->newlocationid, 'Stock Transfer', $this->data->amount, $this->data->locationid, 1) === false) {
             $result['error'] = "Could not create stock history record.";
             return $result;
         }
@@ -364,14 +378,33 @@ class WposAdminStock {
     }
 
     /**
+     * Create a stock history record for a item & location
+     * @param $stockitemid
+     * @param $locationid
+     * @param $type
+     * @param $amount
+     * @param $sourceid
+     * @param int $direction
+     * @return bool
+     */
+    private function createStockHistory($stockitemid, $locationid, $type, $amount, $sourceid = -1, $direction = 0)
+    {
+        if ($this->histMdl->create($stockitemid, $locationid, $type, $amount, $sourceid, $direction) !== false) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Set the level of stock at a location (stocktake)
      * @param $result
      * @return mixed
      */
-    public function setStockLevel($result){
+    public function setStockLevel($result)
+    {
         // validate input
         $jsonval = new JsonValidate($this->data, '{"storeditemid":1, "locationid":1, "amount":">=1}');
-        if (($errors = $jsonval->validate())!==true){
+        if (($errors = $jsonval->validate()) !== true) {
             $result['error'] = $errors;
             return $result;
         }
@@ -382,12 +415,12 @@ class WposAdminStock {
         }
 
         // create history record for added stock
-        if ($this->createStockHistory($this->data->id, $this->data->locationid, 'Stock Add', $this->data->stocklevel)===false){
+        if ($this->createStockHistory($this->data->id, $this->data->locationid, 'Stock Add', $this->data->stocklevel) === false) {
             $result['error'] = "Could not create stock history record";
             return $result;
         }
-        if ($this->stockItemsMdl->setStockLevel($this->data->id, $this->data->stockinventoryid, $this->data->stocklevel, $this->data->expiryDate,   $this->data->cost,  $this->data->price,  $this->data->wprice,  $this->data->code, $this->data->inventoryNo,  json_encode($this->data),  $this->data->locationid)===false){
-            $result['error'] = "Could not add stock to the location".$this->stockItemsMdl->errorInfo;
+        if ($this->stockItemsMdl->setStockLevel($this->data->id, $this->data->stockinventoryid, $this->data->stocklevel, $this->data->expiryDate, $this->data->cost, $this->data->price, $this->data->wprice, $this->data->code, $this->data->inventoryNo, json_encode($this->data), $this->data->locationid) === false) {
+            $result['error'] = "Could not add stock to the location" . $this->stockItemsMdl->errorInfo;
         }
 
         // Success; log data
@@ -401,10 +434,11 @@ class WposAdminStock {
      * @param $result
      * @return mixed
      */
-    public function addStock($result){
+    public function addStock($result)
+    {
         // validate input
         $jsonval = new JsonValidate($this->data, '{"storeditemid":1, "locationid":1, "supplierid":1, "amount":1, "cost":1, "price":1, "wprice":1, "expiryDate":, "inventoryNo":, "batchNo":""}');
-        if (($errors = $jsonval->validate())!==true){
+        if (($errors = $jsonval->validate()) !== true) {
             $result['error'] = $errors;
             return $result;
         }
@@ -419,15 +453,15 @@ class WposAdminStock {
         unset($this->data->storeditemid);
         $this->data->stockinventoryid = $stockinventoryid;
         if ($stockinventoryid > 0) {
-            $id = $this->stockItemsMdl->create($this->data->stockinventoryid, $this->data->amount, $this->data->expiryDate, $this->data->cost,  $this->data->price,  $this->data->wprice,  $this->data->code, $this->data->inventoryNo,  json_encode($this->data),  $this->data->locationid, time());
-            if ($id===false){
-                $result['error'] = "Could add item to stock, error ".$this->stockItemsMdl->errorInfo;
+            $id = $this->stockItemsMdl->create($this->data->stockinventoryid, $this->data->amount, $this->data->expiryDate, $this->data->cost, $this->data->price, $this->data->wprice, $this->data->code, $this->data->inventoryNo, json_encode($this->data), $this->data->locationid, time());
+            if ($id === false) {
+                $result['error'] = "Could add item to stock, error " . $this->stockItemsMdl->errorInfo;
                 return $result;
             }
         }
 
-        if ($this->createStockHistory($id, $this->data->locationid, 'Stock Added', $this->data->amount)===false){
-            $result['error'] = "Could not create stock history record id=".$id;
+        if ($this->createStockHistory($id, $this->data->locationid, 'Stock Added', $this->data->amount) === false) {
+            $result['error'] = "Could not create stock history record id=" . $id;
             return $result;
         }
         // Success; log data
@@ -440,38 +474,14 @@ class WposAdminStock {
      * @param $result
      * @return mixed
      */
-    public function getStockHistory($result){
-        if (($stockHist = $this->histMdl->get($this->data->stockitemid, $this->data->locationid))===false){
-            $result['error']="Could not retrieve stock history";
+    public function getStockHistory($result)
+    {
+        if (($stockHist = $this->histMdl->get($this->data->stockitemid, $this->data->locationid)) === false) {
+            $result['error'] = "Could not retrieve stock history";
         } else {
-            $result['data']= $stockHist;
+            $result['data'] = $stockHist;
         }
         return $result;
-    }
-
-    /**
-     * Create a stock history record for a item & location
-     * @param $stockitemid
-     * @param $locationid
-     * @param $type
-     * @param $amount
-     * @param $sourceid
-     * @param int $direction
-     * @return bool
-     */
-    private function createStockHistory($stockitemid, $locationid, $type, $amount, $sourceid=-1, $direction=0){
-        if ($this->histMdl->create($stockitemid, $locationid, $type, $amount, $sourceid, $direction)!==false){
-            return true;
-        }
-        return false;
-    }
-
-    private function getIdForName($arr, $value){
-        foreach($arr as $key => $item) {
-            if ($item['name'] == $value)
-                return $item['id'];
-        }
-        return false;
     }
 
     /**
@@ -485,8 +495,8 @@ class WposAdminStock {
         if (!is_numeric($this->data)) {
             if (isset($this->data)) {
                 $ids = explode(",", $this->data);
-                foreach ($ids as $id){
-                    if (!is_numeric($id)){
+                foreach ($ids as $id) {
+                    if (!is_numeric($id)) {
                         $result['error'] = "A valid comma separated list of ids must be supplied";
                         return $result;
                     }
@@ -498,9 +508,9 @@ class WposAdminStock {
         }
         // remove the item
         $stockItemsMdl = new StockItemsModel();
-        $qresult = $stockItemsMdl->remove(isset($ids)?$ids:$this->data);
+        $qresult = $stockItemsMdl->remove(isset($ids) ? $ids : $this->data);
         if ($qresult === false) {
-            $result['error'] = "Could not delete the item: ".$stockItemsMdl->errorInfo;
+            $result['error'] = "Could not delete the item: " . $stockItemsMdl->errorInfo;
         } else {
             $result['data'] = true;
             // broadcast the item; supplying the id only indicates deletion

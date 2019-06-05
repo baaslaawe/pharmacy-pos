@@ -45,7 +45,7 @@ function WPOSUtil() {
 
         var datestr;
         if (format == "d/m/y" || format == "m/d/y") {
-            datestr = (format == "d/m/y" ? day + "/" + month : month + "/" + day   ) + "/" + year.toString().substring(2, 4) + " " + hour + ":" + min + ":" + sec;
+            datestr = (format == "d/m/y" ? day + "/" + month : month + "/" + day) + "/" + year.toString().substring(2, 4) + " " + hour + ":" + min + ":" + sec;
         } else {
             datestr = year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
         }
@@ -78,7 +78,7 @@ function WPOSUtil() {
 
         var datestr;
         if (format == "d/m/y" || format == "m/d/y") {
-            datestr = (format == "d/m/y" ? day + "/" + month : month + "/" + day   ) + "/" + year.toString().substring(2, 4);
+            datestr = (format == "d/m/y" ? day + "/" + month : month + "/" + day) + "/" + year.toString().substring(2, 4);
         } else {
             datestr = year + "-" + month + "-" + day;
         }
@@ -119,43 +119,43 @@ function WPOSUtil() {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
     // random ids
-    this.getRandomId = function(){
-        return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    this.getRandomId = function () {
+        return 'xxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     };
     // get order number
     var ordercount = null;
-    this.getSequencialOrderNumber = function(){
-        if (!ordercount){
+    this.getSequencialOrderNumber = function () {
+        if (!ordercount) {
             ordercount = localStorage.getItem("wpos_ordercount");
-            if (ordercount<0)
+            if (ordercount < 0)
                 ordercount = 0;
         }
         // increment or reset count
-        if (ordercount<99){
+        if (ordercount < 99) {
             ordercount++;
         }
         localStorage.setItem("wpos_ordercount", ordercount);
         // pad order number, include deviceid
         var orderStr = WPOS.getConfigTable().deviceid.toString();
-        if (ordercount<10)
-            orderStr+="0";
-        return (orderStr+ordercount);
+        if (ordercount < 10)
+            orderStr += "0";
+        return (orderStr + ordercount);
     };
     // check if an object is equvalent
-    this.areObjectsEquivalent = function(a, b) {
+    this.areObjectsEquivalent = function (a, b) {
         // Create arrays of property names
         var aProps, bProps;
         if (typeof a === "object") {
             aProps = Object.getOwnPropertyNames(a);
-        } else if (typeof a === "array"){
+        } else if (typeof a === "array") {
             aProps = a;
         }
         if (typeof b === "object") {
             bProps = Object.getOwnPropertyNames(b);
-        } else if (typeof b === "array"){
+        } else if (typeof b === "array") {
             bProps = b;
         }
         // If number of properties is different,
@@ -168,8 +168,8 @@ function WPOSUtil() {
             var propName = aProps[i];
             // If values of same property are not equal,
             // objects are not equivalent
-            if (typeof a[propName] === "object" && typeof b[propName]=== "object"){
-                if (!this.areObjectsEquivalent(a[propName], b[propName])){
+            if (typeof a[propName] === "object" && typeof b[propName] === "object") {
+                if (!this.areObjectsEquivalent(a[propName], b[propName])) {
                     return false;
                 }
             } else {
@@ -188,94 +188,98 @@ function WPOSUtil() {
         if (!taxrules.hasOwnProperty(taxruleid)) return true;
         return taxrules[taxruleid].inclusive;
     };*/
-    this.calcTax = function(taxruleid, itemtotal, itemcost){
-        var tax = {total:0, values:{}, inclusive:true};
+    this.calcTax = function (taxruleid, itemtotal, itemcost) {
+        var tax = {total: 0, values: {}, inclusive: true};
         if (!WPOS.getTaxTable().rules.hasOwnProperty(taxruleid))
             return tax;
         // get the tax rule; taxable total is needed to calculate inclusive tax
         var rule = WPOS.getTaxTable().rules[taxruleid];
         tax.inclusive = rule.inclusive;
         var taxitems = WPOS.getTaxTable().items;
-        var locationid = WPOS.getConfigTable().hasOwnProperty("locationid")?WPOS.getConfigTable().locationid:0;
-        var taxablemulti = rule.inclusive?getTaxableTotal(rule, locationid):0;
+        var locationid = WPOS.getConfigTable().hasOwnProperty("locationid") ? WPOS.getConfigTable().locationid : 0;
+        var taxablemulti = rule.inclusive ? getTaxableTotal(rule, locationid) : 0;
         var tempitem;
         var tempval;
         var taxableamt;
         // check in locations, if location rule present get tax totals
-        if (rule.locations.hasOwnProperty(locationid)){
-            for (i=0; i<rule.locations[locationid].length; i++){
-                if (taxitems.hasOwnProperty(rule.locations[locationid][i])){
+        if (rule.locations.hasOwnProperty(locationid)) {
+            for (i = 0; i < rule.locations[locationid].length; i++) {
+                if (taxitems.hasOwnProperty(rule.locations[locationid][i])) {
                     tempitem = taxitems[rule.locations[locationid][i]];
-                    if (!tax.values.hasOwnProperty(rule.locations[locationid][i])) tax.values[tempitem.id]= 0;
-                    taxableamt = (tempitem.type=="vat" ? itemcost : itemtotal);
+                    if (!tax.values.hasOwnProperty(rule.locations[locationid][i])) tax.values[tempitem.id] = 0;
+                    taxableamt = (tempitem.type == "vat" ? itemcost : itemtotal);
                     tempval = rule.inclusive ? getIncludedTax(tempitem.multiplier, taxablemulti, taxableamt) : getExcludedTax(tempitem.multiplier, taxableamt);
                     tax.values[tempitem.id] += tempval;
                     tax.total += tempval;
-                    if (rule.mode=="single")
+                    if (rule.mode == "single")
                         return tax; // return if in single mode
                 }
             }
         }
         // apply base tax totals, if rule is single mode, only apply if no matched locations
-        for (var i=0; i<rule.base.length; i++){
-            if (taxitems.hasOwnProperty(rule.base[i])){
+        for (var i = 0; i < rule.base.length; i++) {
+            if (taxitems.hasOwnProperty(rule.base[i])) {
                 tempitem = taxitems[rule.base[i]];
-                if (!tax.values.hasOwnProperty(rule.base[i])) tax.values[tempitem.id]= 0;
-                taxableamt = (tempitem.type=="vat" ? itemcost : itemtotal);
+                if (!tax.values.hasOwnProperty(rule.base[i])) tax.values[tempitem.id] = 0;
+                taxableamt = (tempitem.type == "vat" ? itemcost : itemtotal);
                 tempval = rule.inclusive ? getIncludedTax(tempitem.multiplier, taxablemulti, taxableamt) : getExcludedTax(tempitem.multiplier, taxableamt);
                 tax.values[tempitem.id] += tempval;
                 tax.total += tempval;
-                if (rule.mode=="single")
+                if (rule.mode == "single")
                     break; // only apply one base tax in single mode
             }
         }
 
         return tax;
     };
+
     // this is used for inclusive tax to workout the total, when multiple tax items are applied, we need this to work out each tax rate total;
-    function getTaxableTotal(rule, locationid){
+    function getTaxableTotal(rule, locationid) {
         var taxitems = WPOS.getTaxTable().items;
         var taxable = 0;
-        if (rule.locations.hasOwnProperty(locationid)){
-            for (i=0; i<rule.locations[locationid].length; i++){
+        if (rule.locations.hasOwnProperty(locationid)) {
+            for (i = 0; i < rule.locations[locationid].length; i++) {
                 if (taxitems.hasOwnProperty(rule.locations[locationid][i]))
                     taxable += parseFloat(taxitems[rule.locations[locationid][i]].multiplier);
-                if (rule.mode=="single")
+                if (rule.mode == "single")
                     return Number(taxable.toFixed(2));
             }
         }
-        for (var i=0; i<rule.base.length; i++){
+        for (var i = 0; i < rule.base.length; i++) {
             if (taxitems.hasOwnProperty(rule.base[i]))
                 taxable += parseFloat(taxitems[rule.base[i]].multiplier);
-            if (rule.mode=="single")
+            if (rule.mode == "single")
                 break;
         }
         return Number(taxable.toFixed(2));
     }
-    function getIncludedTax(multiplier, taxablemulti, value){
+
+    function getIncludedTax(multiplier, taxablemulti, value) {
         value = parseFloat(value);
-        var taxable = (value-(value/(parseFloat(taxablemulti)+1)));
-        return Number( ((taxable/taxablemulti)*multiplier).toFixed(2) );
-    }
-    function getExcludedTax(multiplier, value){
-        return Number( (parseFloat(multiplier)*parseFloat(value)).toFixed(2) );
+        var taxable = (value - (value / (parseFloat(taxablemulti) + 1)));
+        return Number(((taxable / taxablemulti) * multiplier).toFixed(2));
     }
 
-    this.roundToNearestCents = function(cents, value){
+    function getExcludedTax(multiplier, value) {
+        return Number((parseFloat(multiplier) * parseFloat(value)).toFixed(2));
+    }
+
+    this.roundToNearestCents = function (cents, value) {
         var x = 100 / parseInt(cents);
         return (Math.round(value * x) / x).toFixed(2);
     };
 
     var curformat = null;
     var printcursymbol = "";
-    function loadCurrencyValues(){
-        if (curformat==null){
+
+    function loadCurrencyValues() {
+        if (curformat == null) {
             if (!WPOS.getConfigTable().hasOwnProperty('general'))
                 return;
 
             curformat = WPOS.getConfigTable().general.currencyformat.split('~');
             //if (WPOS.getConfigTable().pos.hasOwnProperty('reccurrency') && WPOS.getConfigTable().pos.reccurrency!="")
-                //printcursymbol = String.fromCharCode(parseInt(WPOS.getConfigTable().pos.reccurrency));
+            //printcursymbol = String.fromCharCode(parseInt(WPOS.getConfigTable().pos.reccurrency));
             if (WPOS.hasOwnProperty('print')) {
                 printcursymbol = getPrintCurrencySymbol();
                 if (printcursymbol == "" && (curformat[0] == "£" || containsNonLatinCodepoints(curformat[0]))) {
@@ -284,37 +288,39 @@ function WPOSUtil() {
                 }
             }
 
-            setTimeout(function(){ curformat = null; }, 30000);
+            setTimeout(function () {
+                curformat = null;
+            }, 30000);
         }
     }
 
-    function getPrintCurrencySymbol(){
+    function getPrintCurrencySymbol() {
         // check local setting first
         var codepage, codes;
-        if (WPOS.print.getGlobalPrintSetting('currency_override') && WPOS.print.getGlobalPrintSetting('currency_codes')!=""){
+        if (WPOS.print.getGlobalPrintSetting('currency_override') && WPOS.print.getGlobalPrintSetting('currency_codes') != "") {
             codepage = WPOS.print.getGlobalPrintSetting('currency_codepage');
             codes = WPOS.print.getGlobalPrintSetting('currency_codes').split(',');
-        } else if (WPOS.getConfigTable().pos.hasOwnProperty('reccurrency') && WPOS.getConfigTable().pos.reccurrency!="") {
+        } else if (WPOS.getConfigTable().pos.hasOwnProperty('reccurrency') && WPOS.getConfigTable().pos.reccurrency != "") {
             codepage = WPOS.getConfigTable().pos.reccurrency_codepage;
             codes = WPOS.getConfigTable().pos.reccurrency.split(',');
         } else {
             return "";
         }
         var result = "";
-        for (var i=0; i<codes.length; i++){
+        for (var i = 0; i < codes.length; i++) {
             result += String.fromCharCode(parseInt(codes[i]));
         }
-        if (codepage>0)
+        if (codepage > 0)
             return WPOS.print.wrapWithCharacterSet(result, codepage);
 
         return result;
     }
 
-    this.reloadPrintCurrencySymbol = function(){
+    this.reloadPrintCurrencySymbol = function () {
         printcursymbol = getPrintCurrencySymbol();
-        if ((printcursymbol=="" && curformat!=null) && (curformat[0]=="£" || containsNonLatinCodepoints(curformat[0]))){
+        if ((printcursymbol == "" && curformat != null) && (curformat[0] == "£" || containsNonLatinCodepoints(curformat[0]))) {
             // check for unicode characters and set default alt character if so
-            printcursymbol = curformat[0]=="£"?String.fromCharCode(156):"$";
+            printcursymbol = curformat[0] == "£" ? String.fromCharCode(156) : "$";
         }
     };
 
@@ -322,25 +328,26 @@ function WPOSUtil() {
         return /[^\u0000-\u00ff]/.test(s);
     }
 
-    this.getCurrencySymbol = function(){
+    this.getCurrencySymbol = function () {
         loadCurrencyValues();
         return curformat[0];
     };
 
-    this.getCurrencyPlacedAfter = function(){
+    this.getCurrencyPlacedAfter = function () {
         loadCurrencyValues();
-        return curformat[4]!=0;
+        return curformat[4] != 0;
     };
 
-    this.currencyFormat = function(value, nosymbol, usesymboloverride){
+    this.currencyFormat = function (value, nosymbol, usesymboloverride) {
         loadCurrencyValues();
         var result = number_format(value, curformat[1], curformat[2], curformat[3]);
-        if (!nosymbol){
-            var cursymbol = ((printcursymbol!="" && usesymboloverride)?printcursymbol:curformat[0]);
-            result = curformat[4]==0 ? (cursymbol + result) : (result + cursymbol);
+        if (!nosymbol) {
+            var cursymbol = ((printcursymbol != "" && usesymboloverride) ? printcursymbol : curformat[0]);
+            result = curformat[4] == 0 ? (cursymbol + result) : (result + cursymbol);
         }
         return result;
     };
+
     // javascript equiv of php's number_format
     function number_format(number, decimals, dec_point, thousands_sep) {
         //  discuss at: http://phpjs.org/functions/number_format/
@@ -372,7 +379,7 @@ function WPOSUtil() {
             sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
             dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
             s = '',
-            toFixedFix = function(n, prec) {
+            toFixedFix = function (n, prec) {
                 var k = Math.pow(10, prec);
                 return '' + (Math.round(n * k) / k)
                     .toFixed(prec);
@@ -397,8 +404,7 @@ function WPOSUtil() {
         function moveCursor(input, pos) {
             if (input[0].setSelectionRange) { // Mozilla
                 input[0].setSelectionRange(pos, pos);
-            }
-            else if (input[0].createTextRange) { // IE
+            } else if (input[0].createTextRange) { // IE
                 var range = input[0].createTextRange();
                 range.move('character', pos);
                 range.select();
@@ -415,7 +421,8 @@ function WPOSUtil() {
                 moveCursor(this, this.val().length);
             });
 
-        $('.numpad').keypad({prompt: '', keypadOnly: false,
+        $('.numpad').keypad({
+            prompt: '', keypadOnly: false,
             startText: '|<', startStatus: 'Move to start',
             endText: '>|', endStatus: 'Move to end',
             showAnim: 'show',
@@ -472,132 +479,147 @@ function WPOSUtil() {
      (c) 2009-2013 by Jeff Mott. All rights reserved.
      code.google.com/p/crypto-js/wiki/License
      */
-    this.SHA256 = function(value){
+    this.SHA256 = function (value) {
         return CryptoJS.SHA256(value).toString();
     };
 
     var CryptoJS = CryptoJS || function (h, s) {
         var f = {}, t = f.lib = {}, g = function () {
-            }, j = t.Base = {extend: function (a) {
-                g.prototype = this;
-                var c = new g;
-                a && c.mixIn(a);
-                c.hasOwnProperty("init") || (c.init = function () {
-                    c.$super.init.apply(this, arguments)
-                });
-                c.init.prototype = c;
-                c.$super = this;
-                return c
-            }, create: function () {
-                var a = this.extend();
-                a.init.apply(a, arguments);
-                return a
-            }, init: function () {
-            }, mixIn: function (a) {
-                for (var c in a)a.hasOwnProperty(c) && (this[c] = a[c]);
-                a.hasOwnProperty("toString") && (this.toString = a.toString)
-            }, clone: function () {
-                return this.init.prototype.extend(this)
-            }},
-            q = t.WordArray = j.extend({init: function (a, c) {
-                a = this.words = a || [];
-                this.sigBytes = c != s ? c : 4 * a.length
-            }, toString: function (a) {
-                return(a || u).stringify(this)
-            }, concat: function (a) {
-                var c = this.words, d = a.words, b = this.sigBytes;
-                a = a.sigBytes;
-                this.clamp();
-                if (b % 4)for (var e = 0; e < a; e++)c[b + e >>> 2] |= (d[e >>> 2] >>> 24 - 8 * (e % 4) & 255) << 24 - 8 * ((b + e) % 4); else if (65535 < d.length)for (e = 0; e < a; e += 4)c[b + e >>> 2] = d[e >>> 2]; else c.push.apply(c, d);
-                this.sigBytes += a;
+            }, j = t.Base = {
+                extend: function (a) {
+                    g.prototype = this;
+                    var c = new g;
+                    a && c.mixIn(a);
+                    c.hasOwnProperty("init") || (c.init = function () {
+                        c.$super.init.apply(this, arguments)
+                    });
+                    c.init.prototype = c;
+                    c.$super = this;
+                    return c
+                }, create: function () {
+                    var a = this.extend();
+                    a.init.apply(a, arguments);
+                    return a
+                }, init: function () {
+                }, mixIn: function (a) {
+                    for (var c in a) a.hasOwnProperty(c) && (this[c] = a[c]);
+                    a.hasOwnProperty("toString") && (this.toString = a.toString)
+                }, clone: function () {
+                    return this.init.prototype.extend(this)
+                }
+            },
+            q = t.WordArray = j.extend({
+                init: function (a, c) {
+                    a = this.words = a || [];
+                    this.sigBytes = c != s ? c : 4 * a.length
+                }, toString: function (a) {
+                    return (a || u).stringify(this)
+                }, concat: function (a) {
+                    var c = this.words, d = a.words, b = this.sigBytes;
+                    a = a.sigBytes;
+                    this.clamp();
+                    if (b % 4) for (var e = 0; e < a; e++) c[b + e >>> 2] |= (d[e >>> 2] >>> 24 - 8 * (e % 4) & 255) << 24 - 8 * ((b + e) % 4); else if (65535 < d.length) for (e = 0; e < a; e += 4) c[b + e >>> 2] = d[e >>> 2]; else c.push.apply(c, d);
+                    this.sigBytes += a;
+                    return this
+                }, clamp: function () {
+                    var a = this.words, c = this.sigBytes;
+                    a[c >>> 2] &= 4294967295 <<
+                        32 - 8 * (c % 4);
+                    a.length = h.ceil(c / 4)
+                }, clone: function () {
+                    var a = j.clone.call(this);
+                    a.words = this.words.slice(0);
+                    return a
+                }, random: function (a) {
+                    for (var c = [], d = 0; d < a; d += 4) c.push(4294967296 * h.random() | 0);
+                    return new q.init(c, a)
+                }
+            }), v = f.enc = {}, u = v.Hex = {
+                stringify: function (a) {
+                    var c = a.words;
+                    a = a.sigBytes;
+                    for (var d = [], b = 0; b < a; b++) {
+                        var e = c[b >>> 2] >>> 24 - 8 * (b % 4) & 255;
+                        d.push((e >>> 4).toString(16));
+                        d.push((e & 15).toString(16))
+                    }
+                    return d.join("")
+                }, parse: function (a) {
+                    for (var c = a.length, d = [], b = 0; b < c; b += 2) d[b >>> 3] |= parseInt(a.substr(b,
+                        2), 16) << 24 - 4 * (b % 8);
+                    return new q.init(d, c / 2)
+                }
+            }, k = v.Latin1 = {
+                stringify: function (a) {
+                    var c = a.words;
+                    a = a.sigBytes;
+                    for (var d = [], b = 0; b < a; b++) d.push(String.fromCharCode(c[b >>> 2] >>> 24 - 8 * (b % 4) & 255));
+                    return d.join("")
+                }, parse: function (a) {
+                    for (var c = a.length, d = [], b = 0; b < c; b++) d[b >>> 2] |= (a.charCodeAt(b) & 255) << 24 - 8 * (b % 4);
+                    return new q.init(d, c)
+                }
+            }, l = v.Utf8 = {
+                stringify: function (a) {
+                    try {
+                        return decodeURIComponent(escape(k.stringify(a)))
+                    } catch (c) {
+                        throw Error("Malformed UTF-8 data");
+                    }
+                }, parse: function (a) {
+                    return k.parse(unescape(encodeURIComponent(a)))
+                }
+            },
+            x = t.BufferedBlockAlgorithm = j.extend({
+                reset: function () {
+                    this._data = new q.init;
+                    this._nDataBytes = 0
+                }, _append: function (a) {
+                    "string" == typeof a && (a = l.parse(a));
+                    this._data.concat(a);
+                    this._nDataBytes += a.sigBytes
+                }, _process: function (a) {
+                    var c = this._data, d = c.words, b = c.sigBytes, e = this.blockSize, f = b / (4 * e),
+                        f = a ? h.ceil(f) : h.max((f | 0) - this._minBufferSize, 0);
+                    a = f * e;
+                    b = h.min(4 * a, b);
+                    if (a) {
+                        for (var m = 0; m < a; m += e) this._doProcessBlock(d, m);
+                        m = d.splice(0, a);
+                        c.sigBytes -= b
+                    }
+                    return new q.init(m, b)
+                }, clone: function () {
+                    var a = j.clone.call(this);
+                    a._data = this._data.clone();
+                    return a
+                }, _minBufferSize: 0
+            });
+        t.Hasher = x.extend({
+            cfg: j.extend(), init: function (a) {
+                this.cfg = this.cfg.extend(a);
+                this.reset()
+            }, reset: function () {
+                x.reset.call(this);
+                this._doReset()
+            }, update: function (a) {
+                this._append(a);
+                this._process();
                 return this
-            }, clamp: function () {
-                var a = this.words, c = this.sigBytes;
-                a[c >>> 2] &= 4294967295 <<
-                    32 - 8 * (c % 4);
-                a.length = h.ceil(c / 4)
-            }, clone: function () {
-                var a = j.clone.call(this);
-                a.words = this.words.slice(0);
-                return a
-            }, random: function (a) {
-                for (var c = [], d = 0; d < a; d += 4)c.push(4294967296 * h.random() | 0);
-                return new q.init(c, a)
-            }}), v = f.enc = {}, u = v.Hex = {stringify: function (a) {
-                var c = a.words;
-                a = a.sigBytes;
-                for (var d = [], b = 0; b < a; b++) {
-                    var e = c[b >>> 2] >>> 24 - 8 * (b % 4) & 255;
-                    d.push((e >>> 4).toString(16));
-                    d.push((e & 15).toString(16))
+            }, finalize: function (a) {
+                a && this._append(a);
+                return this._doFinalize()
+            }, blockSize: 16, _createHelper: function (a) {
+                return function (c, d) {
+                    return (new a.init(d)).finalize(c)
                 }
-                return d.join("")
-            }, parse: function (a) {
-                for (var c = a.length, d = [], b = 0; b < c; b += 2)d[b >>> 3] |= parseInt(a.substr(b,
-                    2), 16) << 24 - 4 * (b % 8);
-                return new q.init(d, c / 2)
-            }}, k = v.Latin1 = {stringify: function (a) {
-                var c = a.words;
-                a = a.sigBytes;
-                for (var d = [], b = 0; b < a; b++)d.push(String.fromCharCode(c[b >>> 2] >>> 24 - 8 * (b % 4) & 255));
-                return d.join("")
-            }, parse: function (a) {
-                for (var c = a.length, d = [], b = 0; b < c; b++)d[b >>> 2] |= (a.charCodeAt(b) & 255) << 24 - 8 * (b % 4);
-                return new q.init(d, c)
-            }}, l = v.Utf8 = {stringify: function (a) {
-                try {
-                    return decodeURIComponent(escape(k.stringify(a)))
-                } catch (c) {
-                    throw Error("Malformed UTF-8 data");
+            }, _createHmacHelper: function (a) {
+                return function (c, d) {
+                    return (new w.HMAC.init(a,
+                        d)).finalize(c)
                 }
-            }, parse: function (a) {
-                return k.parse(unescape(encodeURIComponent(a)))
-            }},
-            x = t.BufferedBlockAlgorithm = j.extend({reset: function () {
-                this._data = new q.init;
-                this._nDataBytes = 0
-            }, _append: function (a) {
-                "string" == typeof a && (a = l.parse(a));
-                this._data.concat(a);
-                this._nDataBytes += a.sigBytes
-            }, _process: function (a) {
-                var c = this._data, d = c.words, b = c.sigBytes, e = this.blockSize, f = b / (4 * e), f = a ? h.ceil(f) : h.max((f | 0) - this._minBufferSize, 0);
-                a = f * e;
-                b = h.min(4 * a, b);
-                if (a) {
-                    for (var m = 0; m < a; m += e)this._doProcessBlock(d, m);
-                    m = d.splice(0, a);
-                    c.sigBytes -= b
-                }
-                return new q.init(m, b)
-            }, clone: function () {
-                var a = j.clone.call(this);
-                a._data = this._data.clone();
-                return a
-            }, _minBufferSize: 0});
-        t.Hasher = x.extend({cfg: j.extend(), init: function (a) {
-            this.cfg = this.cfg.extend(a);
-            this.reset()
-        }, reset: function () {
-            x.reset.call(this);
-            this._doReset()
-        }, update: function (a) {
-            this._append(a);
-            this._process();
-            return this
-        }, finalize: function (a) {
-            a && this._append(a);
-            return this._doFinalize()
-        }, blockSize: 16, _createHelper: function (a) {
-            return function (c, d) {
-                return(new a.init(d)).finalize(c)
             }
-        }, _createHmacHelper: function (a) {
-            return function (c, d) {
-                return(new w.HMAC.init(a,
-                    d)).finalize(c)
-            }
-        }});
+        });
         var w = f.algo = {};
         return f
     }(Math);
@@ -608,7 +630,7 @@ function WPOSUtil() {
             var l;
             a:{
                 l = u;
-                for (var x = h.sqrt(l), w = 2; w <= x; w++)if (!(l % w)) {
+                for (var x = h.sqrt(l), w = 2; w <= x; w++) if (!(l % w)) {
                     l = !1;
                     break a
                 }
@@ -617,47 +639,49 @@ function WPOSUtil() {
             l && (8 > k && (j[k] = v(h.pow(u, 0.5))), q[k] = v(h.pow(u, 1 / 3)), k++);
             u++
         }
-        var a = [], f = f.SHA256 = g.extend({_doReset: function () {
-            this._hash = new t.init(j.slice(0))
-        }, _doProcessBlock: function (c, d) {
-            for (var b = this._hash.words, e = b[0], f = b[1], m = b[2], h = b[3], p = b[4], j = b[5], k = b[6], l = b[7], n = 0; 64 > n; n++) {
-                if (16 > n)a[n] =
-                    c[d + n] | 0; else {
-                    var r = a[n - 15], g = a[n - 2];
-                    a[n] = ((r << 25 | r >>> 7) ^ (r << 14 | r >>> 18) ^ r >>> 3) + a[n - 7] + ((g << 15 | g >>> 17) ^ (g << 13 | g >>> 19) ^ g >>> 10) + a[n - 16]
+        var a = [], f = f.SHA256 = g.extend({
+            _doReset: function () {
+                this._hash = new t.init(j.slice(0))
+            }, _doProcessBlock: function (c, d) {
+                for (var b = this._hash.words, e = b[0], f = b[1], m = b[2], h = b[3], p = b[4], j = b[5], k = b[6], l = b[7], n = 0; 64 > n; n++) {
+                    if (16 > n) a[n] =
+                        c[d + n] | 0; else {
+                        var r = a[n - 15], g = a[n - 2];
+                        a[n] = ((r << 25 | r >>> 7) ^ (r << 14 | r >>> 18) ^ r >>> 3) + a[n - 7] + ((g << 15 | g >>> 17) ^ (g << 13 | g >>> 19) ^ g >>> 10) + a[n - 16]
+                    }
+                    r = l + ((p << 26 | p >>> 6) ^ (p << 21 | p >>> 11) ^ (p << 7 | p >>> 25)) + (p & j ^ ~p & k) + q[n] + a[n];
+                    g = ((e << 30 | e >>> 2) ^ (e << 19 | e >>> 13) ^ (e << 10 | e >>> 22)) + (e & f ^ e & m ^ f & m);
+                    l = k;
+                    k = j;
+                    j = p;
+                    p = h + r | 0;
+                    h = m;
+                    m = f;
+                    f = e;
+                    e = r + g | 0
                 }
-                r = l + ((p << 26 | p >>> 6) ^ (p << 21 | p >>> 11) ^ (p << 7 | p >>> 25)) + (p & j ^ ~p & k) + q[n] + a[n];
-                g = ((e << 30 | e >>> 2) ^ (e << 19 | e >>> 13) ^ (e << 10 | e >>> 22)) + (e & f ^ e & m ^ f & m);
-                l = k;
-                k = j;
-                j = p;
-                p = h + r | 0;
-                h = m;
-                m = f;
-                f = e;
-                e = r + g | 0
+                b[0] = b[0] + e | 0;
+                b[1] = b[1] + f | 0;
+                b[2] = b[2] + m | 0;
+                b[3] = b[3] + h | 0;
+                b[4] = b[4] + p | 0;
+                b[5] = b[5] + j | 0;
+                b[6] = b[6] + k | 0;
+                b[7] = b[7] + l | 0
+            }, _doFinalize: function () {
+                var a = this._data, d = a.words, b = 8 * this._nDataBytes, e = 8 * a.sigBytes;
+                d[e >>> 5] |= 128 << 24 - e % 32;
+                d[(e + 64 >>> 9 << 4) + 14] = h.floor(b / 4294967296);
+                d[(e + 64 >>> 9 << 4) + 15] = b;
+                a.sigBytes = 4 * d.length;
+                this._process();
+                return this._hash
+            }, clone: function () {
+                var a = g.clone.call(this);
+                a._hash = this._hash.clone();
+                return a
             }
-            b[0] = b[0] + e | 0;
-            b[1] = b[1] + f | 0;
-            b[2] = b[2] + m | 0;
-            b[3] = b[3] + h | 0;
-            b[4] = b[4] + p | 0;
-            b[5] = b[5] + j | 0;
-            b[6] = b[6] + k | 0;
-            b[7] = b[7] + l | 0
-        }, _doFinalize: function () {
-            var a = this._data, d = a.words, b = 8 * this._nDataBytes, e = 8 * a.sigBytes;
-            d[e >>> 5] |= 128 << 24 - e % 32;
-            d[(e + 64 >>> 9 << 4) + 14] = h.floor(b / 4294967296);
-            d[(e + 64 >>> 9 << 4) + 15] = b;
-            a.sigBytes = 4 * d.length;
-            this._process();
-            return this._hash
-        }, clone: function () {
-            var a = g.clone.call(this);
-            a._hash = this._hash.clone();
-            return a
-        }});
+        });
         s.SHA256 = g._createHelper(f);
         s.HmacSHA256 = g._createHmacHelper(f)
     })(Math);
