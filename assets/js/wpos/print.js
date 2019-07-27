@@ -588,7 +588,7 @@ function WPOSPrint(kitchenMode) {
     }
     function printESCPReceipt(data){
         if (WPOS.getConfigTable().pos.recprintlogo == true) {
-            getESCPImageString(window.location.protocol + "//" + document.location.hostname + WPOS.getConfigTable().pos.reclogo, function (imgdata) {
+            getESCPImageString(window.location.protocol + "//" + document.location.hostname+":91/"+ + WPOS.getConfigTable().pos.reclogo, function (imgdata) {
                 appendQrcode("receipts", imgdata + data);
             });
         } else {
@@ -631,7 +631,7 @@ function WPOSPrint(kitchenMode) {
 
     function testReceipt(printer) {
         var data = getEscReceiptHeader() + getFeedAndCutCommands(printer);
-        getESCPImageString(window.location.protocol + "//" + document.location.hostname + WPOS.getConfigTable().pos.reclogo, function (imgdata) {
+        getESCPImageString(window.location.protocol + "//" + document.location.hostname+":91/"+ + WPOS.getConfigTable().pos.reclogo, function (imgdata) {
             sendESCPPrintData(printer, imgdata + data);
         });
     }
@@ -642,7 +642,7 @@ function WPOSPrint(kitchenMode) {
 
     function appendQrcode(printer, data) {
         if (WPOS.getConfigTable().pos.recqrcode != "") {
-            getESCPImageString(window.location.protocol + "//" + document.location.hostname + "/docs/qrcode.png", function (imgdata) {
+            getESCPImageString(window.location.protocol + "//" + document.location.hostname + ":91/docs/qrcode.png", function (imgdata) {
                 sendESCPPrintData(printer, data + imgdata + getFeedAndCutCommands(printer));
             });
         } else {
@@ -715,12 +715,10 @@ function WPOSPrint(kitchenMode) {
         var bizname = WPOS.getConfigTable().general.bizname;
         var recval = WPOS.getConfigTable().pos;
         // header
-        var header = esc_init + esc_a_c + esc_double + bizname + "\n" + font_reset +
-            esc_bold_on + recval.recline2 + "\n";
-        if (recval.recline3 != "") {
-            header += recval.recline3 + "\n";
-        }
-        header += "\n" + esc_bold_off;
+        var header = esc_init + esc_a_c + esc_double + "Wangambura" + "\n" + font_reset
+            header += recval.recline2 + "\n";
+            header += esc_bold_on + recval.recline3 + "\n"  + esc_bold_off;
+            header += "0702243135" + "\n";
         return header;
     }
 
@@ -732,9 +730,9 @@ function WPOSPrint(kitchenMode) {
         lang = getGlobalPrintSetting('rec_language');
         altlabels = WPOS.getConfigTable()['general'].altlabels;
         // header
-          var cmd =  esc_init + esc_a_c + esc_double + 'Sale Receipt' + "\n" + font_reset;
+        var cmd = getEscReceiptHeader();
+       cmd +=  esc_init + esc_a_c + esc_double + 'Sale Receipt' + "\n" + font_reset;
           cmd += (ltr ? esc_a_l : esc_a_r);
-          cmd += '\n';
         record.isorder ? record.sale_type = "Order": record.sale_type = "Sale";
         cmd += getEscTableRow(formatLabel(translateLabel("Transaction Ref"), true, 1), record.ref, false, false, false);
         // cmd += getEscTableRow(formatLabel(translateLabel("Transaction Type"), true, 1), record.sale_type, false, false, false);
@@ -841,6 +839,7 @@ function WPOSPrint(kitchenMode) {
 
         return cmd;
     }
+
 
     function getEscInvoice(record) {
         ltr = getGlobalPrintSetting('rec_orientation')=="ltr";
@@ -1528,12 +1527,12 @@ function WPOSPrint(kitchenMode) {
             header_line1: config.general.bizname,
             header_line2: config.pos.recline2,
             header_line3: config.pos.recline3,
-            logo_url: document.location.protocol+"//"+document.location.host+config.pos.recemaillogo,
+            logo_url: document.location.protocol+"//"+document.location.host+":91"+config.pos.recemaillogo,
             footer: config.pos.recfooter,
             thermalprint: escpprint,
             print_id: config.pos.recprintid,
             print_desc: config.pos.recprintdesc,
-            qrcode_url: config.pos.recqrcode!=""?document.location.protocol+"//"+document.location.host+"/docs/qrcode.png":null,
+            qrcode_url: config.pos.recqrcode!=""?document.location.protocol+"//"+document.location.host+":91"+"/docs/qrcode.png":null,
             currency: function() {
                 return function (text, render) {
                     return WPOS.util.currencyFormat(render(text));
@@ -1605,7 +1604,7 @@ function WPOSPrint(kitchenMode) {
         if (invoice){
             // business
             temp_data.payment_instructions = config.invoice.payinst;
-            temp_data.logo_url = document.location.protocol+"//"+document.location.host+config.pos.recemaillogo;
+            temp_data.logo_url = document.location.protocol+"//"+document.location.host+":91"+config.pos.recemaillogo;
             temp_data.business_name = config.general.bizname;
             temp_data.business_address = config.general.bizaddress;
             temp_data.business_suburb = config.general.bizsuburb;
@@ -1725,7 +1724,7 @@ function WPOSPrint(kitchenMode) {
             header_line1: config.general.bizname,
             header_line2: config.pos.recline2,
             header_line3: config.pos.recline3,
-            logo_url: document.location.protocol+"//"+document.location.host+config.pos.recemaillogo,
+            logo_url: document.location.protocol+"//"+document.location.host+":91"+config.pos.recemaillogo,
             footer: config.pos.recfooter,
             thermalprint: escpprint,
             print_id: config.pos.recprintid,
@@ -1802,7 +1801,7 @@ function WPOSPrint(kitchenMode) {
         if (invoice){
             // business
             temp_data.payment_instructions = config.invoice.payinst;
-            temp_data.logo_url = document.location.protocol+"//"+document.location.host+config.pos.recemaillogo;
+            temp_data.logo_url = document.location.protocol+"//"+document.location.host+":91"+config.pos.recemaillogo;
             temp_data.business_name = config.general.bizname;
             temp_data.business_address = config.general.bizaddress;
             temp_data.business_suburb = config.general.bizsuburb;
