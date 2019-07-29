@@ -1,14 +1,14 @@
 version: "2.0"
 services:
   apache:
-    image: quebase-apache:0.1
+    image: qpos-apache:0.1
     container_name: quebase-apache
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "80:80"
-      - "443:443"
+      - "445:443"
     links:
       - mariadb
     depends_on:
