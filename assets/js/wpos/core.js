@@ -441,7 +441,13 @@ function WPOS() {
         currentuser = user;
     }
 
+    this.isUserAdmin = function(){
+        return currentuser.isadmin == 1;
+    };
+
     function isUserAdmin() {
+        console.log(currentuser);
+        if(currentuser === undefined) return false;
         return currentuser.isadmin == 1;
     }
 

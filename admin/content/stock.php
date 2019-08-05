@@ -207,6 +207,7 @@
     var categories = null;
     var locations = null;
     var datatable;
+    var isAdmin = WPOS.loggeduser.isadmin == "1";
     $(function () {
         stock = WPOS.getJsonData("stock/get");
         items = WPOS.getJsonData("items/get");
@@ -218,6 +219,7 @@
         var taxrules = WPOS.getTaxTable().rules;
         for (var key in stock) {
             tempstock = stock[key];
+            if(!isAdmin) tempstock.cost = "****";
             if (taxrules.hasOwnProperty(tempstock.taxid)) {
                 tempstock.taxname = taxrules[tempstock.taxid].name;
             } else {
@@ -540,7 +542,7 @@
         $("#setstockinventoryid").val(item.stockinventoryid);
         $("#setstocklocid").val(item.locationid);
         $("#setstockqty").val(item.stocklevel);
-        $("#setstockcost").val(item.cost);
+        $("#setstockcost").val(isAdmin ? item.cost:"****");
         $("#setstockprice").val(item.price);
         $("#setstockwprice").val(item.wprice);
         $("#setstockexpiryDate").val(item.expiryDate);
