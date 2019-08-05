@@ -118,6 +118,15 @@ function WPOSCustomers() {
             customer.postcode = $("#newcustpostcode").val();
             customer.state = $("#newcuststate").val();
             customer.country = $("#newcustcountry").val();
+            if(customer.mobile === "" || customer.name === ""){
+                swal({
+                    type: 'error',
+                    title: 'Error',
+                    text: "Fill the required fields"
+                });
+                WPOS.util.hideLoader();
+                return;
+            }
             result = WPOS.sendJsonData("customers/add", JSON.stringify(customer));
             if (result !== false) {
                 customers[result.id] = result;
