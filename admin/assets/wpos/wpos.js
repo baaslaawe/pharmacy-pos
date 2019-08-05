@@ -250,8 +250,6 @@ function WPOSAdmin() {
     }
 
     this.logout = function () {
-        //  var answer = confirm("Are you sure you want to logout?");
-
         swal({
             title: 'LogOut',
             text: "Are you sure you want to logout",
@@ -262,7 +260,6 @@ function WPOSAdmin() {
             confirmButtonText: 'Yes, Log Out!'
         }).then(function (result) {
             if (result.value) {
-
                 WPOS.util.showLoader();
                 performLogout();
                 setTimeout(

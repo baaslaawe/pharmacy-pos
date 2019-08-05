@@ -6,6 +6,7 @@ RUN apt update -y && \
     apt install -y gnupg gnupg2 gnupg1 && \
     curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
     apt install -y nodejs && \
+    apt install -y nano && \
     a2enmod proxy_http proxy_wstunnel rewrite && \
     docker-php-ext-install mysqli pdo pdo_mysql && \
     apt update && apt install -y \

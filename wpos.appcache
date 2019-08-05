@@ -62,7 +62,6 @@ CACHE:
 
 NETWORK:
 /api/*
-/wpos.appcache
 http://*
 https://*
 *

@@ -23,9 +23,9 @@
 
 function WPOS() {
 
-    var initialsetup = false;
-    var subscriptionStatus = false;
-    this.initApp = function () {
+    let initialSetup = false;
+    let subscriptionStatus = false;
+    this.initApp = async function () {
         $.ajaxSetup({
             cache: true
         });
@@ -33,10 +33,11 @@ function WPOS() {
         if (!checkAppCompatibility())
             return false;
         // check online status to determine start & load procedure.
-        if (checkOnlineStatus()) {
+        if (await checkOnlineStatus()) {
             WPOS.checkCacheUpdate(); // check if application cache is updating or already updated
         } else {
-            // check approppriate offline records exist
+            console.log('User is offline', switchToOffline());
+            // check appropriate offline records exist
             if (switchToOffline()) {
                 WPOS.initLogin();
             }
@@ -67,13 +68,13 @@ function WPOS() {
     }
 
     var cacheloaded = 1;
-    this.checkCacheUpdate = function () {
-        if (window.applicationCache == null) {
+    this.checkCacheUpdate = async function () {
+        const appCache = window.applicationCache;
+        if (appCache == null) {
             console.log("Application cache not supported.");
             WPOS.initLogin();
             return;
         }
-        var appCache = window.applicationCache;
         // check if cache exists, if the app is loaded for the first time, we don't need to wait for an update
         if (appCache.status == appCache.UNCACHED) {
             console.log("Application cache not yet loaded.");
@@ -112,6 +113,10 @@ function WPOS() {
             appCache.swapCache();
             location.reload(true);
         }
+        if(await checkOnlineStatus()){
+            console.log("Should go home");
+            // initData(true);
+        }
     };
     // Check for device UUID & present Login, initial setup is triggered if the device UUID is not present
     this.initLogin = function () {
@@ -123,9 +128,7 @@ function WPOS() {
                 title: 'Oops...',
                 text: 'The device has not been setup yet, please login as an administrator to setup the device.'
             });
-
-            initialsetup = true;
-            online = true;
+            initialSetup = true;
             return false;
         }
         return true;
@@ -220,7 +223,7 @@ function WPOS() {
     function hideLogin() {
         $('#loginmodal').hide();
         $('#loadingdiv').hide();
-        $('#logindiv').show();
+        // $('#logindiv').show();
         $('body').css('overflow', 'auto');
     }
 
@@ -252,7 +255,7 @@ function WPOS() {
                 $("#logindiv").hide();
                 $("#loadingdiv").show();
                 // initiate data download/check
-                if (initialsetup) {
+                if (initialSetup) {
                     if (isUserAdmin()) {
                         initSetup();
                     } else {
@@ -280,6 +283,7 @@ function WPOS() {
             $(loginbtn).prop('disabled', false);
             WPOS.util.hideLoader();
         });
+        event.preventDefault();
     };
 
     this.logout = function () {
@@ -353,7 +357,7 @@ function WPOS() {
 
     function authenticate(user, hashpass, callback) {
         // auth against server if online, offline table if not.
-        if (online == true) {
+        if (online) {
             // send request to server
             WPOS.sendJsonDataAsync("auth", JSON.stringify({
                 username: user,
@@ -369,6 +373,7 @@ function WPOS() {
                     callback(response !== false);
             });
         } else {
+            console.log('Performing offline login');
             if (callback)
                 callback(offlineAuth(user, hashpass));
         }
@@ -399,7 +404,6 @@ function WPOS() {
                     title: 'Oops...',
                     text: 'Sorry, your credentials are currently not available offline.'
                 });
-
                 return false;
             } else {
                 var authentry = jsonauth[username];
@@ -412,7 +416,6 @@ function WPOS() {
                         title: 'Oops...',
                         text: 'Access denied!'
                     });
-
                     return false;
                 }
             }
@@ -462,7 +465,7 @@ function WPOS() {
             deviceSetup(devid, devname, locid, locname, function (result) {
                 if (result) {
                     currentuser = null;
-                    initialsetup = false;
+                    initialSetup = false;
                     $("#setupdiv").on('hidden.bs.modal', function () {
                         // do something…
                     });
@@ -520,7 +523,7 @@ function WPOS() {
 
     // get initial data for pos startup.
     function initData(loginloader) {
-        getSubscription();
+        if(online) getSubscription();
         // startFeed();
         if (loginloader) {
             $("#loadingprogdiv").show();
@@ -647,8 +650,7 @@ function WPOS() {
             title: 'Oops...',
             text: 'Your internet connection is not active and Que POS has started in offline mode.\nSome features are not available in offline mode but you can always make sales and alter transactions that are locally available. \nWhen a connection becomes available the POS will process your transactions on the server.'
         });
-
-
+        hideLogin();
         initDataSuccess(loginloader);
     }
 
@@ -658,7 +660,7 @@ function WPOS() {
             $("title").text("Que POS | Your stock companion");
             WPOS.initPlugins();
             populateDeviceInfo();
-            setTimeout(hideLogin, 500);
+           hideLogin();
         }
     }
 
@@ -909,23 +911,24 @@ function WPOS() {
     this.isOnline = function () {
         return online;
     };
+    var loggedIn = false;
 
-    function checkOnlineStatus() {
+    this.isLoggedIn = function () {
+        loggedIn = localStorage.getItem("wpos_auth") !== null;
+        return loggedIn;
+    };
 
-        try {
-            var res = $.ajax({
-                timeout: 3000,
-                url: "/api/hello",
-                type: "GET",
-                cache: true,
-                dataType: "text",
-                async: false
-            }).status;
-            online = res == 200;
-        } catch (ex) {
-            online = false;
+    async function checkOnlineStatus() {
+        try{
+            const res = await fetch("/api/hello");
+            const user = await res.json();
+            online = user.data !== null;
+            return online;
+        }catch (e) {
+            console.log("Error thrown");
+            console.log(e);
+            return false;
         }
-        return online;
     }
 
     // OFFLINE MODE FUNCTIONS
@@ -951,10 +954,12 @@ function WPOS() {
     };
 
     function switchToOffline() {
-        if (canDoOffline() === true) {
+        console.log("Can do offline");
+        console.log(canDoOffline());
+        if (canDoOffline()) {
             // set js indicator: important
             online = false;
-            setStatusBar(3, "WPOS is Offline", "The POS is offine and will store sale data locally until a connection becomes available.", 0);
+            setStatusBar(3, "Q-POS is Offline", "The POS is offine and will store sale data locally until a connection becomes available.", 0);
             // start online check routine
             checktimer = setInterval(doOnlineCheck, 60000);
             if (WPOS.sales.getOfflineSalesNum() > 0)
@@ -974,8 +979,8 @@ function WPOS() {
         }
     }
 
-    function doOnlineCheck() {
-        if (checkOnlineStatus() === true) {
+    async function doOnlineCheck() {
+        if (await checkOnlineStatus()) {
             clearInterval(checktimer);
             switchToOnline();
         }
@@ -1092,7 +1097,6 @@ function WPOS() {
                                 text: json.warning
                             });
 
-
                         }
                         callback(json.data);
                     } else {
@@ -1121,6 +1125,7 @@ function WPOS() {
                         title: 'Oops...',
                         text: error
                     });
+
                     callback(false);
                 }
             });
@@ -1455,7 +1460,7 @@ function WPOS() {
     }
 
     function removeDeviceUUID() {
-        initialsetup = true;
+        initialSetup = true;
         localStorage.removeItem("wpos_devuuid");
     }
 
@@ -1911,6 +1916,12 @@ $(function () {
     WPOS.initApp();
 
     $("#wrapper").tabs();
+
+    $('#loginForm').on('submit', function(e){
+        e.preventDefault();
+        console.log(e);
+        WPOS.userLogin();
+    });
 
     $("#paymentsdiv").dialog({
         maxWidth: 5000,

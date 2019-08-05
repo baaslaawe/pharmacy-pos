@@ -20,8 +20,10 @@ if (fs.existsSync(configpath))
 var port = (config && config.hasOwnProperty('feedserver_port')) ? config.feedserver_port : 8000;
 var ip = (!config || config.feedserver_proxy) ? '127.0.0.1' : '0.0.0.0';
 var hashkey = (config && config.hasOwnProperty('feedserver_key')) ? config.feedserver_key : "5d40b50e172646b845640f50f296ac3fcbc191a7469260c46903c43cc6310ace"; // key for php interaction, provides extra security
-
-app.listen(port, ip);
+console.log("Running server");
+app.listen(port, ip, function () {
+    console.log("Working")
+});
 
 io = require('socket.io').listen(app);
 

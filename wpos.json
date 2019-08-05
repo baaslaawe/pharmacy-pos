@@ -1,7 +1,8 @@
 {
   "name": "QuePOS",
   "short_name": "QuePOS",
-  "start_url": "http://localhost",
+  "url": "http://localhost",
+  "id": "93202_sdfi092",
   "display": "standalone",
   "background_color": "#237a1b",
   "theme_color": "#237a1b",

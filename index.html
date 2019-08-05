@@ -1176,12 +1176,11 @@
                 <i class="icon icon-lock green" style="margin-right: 3px;"></i>
                 <span id="login-banner-txt"></span>
             </div>
-            <form class="login-form">
+            <form class="login-form" id="loginForm">
                 <input id="username" name="username" placeholder="Enter username here..." type="text"/>
-                <input id="password" name="password" onkeypress="if(event.keyCode == 13){WPOS.userLogin();}" placeholder="Enter password here ..."
+                <input id="password" name="password"  placeholder="Enter password here ..."
                        type="password"/>
-                <button id="loginbutton" onClick="WPOS.userLogin();">Login <i class="icon icon-lock"
-                                                                              style="margin-left: 10px;"></i></button>
+                <button id="loginbutton">Login <i class="icon icon-lock" style="margin-left: 10px;"></i></button>
             </form>
             <div id="loadingdiv" style="height: 225px;">
                 <h3 id="loadingbartxt">Initializing</h3>
