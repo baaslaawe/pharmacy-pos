@@ -7,31 +7,31 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "8500:80"
       - "445:443"
-    links:
-      - mariadb
-    depends_on:
-      - mariadb
+#    links:
+#      - mariadb
+#    depends_on:
+#      - mariadb
     volumes:
       - .:/var/www/html/
 
-  fix-mariadb-permissions:
-    image: "bitnami/mariadb:10.1-master"
-    user: root
-    command: chown -R 1001:1001 /bitnami/mariadb
-    volumes:
-      - ./mariadb/data:/bitnami/mariadb
-
-  mariadb:
-    container_name: mariadb
-    image: "bitnami/mariadb:10.1-master"
-    environment:
-      - MARIADB_ROOT_PASSWORD=root
-      - MARIADB_DATABASE=pos
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./mariadb/data:/bitnami/mariadb
-    depends_on:
-      - fix-mariadb-permissions
+#  fix-mariadb-permissions:
+#    image: "bitnami/mariadb:10.1-master"
+#    user: root
+#    command: chown -R 1001:1001 /bitnami/mariadb
+#    volumes:
+#      - ./mariadb/data:/bitnami/mariadb
+#
+#  mariadb:
+#    container_name: mariadb
+#    image: "bitnami/mariadb:10.1-master"
+#    environment:
+#      - MARIADB_ROOT_PASSWORD=root
+#      - MARIADB_DATABASE=pos
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - ./mariadb/data:/bitnami/mariadb
+#    depends_on:
+#      - fix-mariadb-permissions
