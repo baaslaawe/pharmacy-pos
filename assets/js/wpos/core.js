@@ -911,7 +911,7 @@ function WPOS() {
 
     this.backupOfflineSales = function(){
         var offline_sales = localStorage.getItem('wpos_osales');
-
+        localStorage.removeItem("wpos_osales");
         var a = document.createElement('a');
         var blob = new Blob([offline_sales], {'type':"application/octet-stream"});
         window.URL = window.URL || window.webkitURL;
