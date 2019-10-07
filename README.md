@@ -1,15 +1,21 @@
 # QuePhram POS
 ## An intuitive &amp; modern web based POS system
 
+<br/>
+<br/>
 
 
 # This guide has not been updated in a long time :blush: and may require technical help to setup,:broken_heart: check a demo of the POS running at [Que Base Labs](https://labs.quebasetech.co.ke) Use these credentials, Username - *admin* Password - *admin* 
 
+<br/>
+<br/>
+
 > Contact me for support or with ideas to make this project better. :sunglasses: :fire: :v:
 
-
-
-
+<br/>
+<br/>
+<br/>
+<br/>
 
 #### Cashier Dashboard
 ![Screenshot](assets/images/CashierScreenshot.png)
