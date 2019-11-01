@@ -713,6 +713,15 @@ function WPOS() {
           
     };
 
+    this.removeOfflineSale = function () {
+        localStorage.removeItem("wpos_osales");
+        swal({
+            type: 'success',
+            title: 'Ok...',
+            text: 'Offline sale cleared, log out then login.'
+          });
+    }
+
     this.clearLocalData = function(){
         if (isUserAdmin()){
            // var answer = confirm("Are you sure you want to clear all local data?\nThis removes all locally stored data except device registration key.\nOffline Sales will be deleted.");
@@ -937,8 +946,10 @@ function WPOS() {
             setStatusBar(3, "WPOS is Offline", "The POS is offine and will store sale data locally until a connection becomes available.", 0);
             // start online check routine
             checktimer = setInterval(doOnlineCheck, 60000);
-            if (WPOS.sales.getOfflineSalesNum()>0)
+            if (WPOS.sales.getOfflineSalesNum()>0){
                 $(".backup_btn").show();
+                $(".backup_remove_btn").show();
+            }
             return true;
         } else {
             // display error notice

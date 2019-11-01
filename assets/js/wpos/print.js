@@ -971,14 +971,15 @@ function WPOSPrint(kitchenMode) {
         // Headings
         cmd += esc_a_l + esc_ul_on + esc_bold_on + translateLabel('Customer                  Date        Balance') + font_reset + '\n';
 
-        var item, total_balance = 0, total_paid = 0, total = 0;
+        var item, total_balance = 0, total_paid = 0, total = 0, invMonth;
         for (var i in debtors) {
             item = debtors[i];
             total_balance += parseFloat(item.balance);
             total_paid += parseFloat(item.paid);
             total += parseFloat(item.total);
             today = new Date(item.date);
-            date = today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
+            invMonth = today.getMonth() +1 ;
+            date = today.getDate() + '/' + invMonth + '/' + today.getFullYear();
             if (item.customer.length > 21)
                 item.customer = item.customer.substring(0, 21) + '..   ';
             else{
@@ -1023,7 +1024,8 @@ function WPOSPrint(kitchenMode) {
         cmd += (ltr ? esc_a_l : esc_a_r);
         // Date for today in bold followed by new line
         var today = new Date();
-        var date = today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
+        var month = today.getMonth() + 1;
+        var date = today.getDate() + '/' + month + '/' + today.getFullYear();
         cmd += esc_a_c + esc_bold_on + getEscTableRow(formatLabel(translateLabel("Date #"), true, 1), date, false, false, false) + font_reset;
         cmd += '\n';
 

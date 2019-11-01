@@ -1758,7 +1758,7 @@ function WPOSSales() {
         formdiv.dialog("option", "title", "Refund transaction");
         var voidbtn = $("#procvoidbtn");
         voidbtn.attr("onclick", 'WPOS.sales.processRefund();');
-        voidbtn.prop('disabled', false);
+        voidbtn.prop('disabled', WPOS.getCurrentUserId() != 1);
         // populate items
         var sale = WPOS.trans.getTransactionRecord(ref);
         var items = sale.items;
@@ -1838,8 +1838,9 @@ function WPOSSales() {
         var voidbtn = $("#procvoidbtn");
         formdiv.dialog("option", "title", "Void transaction");
         voidbtn.attr("onclick", 'WPOS.sales.processVoid();');
-        voidbtn.prop('disabled', false);
+        voidbtn.prop('disabled', WPOS.getCurrentUserId()!=1);
         formdiv.dialog('open');
+
     };
 
     this.processVoid = function(){

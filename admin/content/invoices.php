@@ -330,8 +330,9 @@
             for(var p in invoice.payments){
                 paid += parseInt(invoice.payments[p]['amount']);
             }
+            
             debtors.push({
-                customer: customers[invoice.custid]['name'],
+                customer: customers[invoice.custid] == undefined? "Deleted customer":customers[invoice.custid]['name'],
                 paid: paid,
                 balance: invoice.balance,
                 total: invoice.total,
