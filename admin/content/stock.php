@@ -472,7 +472,7 @@
                 deleteStockItem(id, false);
                 delete stock[id];
             }
-            WPOS.loadPageContent("stock");
+            reloadTable();
         }
     }
 
@@ -651,7 +651,8 @@
         var tempstock;
         for (var key in stock){
             tempstock = stock[key];
-            tempstock.taxname = WPOS.getTaxTable().rules[tempstock.taxid].name;
+            // TODO:: tax name issue
+            tempstock.taxname = ""; //WPOS.getTaxTable().rules[tempstock.taxid].name;
             if (tempstock.stockType === '1')
               stockarray.push(tempstock);
         }
