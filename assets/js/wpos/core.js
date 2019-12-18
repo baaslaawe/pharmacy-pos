@@ -1855,7 +1855,8 @@ function WPOS() {
     var socketon = false;
     var authretry = false;
     function startSocket(){
-        if (socket==null){
+        return;
+        if (socket == null){
             var proxy = WPOS.getConfigTable().general.feedserver_proxy;
             var port = WPOS.getConfigTable().general.feedserver_port;
             var socketPath = window.location.protocol+'//'+window.location.hostname+(proxy==false ? ':'+port : (window.location.port ? ':'+window.location.port : ''));

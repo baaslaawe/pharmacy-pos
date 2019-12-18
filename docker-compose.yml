@@ -28,7 +28,7 @@ services:
     image: "bitnami/mariadb:10.1-master"
     environment:
       - MARIADB_ROOT_PASSWORD=root
-      - MARIADB_DATABASE=pos
+      - MARIADB_DATABASE=salvia_pos
     ports:
       - "3306:3306"
     volumes:

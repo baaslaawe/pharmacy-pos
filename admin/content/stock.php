@@ -259,7 +259,8 @@
             "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
                 // Add selected row count to footer
                 var selected = this.api().rows('.selected').count();
-                return sPre+(selected>0 ? '<br/>'+selected+' row(s) selected':'');
+                return sPre+(selected>0 ? '<br/>'+selected+' row(s) selected <span class="action-buttons"><a class="red" onclick="removeSelectedItems();"><i class="icon-trash bigger-130"></i></a></span>':'');
+                // return sPre+(selected>0 ? '<br/>'+selected+' row(s) selected':'');
             }
         });
 
@@ -461,6 +462,20 @@
 
     });
 
+    function removeSelectedItems(){
+        var ids = datatable.api().rows('.selected').data().map(function(row){ return row.id });
+        var answer = confirm("Are you sure you want to delete "+ids.length+" selected items?");
+        if (answer){
+            // show loader
+            for (let i=0; i<ids.length; i++){
+                let id = ids[i];
+                deleteStockItem(id, false);
+                delete stock[id];
+            }
+            WPOS.loadPageContent("stock");
+        }
+    }
+
     function getLocation(location) {
       var l = -1;
       for(var i in locations) {
@@ -498,10 +513,11 @@
         WPOS.util.hideLoader();
         $("#stockhistdialog").dialog('open');
     }
-    function deleteStockItem(id){
+    function deleteStockItem(id, reload=true){
       var results = WPOS.sendJsonData("stock/delete", JSON.stringify(id));
       if (results) {
-        reloadTable();
+          if(reload)
+            reloadTable();
       }
     }
     function openEditStockDialog(id){

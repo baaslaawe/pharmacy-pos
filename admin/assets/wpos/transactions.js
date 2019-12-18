@@ -1252,7 +1252,7 @@ function WPOSTransactions() {
 
                     var typeselecthtml = "";
                     typeselecthtml += "<option selected value='" + ui.item.price + "'>Retail</option>";
-                    typeselecthtml += "<option value='" + ui.item.wprice + "'>Wholesale</option>";
+                    typeselecthtml += "<option value='" + ui.item.wprice + "'>Special</option>";
                     $('#itemtype').html(typeselecthtml);
                     // lock fields
                     setDisabledItemFields();

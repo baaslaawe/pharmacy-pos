@@ -25,13 +25,11 @@
                             <i id="nodestaticon" class="icon-lightbulb icon-2x"></i>
                             <h4 style="display: inline-block" id="nodestattxt">Loading...</h4>
                         </div>
-                        <button id="nodebootbtn" style="display: none;" class="btn btn-success" onclick="startNode();">Start</button>&nbsp;
+                        <button id="nodebootbtn" class="btn btn-success" onclick="startNode();">Start</button>&nbsp;
+                        <button id="nodestopbtn" class="btn btn-danger" onclick="stopNode();">Stop</button>&nbsp;
                         <button id="noderestartbtn" class="btn btn-warning hidden" onclick="restartNode();">Restart</button>
                 </div>
                 <br/>
-                <?php
-                    if ($_SERVER['SERVER_NAME']!='demo.wallacepos.com'){
-                ?>
                 <form class="form-horizontal">
                     <div class="space-4"></div>
                     <div class="form-group">
@@ -55,7 +53,6 @@
                 <div class="text-center">
                     <button class="btn btn-success" onclick="saveFeedSettings();"><i class="icon-save"></i> Save</button>
                 </div>
-                <?php } ?>
             </div>
         </div>
     </div>
