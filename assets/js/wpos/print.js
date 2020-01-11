@@ -569,7 +569,10 @@ function WPOSPrint(kitchenMode) {
       }
 
     function printStock(stock) {
-        var method = getPrintSetting('receipts', 'method');
+        var data = getEscStock(stock);
+        printESCPInvoice(data);
+        return true;
+        /*var method = getPrintSetting('receipts', 'method');
         switch (method) {
             case "br":
             // browserPrintHtml(getHtmlReceipt(debtors, false, true), 'Biashara Pos Invoice', 600, 800);
@@ -584,7 +587,7 @@ function WPOSPrint(kitchenMode) {
                 return true;
             default :
                 return false;
-        }
+        }*/
     }
     function printESCPReceipt(data){
         if (WPOS.getConfigTable().pos.recprintlogo == true) {

@@ -731,16 +731,19 @@ class WposAdminStats {
         if ($items===false){
             $result['error']= "Error getting items data: ".$itemsMdl->errorInfo;
         }
-        foreach ($items as $item) {
-            $stats[$item['name']] = new stdClass();
-            foreach ($stocks as $stock){
-                if ($item['name'] == $stock['name']) {
-                    $stats[$stock['name']]->stocklevel += $stock['stocklevel'];
-                    $stats[$stock['name']]->reorderpoint = $stock['reorderPoint'];
-                    $stats[$stock['name']]->stockType = $stock['stockType'];
-                }
-            }
+        foreach ($stocks as $stock){
+            $stats[$stock['storeditemid']] = new stdClass();
+            $stats[$stock['storeditemid']]->name = $stock['name'];
+            $stats[$stock['storeditemid']]->storeditemid = $stock['storeditemid'];
+            $stats[$stock['storeditemid']]->items = [];
         }
+        foreach ($stocks as $stock) {
+            array_push($stats[$stock['storeditemid']]->items, $stock);
+        }
+        /*foreach ($items as $item) {
+            $stats[$item['name']] = new stdClass();
+
+        }*/
         $result['data'] = $stats;
         return $result;
     }

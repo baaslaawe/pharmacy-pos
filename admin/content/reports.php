@@ -346,11 +346,22 @@
 
     function populateOrder(){
         var html = getCurrentReportHeader("Purchase Order");
-        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td>Stock Qty</td><td>Reorder Point</td></tr></thead><tbody>";
-        for (var i in repdata){
-            rowdata = repdata[i];
-            if (parseInt(rowdata.stocklevel) <= parseInt(rowdata.reorderpoint) && rowdata.stockType === '1'){
-              html += "<tr><td>"+i+"</td><td>"+rowdata.stocklevel+"</td><td>"+rowdata.reorderpoint+"</td></tr>"
+        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td>Supplier</td><td>Cost</td><td>Stock Qty</td><td>Reorder Point</td></tr></thead><tbody>";
+        var sortable = {};
+
+        for(var i in repdata) {
+            var drug = repdata[i];
+            if(drug['name'])
+                sortable[drug['name'].toLowerCase()] = drug;
+        }
+        repdata = Object.keys(sortable).sort((a, b)=> {return a.name - b.name });
+        for (var i in sortable){
+            var items = sortable[i].items;
+            for(var item in items){
+                let rowdata = items[item];
+                if (parseInt(rowdata.stocklevel) <= parseInt(rowdata.reorderPoint) && rowdata.stockType == '1'){
+                    html += "<tr><td>"+rowdata.name+"</td><td>"+rowdata.supplier+"</td><td>"+rowdata.cost+"</td><td>"+rowdata.stocklevel+"</td><td>"+rowdata.reorderPoint+"</td></tr>"
+                }
             }
         }
         html += "</tbody></table>";
