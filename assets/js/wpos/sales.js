@@ -284,7 +284,7 @@ function WPOSItems() {
         var row = $('<tr class="item_row"' + ' style="display: '+ (hidden? "none": "visible")+';">' +
             '<td><input type="hidden" class="reorderpoint" value="' + reorderpoint + '" /><input type="hidden" class="newItem" value="true" /><input type="hidden" name="relatedItems[]" class="otherRelatedItemsId" value="' + otherRelatedItemsId + '" /><input type="hidden" class="totalStockLevel" value="' + totalStockLevel + '" /><input type="hidden" class="totalItems" value="' + totalItems + '" data-options=\''+JSON.stringify(data)+'\' /><input class="itemid form-control" type="hidden" value="' + sitemid + '" data-options=\''+JSON.stringify(data)+'\' /><input onChange="WPOS.sales.updateSalesTotal();" style="width:50px;" type="text" class="itemqty numpad form-control" value="' + qty + '" /></td>' +
             '<td><input '+((disable==true && name!="")?"disabled":"")+' type="text" class="itemname form-control" value="' + name + '" onChange="WPOS.sales.updateSalesTotal();" /><div class="itemmodtxt"></div></td>' +
-            '<td><select onchange="WPOS.sales.updateSaleUnit($(this).val(), $(this).parent().parent());" style="max-width:80px;" class="itemtype form-control">' +getTypeSelectHTML(unit, wunit)+ '</select><input class="itemtypeval" type="hidden" value="0" /></td>' +
+            '<td><input type="hidden" value="'+ wunit +'" class="item_whole_price"><input type="hidden" value="'+ unit +'" class="item_retail_price"><select onchange="WPOS.sales.updateSaleUnit($(this).val(), $(this).parent());" style="max-width:80px;" class="itemtype form-control">' +getTypeSelectHTML(unit, wunit)+ '</select><input class="itemtypeval" type="hidden" value="0" /></td>' +
             '<td class="itemprice"><input onChange="WPOS.sales.updateSalesTotal();" style="max-width:110px;" type="text" class="itemunit form-control numpad" value="' + unit + '" /></td>' +
             '<td><select '+((!newItem && disabletax==true && taxid!=null)?"disabled":"")+' onChange="WPOS.sales.updateSalesTotal();" style="max-width:80px;" class="itemtax form-control">' +getTaxSelectHTML(taxid)+ '</select><input class="itemtaxval" type="hidden" value="0.00" /></td>' +
             '<td><input style="max-width:110px;" type="text" class="itemprice form-control" value="0.00" disabled /></td>' +
@@ -764,10 +764,38 @@ function WPOSSales() {
     };
 
     this.updateSaleUnit = function (unit, parent) {
-        parent.children('.itemprice').each(function(index, element){
-            $(element).find('.itemunit').val(unit);
-        });
-        WPOS.sales.updateSalesTotal();
+        let retailPrice = parent.children('.item_retail_price').val();
+        let wholesalePrice = parent.children('.item_whole_price').val();
+        if(unit == retailPrice) {
+            WPOS.sales.updateSalesTotal();
+        } else {
+            swal({
+                title: 'Select selling price',
+                text: `Retail price=>${retailPrice} Wholesale=>${wholesalePrice} Sell using wholesale price? `,
+                type: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, sell at '+ wholesalePrice
+            }).then(answer=> {
+                if(answer.value) {
+                    let discount = parseFloat($("#salediscount").val()) + parseFloat(retailPrice) - parseFloat(wholesalePrice);
+                    $("#salediscount").val(Math.ceil(discount));
+                    WPOS.sales.updateSalesTotal();
+                    swal({
+                        type: "success",
+                        title: "Discount added",
+                        text: "A discount of " + Math.ceil(parseFloat(retailPrice) - parseFloat(wholesalePrice)) + " has been given",
+                    });
+                }
+            }).catch(error=> {
+                swal({
+                    type: "danger",
+                    title: "Error",
+                    text: "Something went wrong",
+                })
+            })
+        }
     };
 
     /**
