@@ -31,15 +31,15 @@ class DbConfig
     /**
      * @var string Username to login to database, could probably be fetched from a config file instead but w/e
      */
-    private static $_username = '';
+    private static $_username = 'joe';
     /**
      * @var string
      */
-    private static $_password = '';
+    private static $_password = 'root';
     /**
      * @var string
      */
-    private static $_database = '';
+    private static $_database = 'salvia_pos';
     /**
      * @var string
      */

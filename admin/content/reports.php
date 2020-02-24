@@ -145,6 +145,7 @@
         all ? html += '<tr><td><a onclick="WPOS.transactions.openExpensesList(\''+repdata.expensesrefs+'\');">Expenses</a></td><td>'+repdata.expensesnum+'</td><td>'+WPOS.util.currencyFormat(repdata.expenses)+'</td></tr>': '';
         all ? html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refs+'\');">Revenue(Total money collected)</a></td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.totaltakings)+'</td></tr>': '';
         invoice ? html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.invoicerefs+'\');">Paid Invoices</a></td><td>'+repdata.invoicenum+'</td><td>'+WPOS.util.currencyFormat(parseFloat(repdata.invoicetotal)- parseFloat(repdata.invoicebalance))+'</td></tr>': '';
+        html += '<tr><td>Discounts</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.discounts)+'</td></tr>';
         html += '<tr><td>Cost</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.cost)+'</td></tr>';
         all ? html += '<tr><td>Gross profit</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.profit)+'</td></tr>': html += '<tr><td>Profit</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.profit)+'</td></tr>';
         all ? html += '<tr><td>Net profit</td><td>'+repdata.salenum+'</td><td>'+WPOS.util.currencyFormat(repdata.netprofit)+'</td></tr>': '';
@@ -344,13 +345,40 @@
         $("#reportcontain").html(html);
     }
 
-    function populateOrder(){
+    function populateOrder(filter=false){
         var html = getCurrentReportHeader("Purchase Order");
-        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td>Stock Qty</td><td>Reorder Point</td></tr></thead><tbody>";
-        for (var i in repdata){
-            rowdata = repdata[i];
-            if (parseInt(rowdata.stocklevel) <= parseInt(rowdata.reorderpoint) && rowdata.stockType === '1'){
-              html += "<tr><td>"+i+"</td><td>"+rowdata.stocklevel+"</td><td>"+rowdata.reorderpoint+"</td></tr>"
+        html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td>Supplier</td><td>Cost</td><td>Stock Qty</td><td>Reorder Point</td></tr></thead><tbody>";
+        var sortable = {};
+
+        for(var i in repdata) {
+            var drug = repdata[i];
+            if(drug['name']){
+                if(filter){
+                    if(drug['items'].length <= 1){
+                        sortable[drug['name'].toLowerCase()] = drug;
+                    } else {
+                        let min = drug.items[0];
+                        drug.items.forEach(item=> {
+                            if(item.cost <= min.cost)
+                                min = item;
+                        });
+                        drug.items = [min];
+                        sortable[drug['name'].toLowerCase()] = drug;
+                        debugger
+                    }
+                } else {
+                    sortable[drug['name'].toLowerCase()] = drug;
+                }
+
+            }
+        }
+        for (var i in sortable){
+            var items = sortable[i].items;
+            for(var item in items){
+                let rowdata = items[item];
+                if (parseInt(rowdata.stocklevel) <= parseInt(rowdata.reorderPoint) && rowdata.stockType == '1'){
+                    html += "<tr><td>"+rowdata.name+"</td><td>"+rowdata.supplier+"</td><td>"+rowdata.cost+"</td><td>"+rowdata.stocklevel+"</td><td>"+rowdata.reorderPoint+"</td></tr>"
+                }
             }
         }
         html += "</tbody></table>";
@@ -392,6 +420,8 @@
     }
 
     function exportCurrentReport(){
+        if($('#reportcontain').find('h3').text() == 'Purchase Order')
+            populateOrder(true);
         var data  = WPOS.table2CSV($("#reportcontain"));
         var filename = $("#reportcontain div h3").text()+"-"+$("#reportcontain div h5").text();
         filename = filename.replace(" ", "");

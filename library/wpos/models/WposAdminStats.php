@@ -67,6 +67,7 @@ class WposAdminStats {
     public function getOverviewStats($result){
         $stats = new stdClass();
         $stats->saletotal = 0; // set defaults
+        $stats->discounts = 0; // set defaults
         $stats->salenum = 0;
         $stats->invoicetotal = 0;
         $stats->invoicenum = 0;
@@ -106,6 +107,7 @@ class WposAdminStats {
                 $stats->salerefs = $sales[0]['refs'];
                 $stats->saletotal = $sales[0]['stotal'];
                 $stats->saletotalcost = $sales[0]['ctotal'];
+                $stats->discounts += $sales[0]['cdiscount'];
                 $stats->salenum = $sales[0]['snum'];
             } else {
                 $result['error']= $salesMdl->errorInfo;
@@ -116,6 +118,7 @@ class WposAdminStats {
             if (($sales = $salesMdl->getTotals($stime, $etime, 3, false, false, 'sale'))!==false){
                 $stats->salerefs = $sales[0]['refs'];
                 $stats->saletotal = $sales[0]['stotal'];
+                $stats->discounts += $sales[0]['cdiscount'];
                 $stats->saletotalcost = $sales[0]['ctotal'];
                 $stats->salenum = $sales[0]['snum'];
             } else {
@@ -128,6 +131,7 @@ class WposAdminStats {
             if (($invoices = $salesMdl->getTotals($stime, $etime, 3, false, false, 'invoice'))!==false){
                 $stats->invoicerefs = $invoices[0]['refs'];
                 $stats->invoicetotal = $invoices[0]['stotal'];
+                $stats->discounts += $invoices[0]['cdiscount'];
                 $stats->invoicecost = $invoices[0]['ctotal'];
                 $stats->invoicenum = $invoices[0]['snum'];
             } else {
@@ -731,16 +735,19 @@ class WposAdminStats {
         if ($items===false){
             $result['error']= "Error getting items data: ".$itemsMdl->errorInfo;
         }
-        foreach ($items as $item) {
-            $stats[$item['name']] = new stdClass();
-            foreach ($stocks as $stock){
-                if ($item['name'] == $stock['name']) {
-                    $stats[$stock['name']]->stocklevel += $stock['stocklevel'];
-                    $stats[$stock['name']]->reorderpoint = $stock['reorderPoint'];
-                    $stats[$stock['name']]->stockType = $stock['stockType'];
-                }
-            }
+        foreach ($stocks as $stock){
+            $stats[$stock['storeditemid']] = new stdClass();
+            $stats[$stock['storeditemid']]->name = $stock['name'];
+            $stats[$stock['storeditemid']]->storeditemid = $stock['storeditemid'];
+            $stats[$stock['storeditemid']]->items = [];
         }
+        foreach ($stocks as $stock) {
+            array_push($stats[$stock['storeditemid']]->items, $stock);
+        }
+        /*foreach ($items as $item) {
+            $stats[$item['name']] = new stdClass();
+
+        }*/
         $result['data'] = $stats;
         return $result;
     }

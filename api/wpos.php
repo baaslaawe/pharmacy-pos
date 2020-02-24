@@ -667,9 +667,9 @@ function routeApiCall($action, $data, $result) {
             $result = $jsondata->getExpenses($result);
             break;
         case "stats/bills":
-                    $jsondata = new WposAdminExpenses($data);
-                    $result = $jsondata->getExpenses($result);
-                    break;
+            $jsondata = new WposAdminExpenses($data);
+            $result = $jsondata->getExpenses($result);
+            break;
 
         // GRAPH
         case "graph/general": // like the general stats, but in graph form/time.

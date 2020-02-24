@@ -8,6 +8,7 @@
 
 class WposStockItem extends stdClass
 {
+    public $id = 0;
     public $stockinventoryid = 0;
     public $storeditemid = 0;
     public $supplierid = 0;

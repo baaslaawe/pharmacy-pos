@@ -354,7 +354,7 @@ function WPOSKitchen() {
                         return;
                     }
                     // start websocket connection
-                    startSocket();
+                    // startSocket();
                     setStatusBar(1, "WPOS is Online", "The POS is running in online mode.\nThe feed server is connected and receiving realtime updates.", 0);
                     initDataSuccess(loginloader);
                     // check for offline sales on login
