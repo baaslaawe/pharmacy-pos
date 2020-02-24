@@ -778,7 +778,8 @@
           {label: "Set unknown tax names to no tax", id:"skip_tax", checked:false},
           {label: "Create Items if doesn't exists", id:"add_items", checked:true},
           {label: "Create unknown suppliers", id:"add_suppliers", checked:true},
-          {label: "Create unknown categories", id:"add_categories", checked:true}
+          {label: "Create unknown categories", id:"add_categories", checked:true},
+          {label: "Override existing stock values", id:"override_stock", checked:false}
         ],
         // callbacks
         onImport: function(jsondata, options){
