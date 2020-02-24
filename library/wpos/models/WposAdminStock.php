@@ -171,9 +171,7 @@ class WposAdminStock {
                     }
                 }
             }
-
             $storedItem = $storedItemsMdl->get($id);
-            var_dump($storedItem[0]);
             if ($storedItem !== false || $storedItem === null) {
                 $storedItem[0]['reorderPoint'] = $item->reorderPoint;
                 $sitem = $storedItem[0];
@@ -189,7 +187,6 @@ class WposAdminStock {
             $item->storeditemid = $id;
             $storedItems[] = ['id'=>$id, 'name'=>$item->name];
             unset($item->name);
-
 
             // Match supplier
             if (!$item->supplier_name || $item->supplier_name=="None" || $item->supplier_name=="Misc"){
@@ -243,12 +240,17 @@ class WposAdminStock {
                 // create add the item in stock Items model
                 unset($stockObj->storeditemid);
                 $stockObj->stockinventoryid = $stockinventoryid;
-                $id=$stockItemsMdl->create($stockObj->stockinventoryid, $stockObj->amount, $stockObj->expiryDate,  $stockObj->cost,  $stockObj->price,  $stockObj->wprice,  $stockObj->code, $stockObj->inventoryNo,  json_encode($stockObj),  $stockObj->locationid, time());
-                if ($id===false){
-                    $result['error'] = "Could not add item to stock, ".json_encode($stockObj);
-                    EventStream::sendStreamData($result);
-                    return $result;
+                if($options->override){
+                    $id = $stockItemsMdl->setStockLevel($stockObj->id, $stockObj->stockinventoryid, $stockObj->amount, $stockObj->expiryDate, $stockObj->cost, $stockObj->price, $stockObj->wprice, $stockObj->code, $stockObj->inventoryNo, json_encode($stockObj), $stockObj->locationid);
+                } else {
+                    $id=$stockItemsMdl->create($stockObj->stockinventoryid, $stockObj->amount, $stockObj->expiryDate,  $stockObj->cost,  $stockObj->price,  $stockObj->wprice,  $stockObj->code, $stockObj->inventoryNo,  json_encode($stockObj),  $stockObj->locationid, time());
+                    if ($id===false){
+                        $result['error'] = "Could not add item to stock, ".json_encode($stockObj);
+                        EventStream::sendStreamData($result);
+                        return $result;
+                    }
                 }
+
                 // create history record for imported stock
                 if ($this->histMdl->create($id, $stockObj->locationid, 'Stock Imported', $item->amount)===false){
                     $result['error'] = "Could not create stock history record".$this->histMdl->errorInfo;

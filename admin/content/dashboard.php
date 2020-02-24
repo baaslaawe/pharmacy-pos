@@ -167,6 +167,15 @@
                     <div class="infobox-content">Cost</div>
                 </div>
             </div>
+            <div class="infobox infobox-green infobox-discounts">
+                <div class="infobox-icon">
+                    <i class="icon-minus-sign-alt"></i>
+                </div>
+                <div class="infobox-data">
+                    <span id="discounts" class="infobox-data-number">-</span>
+                    <div class="infobox-content">Discounts</div>
+                </div>
+            </div>
             <div class="infobox infobox-green infobox-actual-cash">
                 <div class="infobox-icon">
                     <i class="icon-bitcoin"></i>
@@ -439,6 +448,7 @@
         $("#bills").text(WPOS.util.currencyFormat(totals.bills, true));
         $("#billsnum").text(totals.billsnum);
         $("#cost").text(WPOS.util.currencyFormat(parseFloat(sales.cost) + parseFloat(invoices.invoicecost), true));
+        $("#discounts").text(WPOS.util.currencyFormat(totals.discounts, true));
         $("#actualcash").text(WPOS.util.currencyFormat(totals.totalcash-totals.expenses - totals.bills, true));
         // $("#gprofit").text(WPOS.util.currencyFormat(totals.netprofit, true));
         // Set onclicks

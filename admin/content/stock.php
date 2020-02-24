@@ -3,9 +3,11 @@
     <h1 class="inline">
         Item Inventory
     </h1>
-    <button onclick="openAddStockDialog();" id="addbtn" class="btn btn-primary btn-sm pull-right"><i class="icon-pencil align-top bigger-125"></i>Add</button>
-    <button class="btn btn-success btn-sm pull-right" style="margin-right: 10px;" onclick="exportStock();"><i class="icon-cloud-download align-top bigger-125"></i>Download Template</button>
-    <button class="btn btn-success btn-sm pull-right" style="margin-right: 10px;" onclick="openImportDialog();"><i class="icon-cloud-upload align-top bigger-125"></i>Update Inventory</button>
+    <button onclick="openAddStockDialog();" id="addbtn" class="btn btn-primary btn-sm pull-right"><i class="icon-pencil align-top bigger-125"></i> Add</button>
+    <button class="btn btn-success btn-sm pull-right" style="margin-right: 10px;" onclick="exportStock();"><i class="icon-cloud-download align-top bigger-125"></i> Download Template</button>
+    <button class="btn btn-success btn-sm pull-right" style="margin-right: 10px;" onclick="openImportDialog();"><i class="icon-cloud-upload align-top bigger-125"></i> Update Inventory</button>
+    <button class="btn btn-info btn-sm pull-right" style="margin-right: 10px;" onclick="exportStockForOverride();"><i class="icon-download-alt align-top bigger-125"></i> Override template</button>
+    <button class="btn btn-info btn-sm pull-right" style="margin-right: 10px;" onclick="openImportDialogForOverride();"><i class="icon-upload-alt align-top bigger-125"></i> Override upload</button>
 <!--    <input type="file" id="files" name="inventory" data-buttonText="" class="btn btn-success btn-sm pull-right" style="margin-right: 10px;"/>-->
 </div><!-- /.page-header -->
 
@@ -660,6 +662,122 @@
         datatable.fnAddData(stockarray, false);
         datatable.api().draw(false);
     }
+
+    function exportStockForOverride(){
+        var filename = "stock-taking-"+WPOS.util.getDateFromTimestamp(new Date());
+        filename = filename.replace(" ", "");
+
+        var data = {};
+        var config = JSON.parse(localStorage.getItem('wpos_config'));
+        var sortable=[];
+        var items = WPOS.getJsonData("stock/get");
+        var list = {};
+        for(var item in items) {
+            if (items[item].stockType === '1')
+                list[items[item].id] = items[item];
+        }
+        for(var key in list)
+            if(list.hasOwnProperty(key))
+                sortable.push([key, list[key]]);
+        var sorted = sortable.sort(function(a, b) {
+            return a[1].name.localeCompare(b[1].name);
+        });
+        var i = 1;
+        for(var it in sorted){
+            i++;
+            let item = sorted[it][1];
+            data[it] = {
+                id: item.id,
+                name: item.name,
+                description: item.description,
+                locationid: config.deviceconfig.locationid,
+                cost: item.cost,
+                price: item.price,
+                wprice: item.wprice,
+                stocklevel: item.stocklevel,
+                reorderpoint: item.reorderPoint,
+                supplier: item.supplier,
+                inventoryNo: item.inventoryNo,
+                expiryDate: item.expiryDate,
+                taxname: WPOS.getTaxTable().rules[item.taxid].name,
+                categoryid: item.categoryid
+            };
+        }
+
+        var csv = WPOS.data2CSV(
+            ['Item id', '*Name', 'Description', '*Location', '*Unit Cost', '*Unit Retail', '*Unit Wholesale', '*Stock Level', 'Reorder Point', '*Supplier Name', 'Invoice No', 'Expiry Date', 'Tax Name', 'Category Name'],
+            ['id', 'name', 'description',
+                {key:'locationid', func: function(value){ return WPOS.locations.hasOwnProperty(value) ? WPOS.locations[value].name : 'Unknown'; }},
+                'cost', 'price',  'wprice', 'stocklevel', 'reorderpoint', 'supplier', 'inventoryNo', 'expiryDate', 'taxname',
+                {key:'categoryid', func: function(value){ return categories.hasOwnProperty(value) ? categories[value].name : 'GENERAL'; }}
+            ],
+            data
+        );
+        WPOS.initSave(filename, csv);
+    }
+
+    function openImportDialogForOverride(){
+        if (importdialog!=null) {
+            importdialog.csvImport("destroy");
+        }
+        importdialog = $("body").csvImport({
+            jsonFields: {
+                'id': {title:'Item id', required: true, value: "0"},
+                'name': {title:'*Name', required: true},
+                'description': {title:'Description', required: false, value: "No Description"},
+                'location': {title:'*Location', required: true},
+                'cost': {title:'*Unit Cost', required: true},
+                'price': {title:'*Unit Retail', required: true},
+                'wprice': {title:'*Unit Wholesale', required: true},
+                'amount': {title:'*Stock Level', required: true},
+                'reorderpoint': {title:'Reorder Point', required: false, value: "0"},
+                'supplier_name': {title:'*Supplier Name', required: true},
+                'inventoryNo': {title:'Invoice No', required: false, value: "0000"},
+                'expiryDate': {title:'Expiry Date', required: false, value: "12/31/2050"},
+                'tax_name': {title:'Tax Name', required: false, value: "No Tax"},
+                'category_name': {title:'Category Name', required: false, value: "General"}
+            },
+            csvHasHeader: true,
+            importOptions: [
+                {label: "Import items with zero stock level", id:"import_zeros", checked:true},
+                {label: "Override", id:"override", checked:true},
+                {label: "Set unknown tax names to no tax", id:"skip_tax", checked:false},
+                {label: "Create Items if doesn't exists", id:"add_items", checked:true},
+                {label: "Create unknown suppliers", id:"add_suppliers", checked:true},
+                {label: "Create unknown categories", id:"add_categories", checked:true},
+            ],
+            onImport: function(jsondata, options){
+                var data = [];
+                for(var i=0; i<jsondata.length;i++){
+                    if(!options.import_zeros) {
+                        if (jsondata[i].amount === "0" || jsondata[i].amount === '' || jsondata[i].amount === null ) {
+                            continue;
+                        }
+                    }
+                    data.push({
+                        id: jsondata[i].id,
+                        name: jsondata[i].name,
+                        description: jsondata[i].description !== '' ? jsondata[i].description.toUpperCase(): "No Description",
+                        supplier_name: jsondata[i].supplier_name.toUpperCase(),
+                        locationid: getLocation(jsondata[i].location),
+                        cost: jsondata[i].cost,
+                        price: jsondata[i].price,
+                        wprice: jsondata[i].wprice,
+                        stockType: '1',
+                        amount: jsondata[i].amount,
+                        reorderPoint: jsondata[i].reorderpoint !== '' ? jsondata[i].reorderpoint: "0",
+                        code: "0000",
+                        expiryDate: jsondata[i].expiryDate !== '' ? jsondata[i].expiryDate: "30/12/2050",
+                        inventoryNo: jsondata[i].inventoryNo !== '' ? jsondata[i].inventoryNo.toUpperCase(): "INV0000",
+                        category_name: jsondata[i].category_name !== '' ? jsondata[i].category_name.toUpperCase(): "GENERAL",
+                        tax_name: jsondata[i].tax_name !== '' ? jsondata[i].tax_name: "No Tax"
+                    });
+                }
+                importItems(data, options);
+            }
+        });
+    }
+
     function exportStock(){
         var filename = "stock-"+WPOS.util.getDateFromTimestamp(new Date());
         filename = filename.replace(" ", "");
@@ -778,7 +896,8 @@
           {label: "Set unknown tax names to no tax", id:"skip_tax", checked:false},
           {label: "Create Items if doesn't exists", id:"add_items", checked:true},
           {label: "Create unknown suppliers", id:"add_suppliers", checked:true},
-          {label: "Create unknown categories", id:"add_categories", checked:true}
+          {label: "Create unknown categories", id:"add_categories", checked:true},
+          {label: "Override existing stock values", id:"override_stock", checked:false}
         ],
         // callbacks
         onImport: function(jsondata, options){
