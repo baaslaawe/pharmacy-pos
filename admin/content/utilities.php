@@ -217,7 +217,7 @@
     }
 
     function exportDB(){
-        $("#dlframe").attr('src', 'http://localhost/api/wpos.php?a=db%2Fbackup');
+        $("#dlframe").attr('src', 'http://localhost:91/api/wpos.php?a=db%2Fbackup');
     }
 
     function restoreTemplates(){
