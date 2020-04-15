@@ -925,6 +925,11 @@ function WPOS() {
         a.remove();
     };
 
+    this.removeOfflineSales = function() {
+        localStorage.removeItem('wpos_osales');
+        swal("Done", "Restart the app to reflect changes");
+    }
+
     function populateDeviceInfo(){
         var config = WPOS.getConfigTable();
         $(".device_id").text(config.deviceid);
