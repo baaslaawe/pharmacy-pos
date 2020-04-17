@@ -32,7 +32,7 @@
     <th data-priority="2">Name</th>
     <th data-priority="3">Description</th>
     <th data-priority="7">Stock Type</th>
-    <th data-priority="8">DAA</th>
+    <th data-priority="8">DDA</th>
     <th data-priority="4">Category</th>
     <th data-priority="5">Tax</th>
     <th data-priority="6">Reorder Point</th>
@@ -83,7 +83,7 @@
         </td>
       </tr>
         <tr>
-            <td style="text-align: right;"><label>Is DAA required:&nbsp;</label></td>
+            <td style="text-align: right;"><label>Is DDA required:&nbsp;</label></td>
             <td>
                 <input type="checkbox" checked="false" id="itemIsDaa">
             </td>
@@ -125,7 +125,7 @@
           </td>
         </tr>
         <tr>
-            <td style="text-align: right;"><label>Is DAA required:&nbsp;</label></td>
+            <td style="text-align: right;"><label>Is DDA required:&nbsp;</label></td>
             <td>
                 <input type="checkbox" id="newItemIsDaa">
             </td>
@@ -173,7 +173,7 @@
                 { "mData":"name" },
                 { "mData":"description" },
                 { "mData":function(data){return (data.stockType === '1' ?'Inventory':'Non-Inventory'); } },
-                { "mData":function(data){return (data.isDaa?'DAA':'Non-DAA'); } },
+                { "mData":function(data){return (data.isDaa?'DDA':'Non-DDA'); } },
                 { "mData":function(data,type,val){return (categories.hasOwnProperty(data.categoryid)?categories[data.categoryid].name:'None'); } },
                 { "mData":"taxname"},
                 { "mData":"reorderPoint"},
@@ -536,14 +536,14 @@
             name: sorted[item][1].name,
             description: sorted[item][1].description,
             stockType: sorted[item][1].stockType === '1'? 'Inventory': 'Non-Inventory',
-            isDaa: sorted[item][1].isDaa ? 'DAA': 'Non-DAA',
+            isDaa: sorted[item][1].isDaa ? 'DDA': 'Non-DDA',
             categoryid: sorted[item][1].categoryid,
             taxname: WPOS.getTaxTable().rules[sorted[item][1].taxid].name,
             reorderPoint: sorted[item][1].reorderPoint
           };
         }
         var csv = WPOS.data2CSV(
-            ['ID', 'Name', 'Description', 'Stock Type', 'DAA', 'Category Name', 'Tax', 'Reorder Point'],
+            ['ID', 'Name', 'Description', 'Stock Type', 'DDA', 'Category Name', 'Tax', 'Reorder Point'],
             ['id', 'name', 'description', 'stockType', 'isDaa',
                 {key:'categoryid', func: function(value){ return categories.hasOwnProperty(value) ? categories[value].name : 'Unknown'; }},
               'taxname', 'reorderPoint'
@@ -567,7 +567,7 @@
                 'tax_name': {title:'Tax Name', required: true},
                 'reorderPoint': {title:'Reorder Point', required: true},
                 'stockType': {title:'Stock Type', required: true},
-                'isDaa': {title:'DAA', required: true}
+                'isDaa': {title:'DDA', required: true}
             },
             csvHasHeader: true,
             importOptions: [
