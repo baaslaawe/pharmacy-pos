@@ -718,6 +718,27 @@ class WposAdminStats {
         return $result;
     }
 
+    public function getDAAList($result){
+        // check if params set, if not set defaults
+        $stime = isset($this->data->stime)?$this->data->stime:(strtotime('-1 week')*1000);
+        $etime = isset($this->data->etime)?$this->data->etime:(time()*1000);
+        $stats = [];
+        $daaMdl = new DAAPatientsModel();
+        $drugs = $daaMdl->get($stime, $etime);
+        if ($drugs===false){
+            $result['error']= "Error getting DAA List data: ".$daaMdl->errorInfo;
+        }
+//        var_dump($drugs);
+        foreach ($drugs as $drug){
+            $stats[$drug['id']] = new stdClass();
+            $stats[$drug['id']]->customer = $drug['customer'];
+            $stats[$drug['id']]->drug = $drug['drug'];
+            $stats[$drug['id']]->qty = $drug['qty'];
+        }
+        $result['data'] = $stats;
+        return $result;
+    }
+
     /**
      * Get the current reorder points, does not take into account the current range
      * @param $result

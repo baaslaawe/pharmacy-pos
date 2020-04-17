@@ -24,12 +24,14 @@
 function WPOSItems() {
     var stock;
     // public members for modifying the current sales items
+    this.hasDaaDrug = false;
+    // Mark sale with no DAA drug
     /**
      * Adds a blank item row for the user to fill in
      */
     this.addManualItemRow = function () {
         // add the row
-        addItemRow(1, "", "0.00", "0.00", 1, 0, 0, 0, {desc:"general", cost:0.00, unit_original:0.00}, 0, 0, false);
+        addItemRow(1, "", "0.00", "0.00", 1, 0, 0, 0, {desc:"general", cost:0.00, unit_original:0.00}, 0, 0, false, '0');
         // focus on qty
         $("#itemtable")
             .children('tr :last')
@@ -235,6 +237,7 @@ function WPOSItems() {
           price: 0
         };
         item.name = items[i].name;
+        item.isDaa = items[i].isDaa == "1";
         for (var s in sorted) {
           if (items[i].name === sorted[s][1].name && sorted[s][1].locationid === locationid ) {
             if(parseInt(sorted[s][1].stocklevel) > 0){
@@ -273,16 +276,18 @@ function WPOSItems() {
      * @param {Array} otherRelatedItemsId
      * @param {Number} totalStockLevel
      * @param {Boolean} hidden
+     * @param {String} daa
      * @param data
      */
-    function addItemRow(qty, name, unit, wunit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden) {
+    function addItemRow(qty, name, unit, wunit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden, daa) {
+        var isDaa = daa != "0";
         sitemid = (sitemid>0?sitemid:0);
         var disable = (sitemid>0); // disable fields that are filled by the stored item
         // var disableprice = (sitemid>0 && WPOS.getConfigTable().pos.priceedit!="always");
         var disabletax = (!WPOS.getConfigTable().pos.hasOwnProperty('taxedit') || WPOS.getConfigTable().pos.taxedit=='no');
         var newItem = (sitemid===0 && totalStockLevel ===0);
         var row = $('<tr class="item_row"' + ' style="display: '+ (hidden? "none": "visible")+';">' +
-            '<td><input type="hidden" class="reorderpoint" value="' + reorderpoint + '" /><input type="hidden" class="newItem" value="true" /><input type="hidden" name="relatedItems[]" class="otherRelatedItemsId" value="' + otherRelatedItemsId + '" /><input type="hidden" class="totalStockLevel" value="' + totalStockLevel + '" /><input type="hidden" class="totalItems" value="' + totalItems + '" data-options=\''+JSON.stringify(data)+'\' /><input class="itemid form-control" type="hidden" value="' + sitemid + '" data-options=\''+JSON.stringify(data)+'\' /><input onChange="WPOS.sales.updateSalesTotal();" style="width:50px;" type="text" class="itemqty numpad form-control" value="' + qty + '" /></td>' +
+            '<td><input type="hidden" class="reorderpoint" value="' + reorderpoint + '" /><input type="hidden" class="isDaa" value="' + isDaa + '" /><input type="hidden" class="newItem" value="true" /><input type="hidden" name="relatedItems[]" class="otherRelatedItemsId" value="' + otherRelatedItemsId + '" /><input type="hidden" class="totalStockLevel" value="' + totalStockLevel + '" /><input type="hidden" class="totalItems" value="' + totalItems + '" data-options=\''+JSON.stringify(data)+'\' /><input class="itemid form-control" type="hidden" value="' + sitemid + '" data-options=\''+JSON.stringify(data)+'\' /><input onChange="WPOS.sales.updateSalesTotal();" style="width:50px;" type="text" class="itemqty numpad form-control" value="' + qty + '" /></td>' +
             '<td><input '+((disable==true && name!="")?"disabled":"")+' type="text" class="itemname form-control" value="' + name + '" onChange="WPOS.sales.updateSalesTotal();" /><div class="itemmodtxt"></div></td>' +
             '<td><input type="hidden" value="'+ wunit +'" class="item_whole_price"><input type="hidden" value="'+ unit +'" class="item_retail_price"><select onchange="WPOS.sales.updateSaleUnit($(this).val(), $(this).parent());" style="max-width:80px;" class="itemtype form-control">' +getTypeSelectHTML(unit, wunit)+ '</select><input class="itemtypeval" type="hidden" value="0" /></td>' +
             '<td class="itemprice"><input onChange="WPOS.sales.updateSalesTotal();" style="max-width:110px;" type="text" class="itemunit form-control numpad" value="' + unit + '" /></td>' +
@@ -300,8 +305,8 @@ function WPOSItems() {
         WPOS.initKeypad();
         WPOS.sales.updateSalesTotal();
     }
-    this.addItemRow = function(qty, name, unit,  wunit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden){
-        addItemRow(qty, name, unit, wunit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden);
+    this.addItemRow = function(qty, name, unit,  wunit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden, isDaa){
+        addItemRow(qty, name, unit, wunit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden, isDaa);
     };
 
     /**
@@ -388,11 +393,11 @@ function WPOSItems() {
         // check if a priced item is already present in the sale and if so increment it's qty
         if (item.price==""){
           // insert item into table
-          addItemRow(1, item.name, item.price, item.wprice, item.taxid, item.reorderPoint, item.stocklevel, item.id[item.id.length-1], {desc:item.description, cost:item.cost, unit_original:item.price, alt_name:item.alt_name}, item.otherIds, item.totalStockLevel, false);
+          addItemRow(1, item.name, item.price, item.wprice, item.taxid, item.reorderPoint, item.stocklevel, item.id[item.id.length-1], {desc:item.description, cost:item.cost, unit_original:item.price, alt_name:item.alt_name}, item.otherIds, item.totalStockLevel, false,item.isDaa);
         } else {
           if (!isItemAdded(item.name, true)){
             // insert item into table
-            addItemRow(1, item.name, item.price, item.wprice, item.taxid, item.reorderPoint, item.stocklevel, item.id[item.id.length-1], {desc:item.description, cost:item.cost, unit_original:item.price, alt_name:item.alt_name}, item.otherIds, item.totalStockLevel, false);
+            addItemRow(1, item.name, item.price, item.wprice, item.taxid, item.reorderPoint, item.stocklevel, item.id[item.id.length-1], {desc:item.description, cost:item.cost, unit_original:item.price, alt_name:item.alt_name}, item.otherIds, item.totalStockLevel, false, item.isDaa);
           }
         }
         $("#codeinput").val('');
@@ -972,6 +977,7 @@ function WPOSSales() {
         $("#invaliditemnotice").hide();
         //Reload items from server
         WPOS.refreshData();
+        WPOS.sales.hasDaaDrug = false;
     }
 
     function getNumSalesItems(){
@@ -983,6 +989,8 @@ function WPOSSales() {
         var numinvalid = 0;
         var allow_negative = WPOS.getConfigTable().pos.negative_items;
         var newItem = false;
+        var hasDaa = false;
+
         $("#itemtable").children(".item_row").each(function (index, element) {
                 qty = parseFloat($(element).find(".itemqty").val());
                 stockLevel = parseFloat($(element).find(".totalItems").val());
@@ -994,6 +1002,10 @@ function WPOSSales() {
                 mod = itemdata.hasOwnProperty('mod') ? itemdata.mod.total : 0;
                 tempprice = parseFloat("0.00");
                 newItem = $(element).find(".newItem").val();
+                if(!hasDaa){
+                    if($(element).find(".isDaa").val() === 'true')
+                        hasDaa = true;
+                }
                 if (name === "" || unit <= 0 || totalStockLevel <=0)
                   $(element).find(".newItem").val("true");
                 else
@@ -1031,6 +1043,7 @@ function WPOSSales() {
                     numinvalid++;
                 }
         });
+        WPOS.sales.hasDaaDrug = hasDaa;
         // show warning if items invalid
         if (numinvalid>0){
             $("#invaliditemnotice").show();
@@ -1051,6 +1064,9 @@ function WPOSSales() {
                 inteftbtn.hide();
             }
             $("#paymentsdiv").dialog('open');
+            if (WPOS.sales.hasDaaDrug){
+                $("#patientInfoDialog").dialog('open');
+            }
             $("#endsalebtn").prop("disabled", false); // make sure the damn button is active, dunno why but when the page reloads it seems to keep its state.
         } else {
             swal({
@@ -1060,6 +1076,32 @@ function WPOSSales() {
               });
               
         }
+    };
+
+    this.saveCustomer = function() {
+        // show loader
+        WPOS.util.showLoader();
+        var customer = {};
+        var result;
+        // adding a new item
+        customer.email = $("#newcustemail").val();
+        customer.name = $("#newcustname").val();
+        customer.phone = $("#newcustphone").val();
+        customer.mobile = $("#newcustmobile").val();
+        customer.address = $("#newcustaddress").val();
+        customer.suburb = $("#newcustsuburb").val();
+        customer.postcode = $("#newcustpostcode").val();
+        customer.state = $("#newcuststate").val();
+        customer.country = $("#newcustcountry").val();
+        result = WPOS.sendJsonData("customers/add", JSON.stringify(customer));
+        if (result !== false) {
+            WPOS.updateCustTable(result.id, result);
+            $('#patientid').val(''+result.id);
+            $('#patientname').val(result.name);
+            $("#addcustdialog").dialog("close");
+        }
+        // hide loader
+        WPOS.util.hideLoader();
     };
 
     this.addAdditionalPayment = function(){
@@ -1178,10 +1220,13 @@ function WPOSSales() {
             '<option value="deposit" '+(method=='deposit'?'selected':'')+'>Deposit</option>' +
             exmethod+ '</select>' +
             '<div class="cashvals" '+(method!='cash'?'style="display: none"':'width:150px;')+'>'+
-            '<div style="padding:40px font-weight:bold"><h3>Tendered:<h3></div><input onChange="WPOS.sales.updatePaymentChange($(this).parent());" class="paytender form-control" style="width:80px;display:inline;" type="text" value="'+(method!='cash'?0.00:(tender!=null?tender:value))+'" />' +
+            '<div style="font-weight:bold"><h3>Tendered:<h3></div><input onChange="WPOS.sales.updatePaymentChange($(this).parent());" class="paytender form-control" style="width:80px;display:inline;" type="text" value="'+(method!='cash'?0.00:(tender!=null?tender:value))+'" />' +
              '<div style="margin:5px 0px;"><h3><strong>Change:</strong></h3></div> <input class="paychange form-control" style="width:80px ;display:inline;" type="text" value="'+(method!='cash'?0.00:(change!=null?change:0.00))+'" readonly />' +
-             '</div></td>' +
-            '<td>'+'<input onChange="WPOS.sales.updatePaymentSums();" class="payamount numpad form-control" style="width:80px;display:inline;" type="text" value="'+value+'" autocomplete="off"/> '+curAfter+'</td>' +
+            '</div>'+
+            '<div class="mpesa" '+(method!='mpesa'?'style="display: none"':'width:150px;')+'>'+
+            '<div style="font-weight:bold"><h3>M-Pesa Code:<h3></div><input class="mpesa-code form-control" style="display:inline;" type="text" value="" />' +
+            '</div></td>' +
+            '<td>'+'<input type="hidden" class="method" value="'+method+'"/>'+'<input onChange="WPOS.sales.updatePaymentSums();" class="payamount numpad form-control" style="width:80px;display:inline;" type="text" value="'+value+'" autocomplete="off"/> '+curAfter+'</td>' +
             '<td><button class="btn btn-xs btn-danger" onclick="WPOS.sales.removePayment($(this));">X</button></td></tr>';
 
         $("#paymentstable").append(payrow);
@@ -1325,7 +1370,7 @@ function WPOSSales() {
                 };
                 if (item.hasOwnProperty('mod')) data.mod = item.mod;
                 var originalItem = WPOS.items.findOrderItem(item.name);
-                WPOS.items.addItemRow(item.qty, item.name, item.unit, item.unit, item.taxid, item.reorderpoint, originalItem.qty, item.sitemid, data, originalItem.id, originalItem.qty, false);
+                WPOS.items.addItemRow(item.qty, item.name, item.unit, item.unit, item.taxid, item.reorderpoint, originalItem.qty, item.sitemid, data, originalItem.id, originalItem.qty, false, item.isDaa);
             }
             // add a new order row
             if (WPOS.isOrderTerminal())
@@ -1390,12 +1435,16 @@ function WPOSSales() {
             return;
         }
         if (!validatePayments()){
+            salebtn.prop("disabled", false);
+            return;
+        }
+
+        if (WPOS.sales.hasDaaDrug && $('#patientid').val() === null){
             swal({
                 type: 'error',
-                title: 'Oops...',
-                text: 'Only cash-out payments may have a negative amount'
-              });
-              
+                title: 'Add a patient',
+                text: 'This sale has a DAA drug, add a patient then proceed.'
+            });
             salebtn.prop("disabled", false);
             return;
         }
@@ -1414,11 +1463,38 @@ function WPOSSales() {
         $("#paymentstable").children("tr").each(function (index, element) {
             // Make sure payments are positive amounts, except cashout
             if (parseFloat($(element).find(".payamount").val())<0){
-                if ($(element).find(".payamount").val()=='cash' && !$(element).data('paydata').hasOwnProperty('cashOut'))
+                if ($(element).find(".payamount").val()=='cash' && !$(element).data('paydata').hasOwnProperty('cashOut')) {
                     valid = false;
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Only cash-out payments may have a negative amount'
+                    });
+                }
+            }
+            if ($(element).find(".method").val() === 'mpesa'){
+                if (!$(element).find(".mpesa-code").val()){
+                    valid = false;
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Please add the M-pesa transaction code before continuing'
+                    });
+                }
             }
         });
         return valid;
+    }
+
+    function hasDaa(){
+        var hasDaa = false;
+        $("#paymentstable").children("tr").each(function (index, element) {
+            if(!hasDaa){
+                if($(element).find(".isDaa").val() === 'true')
+                    hasDaa = true;
+            }
+        });
+        return hasDaa;
     }
 
     function ProcessSaleTransaction(){
@@ -1559,6 +1635,7 @@ function WPOSSales() {
           totalStockLevel = parseFloat($(element).find(".totalStockLevel").val());
           stockLevel = parseFloat($(element).find(".totalItems").val());
           otherItemsId = $(element).find(".otherRelatedItemsId").val();
+
           newItem = $(element).find(".newItem").val();
           if (newItem === "true") {
             // add tax information into the tax totals array
@@ -1630,6 +1707,7 @@ function WPOSSales() {
                 "reorderpoint": item.reorderPoint,
                 "qty": qty,
                 "name": item.name,
+                "hasDAA": item.isDaa,
                 "unit": unit,
                 "taxid": taxruleid,
                 "tax": taxdata,
@@ -1687,10 +1765,13 @@ function WPOSSales() {
         var payments = [];
         $("#paymentstable").children("tr").each(function (index, element) {
             var payment = {"method": $(element).find(".paymethod option:selected").val(), "amount": parseFloat($(element).find(".payamount").val()).toFixed(2) };
-            if (payment.method == 'cash'){
+            if (payment.method === 'cash'){
                 payment.tender = parseFloat($(element).find(".paytender").val()).toFixed(2);
                 payment.change = parseFloat($(element).find(".paychange").val()).toFixed(2);
 
+            }
+            if (payment.method === 'mpesa') {
+                payment.transactionCode = $(element).find('.mpesa-code').val();
             }
             if ($(element).data('paydata'))
                 payment.paydata = $(element).data('paydata');
@@ -1727,6 +1808,10 @@ function WPOSSales() {
         if (updatecust){
             salesobj.custdata = getCustomerObject();
             updatecust = false; // reset flag
+        }
+
+        if(WPOS.sales.hasDaaDrug){
+            salesobj.custdata = WPOS.getCustTable()[parseInt($('#patientid').val())];
         }
 
         // if customer wants the receipt send, set the flag

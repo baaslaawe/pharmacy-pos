@@ -32,6 +32,7 @@
     <th data-priority="2">Name</th>
     <th data-priority="3">Description</th>
     <th data-priority="7">Stock Type</th>
+    <th data-priority="8">DAA</th>
     <th data-priority="4">Category</th>
     <th data-priority="5">Tax</th>
     <th data-priority="6">Reorder Point</th>
@@ -81,100 +82,14 @@
           </select>
         </td>
       </tr>
+        <tr>
+            <td style="text-align: right;"><label>Is DAA required:&nbsp;</label></td>
+            <td>
+                <input type="checkbox" checked="false" id="itemIsDaa">
+            </td>
+        </tr>
     </table>
   </div>
-<!--    <div class="tabbable" style="min-width: 360px; min-height: 310px;">-->
-<!--        <ul class="nav nav-tabs">-->
-<!--            <li class="active">-->
-<!--                <a href="#itemdetails" data-toggle="tab">-->
-<!--                    Details-->
-<!--                </a>-->
-<!--            </li>-->
-<!--            <li class="">-->
-<!--                <a href="#itemoptions" data-toggle="tab">-->
-<!--                    Options-->
-<!--                </a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--        <div class="tab-content" style="min-height: 320px;padding-top:5px;">-->
-<!--            <div class="tab-pane active in" id="itemdetails">-->
-<!--                <table>-->
-<!--                    <tr>-->
-<!--                        <td style="text-align: right;"><label>Name:&nbsp;</label></td>-->
-<!--                        <td><input id="itemname" class="form-control" type="text"/>-->
-<!--                            <input id="itemid" type="hidden"/></td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td style="text-align: right;"><label>Description:&nbsp;</label></td>-->
-<!--                        <td><input class="form-control" id="itemdesc" type="text"/></td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td style="text-align: right;"><label>Category:&nbsp;</label></td>-->
-<!--                        <td><select id="itemcategory" class="catselect form-control">-->
-<!--                            </select></td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td style="text-align: right;"><label>Tax:&nbsp;</label></td>-->
-<!--                        <td><select id="itemtax" class="taxselect form-control">-->
-<!--                            </select></td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td style="text-align: right;"><label>Reorder Point:&nbsp;</label></td>-->
-<!--                        <td><input class="form-control" id="itemreorderpoint" type="text"/></td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                      <td style="text-align: right;"><label>Stock Type:&nbsp;</label></td>-->
-<!--                      <td>-->
-<!--                        <select id="stocktype" class="stockselect form-control">-->
-<!--                        </select>-->
-<!--                      </td>-->
-<!--                    </tr>-->
-<!--                </table>-->
-<!--            </div>-->
-<!--            <div class="tab-pane" id="itemoptions" style="min-height: 280px;">-->
-<!--                <form class="form-horizontal">-->
-<!--                    <div class="form-group">-->
-<!--                        <div class="col-sm-4"><label>Item Type:</label></div>-->
-<!--                        <div class="col-sm-8">-->
-<!--                            <select id="itemtype">-->
-<!--                                <option value="general">General</option>-->
-<!--                                <option value="food">Food</option>-->
-<!--                                <option value="beverage">Beverage</option>-->
-<!--                            </select>-->
-<!--                            <br/><small>Used for kitchen terminal dispatch</small>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="space-4"></div>-->
-<!--                    <div class="form-group">-->
-<!--                        <div class="col-sm-12"><label>Simple Modifiers:</label></div>-->
-<!--                        <table class="table table-stripped table-responsive" style="margin-bottom: 0; padding-left: 10px; margin-right: 10px;">-->
-<!--                            <thead class="table-header smaller">-->
-<!--                                <tr>-->
-<!--                                    <th><small>Qty</small></th>-->
-<!--                                    <th><small>Min Qty</small></th>-->
-<!--                                    <th><small>Max Qty</small></th>-->
-<!--                                    <th><small>Name</small></th>-->
-<!--                                    <th><small>Price</small></th>-->
-<!--                                    <th></th>-->
-<!--                                </tr>-->
-<!--                            </thead>-->
-<!--                            <tbody id="itemmodtable">-->
-<!---->
-<!--                            </tbody>-->
-<!--                        </table>-->
-<!--                        <button style="float: right; margin-right: 8px;" class="btn btn-primary btn-xs" onclick="addItemModifier();">Add</button>-->
-<!--                        <div class="col-sm-12"><label>Select Modifiers:</label></div>-->
-<!--                        <table class="table table-stripped table-responsive" style="margin-bottom: 0; padding-left: 10px; margin-right: 10px;">-->
-<!--                            <tbody id="itemselmodtable">-->
-<!---->
-<!--                            </tbody>-->
-<!--                        </table>-->
-<!--                        <button style="float: right; margin-right: 8px;" class="btn btn-primary btn-xs" onclick="addSelectItemModifier();">Add</button>-->
-<!--                    </div>-->
-<!--                </form>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
 </div>
 <div id="adddialog" class="hide">
     <table>
@@ -208,6 +123,12 @@
               <option selected value="1">Inventory Stock</option>
             </select>
           </td>
+        </tr>
+        <tr>
+            <td style="text-align: right;"><label>Is DAA required:&nbsp;</label></td>
+            <td>
+                <input type="checkbox" id="newItemIsDaa">
+            </td>
         </tr>
     </table>
 </div>
@@ -252,6 +173,7 @@
                 { "mData":"name" },
                 { "mData":"description" },
                 { "mData":function(data){return (data.stockType === '1' ?'Inventory':'Non-Inventory'); } },
+                { "mData":function(data){return (data.isDaa?'DAA':'Non-DAA'); } },
                 { "mData":function(data,type,val){return (categories.hasOwnProperty(data.categoryid)?categories[data.categoryid].name:'None'); } },
                 { "mData":"taxname"},
                 { "mData":"reorderPoint"},
@@ -260,6 +182,7 @@
             "columns": [
                 {},
                 {type: "numeric"},
+                {type: "string"},
                 {type: "string"},
                 {type: "string"},
                 {type: "string"},
@@ -420,6 +343,11 @@
         $("#itemtax").val(item.taxid);
         $("#itemreorderpoint").val(item.reorderPoint);
         $("#itemtype").val(item.type);
+        if (item.isDaa) {
+            $("#itemIsDaa").prop('checked', true);
+        }else {
+            $("#itemIsDaa").prop('checked', false);
+        }
         var modtable = $("#itemmodtable");
         var modselecttable = $("#itemselmodtable");
         modtable.html('');
@@ -475,6 +403,7 @@
             item.taxid = $("#newitemtax").val();
             item.reorderPoint = $("#newitemreorderpoint").val();
             item.stockType = $("#newstocktype").val();
+            item.isDaa = $("#newItemIsDaa").is(':checked');
             item.type = "general";
             item.modifiers = [];
             result = WPOS.sendJsonData("items/add", JSON.stringify(item));
@@ -492,6 +421,7 @@
           item.taxid = $("#itemtax").val();
           item.reorderPoint = $("#itemreorderpoint").val();
           item.stockType = $("#stocktype").val();
+          item.isDaa = $("#itemIsDaa").is(':checked');
           item.type = $("#itemtype").val();
           item.modifiers = [];
             item.modifiers = [];
@@ -606,14 +536,15 @@
             name: sorted[item][1].name,
             description: sorted[item][1].description,
             stockType: sorted[item][1].stockType === '1'? 'Inventory': 'Non-Inventory',
+            isDaa: sorted[item][1].isDaa ? 'DAA': 'Non-DAA',
             categoryid: sorted[item][1].categoryid,
             taxname: WPOS.getTaxTable().rules[sorted[item][1].taxid].name,
             reorderPoint: sorted[item][1].reorderPoint
           };
         }
         var csv = WPOS.data2CSV(
-            ['ID', 'Name', 'Description', 'Stock Type', 'Category Name', 'Tax', 'Reorder Point'],
-            ['id', 'name', 'description', 'stockType',
+            ['ID', 'Name', 'Description', 'Stock Type', 'DAA', 'Category Name', 'Tax', 'Reorder Point'],
+            ['id', 'name', 'description', 'stockType', 'isDaa',
                 {key:'categoryid', func: function(value){ return categories.hasOwnProperty(value) ? categories[value].name : 'Unknown'; }},
               'taxname', 'reorderPoint'
             ],
@@ -635,7 +566,8 @@
                 'category_name': {title:'Category Name', required: true},
                 'tax_name': {title:'Tax Name', required: true},
                 'reorderPoint': {title:'Reorder Point', required: true},
-                'stockType': {title:'Stock Type', required: true}
+                'stockType': {title:'Stock Type', required: true},
+                'isDaa': {title:'DAA', required: true}
             },
             csvHasHeader: true,
             importOptions: [
@@ -654,6 +586,7 @@
                     description: jsondata[i].description !== '' ? jsondata[i].description: "No description",
                     reorderPoint: jsondata[i].reorderPoint !== '' ? jsondata[i].reorderPoint: "0",
                     stockType: jsondata[i].stockType !== '' ? jsondata[i].stockType: "Inventory",
+                    isDaa: jsondata[i].isDaa !== '' ? jsondata[i].isDaa:false,
                     tax_name: jsondata[i].tax_name !== '' ? jsondata[i].tax_name.toUpperCase(): "No Tax",
                     category_name: jsondata[i].category_name !== '' ? jsondata[i].category_name.toUpperCase(): "GENERAL"
                   });
