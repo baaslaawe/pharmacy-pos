@@ -939,7 +939,7 @@ function WPOS() {
     this.removeOfflineSales = function() {
         localStorage.removeItem('wpos_osales');
         swal("Done", "Restart the app to reflect changes");
-    }
+    };
 
     function populateDeviceInfo(){
         var config = WPOS.getConfigTable();
@@ -1080,6 +1080,7 @@ function WPOS() {
             checktimer = setInterval(doOnlineCheck, 60000);
             if (WPOS.sales.getOfflineSalesNum()>0)
                 $(".backup_btn").show();
+                $(".remove_btn").show();
             return true;
         } else {
             // display error notice

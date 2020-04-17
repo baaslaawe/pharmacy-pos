@@ -350,7 +350,7 @@
     }
 
     function populateDAA(){
-        var html = getCurrentReportHeader("DAA List");
+        var html = getCurrentReportHeader("DDA List");
         html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Customer </td><td>Drug</td><td>Quantity</td></tr></thead><tbody>";
         for (var i in repdata){
             rowdata = repdata[i];
