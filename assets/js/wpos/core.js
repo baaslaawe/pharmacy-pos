@@ -346,11 +346,11 @@ function WPOS() {
     }
 
     function startFeed(){
-        WPOS.getJsonDataAsync("node/start", function(result){
+        /*WPOS.getJsonDataAsync("node/start", function(result){
             if (result !== false){
                 startSocket();
             }
-        });
+        });*/
     }
 
     function authenticate(user, hashpass, callback) {

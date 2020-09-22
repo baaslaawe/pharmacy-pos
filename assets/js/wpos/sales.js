@@ -237,7 +237,7 @@ function WPOSItems() {
           price: 0
         };
         item.name = items[i].name;
-        item.isDaa = items[i].isDaa == "1";
+        item.isDaa = items[i].isDaa;// === "1";
         for (var s in sorted) {
           if (items[i].name === sorted[s][1].name && sorted[s][1].locationid === locationid ) {
             if(parseInt(sorted[s][1].stocklevel) > 0){
@@ -280,7 +280,7 @@ function WPOSItems() {
      * @param data
      */
     function addItemRow(qty, name, unit, wunit, taxid, reorderpoint, totalItems, sitemid, data, otherRelatedItemsId, totalStockLevel, hidden, daa) {
-        var isDaa = daa != "0";
+        var isDaa = daa !== "0";
         sitemid = (sitemid>0?sitemid:0);
         var disable = (sitemid>0); // disable fields that are filled by the stored item
         // var disableprice = (sitemid>0 && WPOS.getConfigTable().pos.priceedit!="always");

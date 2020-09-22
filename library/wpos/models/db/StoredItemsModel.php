@@ -48,7 +48,7 @@ class StoredItemsModel extends DbConfig
         $dataObj = json_encode(['name'=>$data->name, 'description'=>$data->description, 'categoryid'=>$data->categoryid, 'taxid'=>$data->taxid, 'reorderPoint'=>$data->reorderPoint, 'stockType'=>$data->stockType, 'isDaa'=>$data->isDaa]);
 
         $sql          = "INSERT INTO stored_items (`data`, `categoryid`, `name`, `description`, `taxid`, `reorderPoint`, `stockType`, `isDaa`) VALUES (:data, :categoryid, :name, :description, :taxid, :reorderPoint, :stockType, :isDaa);";
-        $placeholders = [":data"=>$dataObj, ":categoryid"=>$data->categoryid, ":name"=>$data->name, ":description"=>$data->description, ":taxid"=>$data->taxid, ":reorderPoint"=>$data->reorderPoint, ":stockType"=>$data->stockType, ":isDaa"=>$data->isDaa];
+        $placeholders = [":data"=>$dataObj, ":categoryid"=>$data->categoryid, ":name"=>$data->name, ":description"=>$data->description, ":taxid"=>$data->taxid, ":reorderPoint"=>$data->reorderPoint, ":stockType"=>$data->stockType, ":isDaa"=>$data->isDaa?1:0];
 
         return $this->insert($sql, $placeholders);
     }
@@ -122,11 +122,11 @@ class StoredItemsModel extends DbConfig
      */
     public function edit($id, $data){
         $json = json_encode($data);
-        $sql = "UPDATE stored_items SET data= :data, categoryid= :categoryid, name= :name, taxid= :taxid, reorderPoint= :reorderPoint, stockType= :stockType WHERE id= :id;";
+        $sql = "UPDATE stored_items SET data= :data, categoryid= :categoryid, name= :name, taxid= :taxid, reorderPoint= :reorderPoint, stockType= :stockType, isDaa=:isDaa WHERE id= :id;";
         if(is_array($data)){
-            $placeholders = [":id"=>$id, ":data"=>$json, ":categoryid"=>$data['categoryid'], ":name"=>$data['name'], ":taxid"=>$data['taxid'], ":reorderPoint"=>$data['reorderPoint'], ":stockType"=>$data['stockType']];
+            $placeholders = [":id"=>$id, ":data"=>$json, ":categoryid"=>$data['categoryid'], ":name"=>$data['name'], ":taxid"=>$data['taxid'], ":reorderPoint"=>$data['reorderPoint'], ":stockType"=>$data['stockType'], ":isDaa"=>$data['isDaa']?1:0];
         } else {
-            $placeholders = [":id"=>$id, ":data"=>$json, ":categoryid"=>$data->categoryid, ":name"=>$data->name, ":taxid"=>$data->taxid, ":reorderPoint"=>$data->reorderPoint, ":stockType"=>$data->stockType];
+            $placeholders = [":id"=>$id, ":data"=>$json, ":categoryid"=>$data->categoryid, ":name"=>$data->name, ":taxid"=>$data->taxid, ":reorderPoint"=>$data->reorderPoint, ":stockType"=>$data->stockType, ":isDaa"=>$data->isDaa?1:0];
         }
 
         return $this->update($sql, $placeholders);
