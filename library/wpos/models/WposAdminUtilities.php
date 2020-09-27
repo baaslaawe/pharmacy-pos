@@ -252,7 +252,7 @@ class WposAdminUtilities {
      */
     public static function backUpDatabase($download=true){
         $conf = DbConfig::getConf();
-        $dump = new IMysqldump\Mysqldump('mysql:host='.$conf['host'].';dbname='.$conf['db'], $conf['user'], $conf['pass']);
+        $dump = new IMysqldump\Mysqldump('mysql:host='.$conf['host'].';port='.$conf['port'].';dbname='.$conf['db'], $conf['user'], $conf['pass']);
         $fname = $_SERVER['DOCUMENT_ROOT'].$_SERVER['APP_ROOT'].'docs/backup/dbbackup-'.date("Y-m-d_H-i-s").'.sql';
         $dump->start($fname);
         if ($download) {
