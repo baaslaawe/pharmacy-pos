@@ -364,6 +364,7 @@
     function populateOrder(){
         var html = getCurrentReportHeader("Purchase Order");
         html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td>Name</td><td>Stock Qty</td><td>Reorder Point</td></tr></thead><tbody>";
+        console.log(repdata)
         for (var i in repdata){
             rowdata = repdata[i];
             html += "<tr><td>"+rowdata.customer+"</td><td>"+rowdata.drug+"</td><td>"+rowdata.qty+"</td></tr>"
@@ -381,23 +382,15 @@
         for(var i in repdata) {
             var drug = repdata[i];
             if(drug['name']){
-                if(filter){
-                    if(drug['items'].length <= 1){
-                        sortable[drug['name'].toLowerCase()] = drug;
-                    } else {
-                        let min = drug.items[0];
-                        drug.items.forEach(item=> {
-                            if(item.cost <= min.cost)
-                                min = item;
-                        });
-                        drug.items = [min];
-                        sortable[drug['name'].toLowerCase()] = drug;
-                        debugger
-                    }
-                } else {
-                    sortable[drug['name'].toLowerCase()] = drug;
+                if(drug['items'].length > 1 && filter) {
+                    let min = drug.items[0];
+                    drug.items.forEach(item=> {
+                        if(item.cost <= min.cost)
+                            min = item;
+                    });
+                    drug.items = [min];
                 }
-
+                sortable[drug['name'].toLowerCase()] = drug;
             }
         }
         for (var i in sortable){
@@ -448,8 +441,9 @@
     }
 
     function exportCurrentReport(){
-        if($('#reportcontain').find('h3').text() == 'Purchase Order')
+        if($('#reportcontain').find('h3').text() === 'Purchase Order') {
             populateOrder(true);
+        }
         var data  = WPOS.table2CSV($("#reportcontain"));
         var filename = $("#reportcontain div h3").text()+"-"+$("#reportcontain div h5").text();
         filename = filename.replace(" ", "");
