@@ -1723,7 +1723,7 @@ function WPOS() {
         });
     };
 
-      function fetchSuppliersTable(callback) {
+    function fetchSuppliersTable(callback) {
         return WPOS.getJsonDataAsync("suppliers/get", function(data){
           if (data) {
             supplierstable = data;
@@ -1732,7 +1732,15 @@ function WPOS() {
           if (callback)
             callback(data);
         });
-      }
+    }
+
+    this.fetchAccountingStats = function(callback) {
+       return WPOS.getJsonDataAsync("stats/accounting", function (data) {
+           console.log(data)
+           if (callback)
+               callback(data);
+       });
+    }
 
     function generateItemIndex() {
         stockindex = {};

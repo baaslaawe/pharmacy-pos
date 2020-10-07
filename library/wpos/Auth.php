@@ -162,6 +162,9 @@ class Auth{
             // allow user if action defined in permisions
             return true;
         }
+        // Allow staff to check stock value from cashier dashboard
+        if($apiAction == "stats/accounting") return true;
+
         return false;
     }
 

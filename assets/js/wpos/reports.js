@@ -33,6 +33,12 @@ function WPOSReports() {
         $("#rvoidstotal").text(WPOS.util.currencyFormat(stats.voidtotal.toFixed(2)));
         $("#rtotaltakings").text(WPOS.util.currencyFormat(stats.totaltakings.toFixed(2)));
 
+        let stockValue = WPOS.fetchAccountingStats(function (data){
+            $("#stock_value_b4_margin").text(WPOS.util.currencyFormat(data.stockvalueBeforeMargin.toFixed(2)));
+            $("#stock_value").text(WPOS.util.currencyFormat(data.stockvalue.toFixed(2)));
+        });
+
+
         showAdditionalReports();
         // generate takings report
         this.generateTakingsReport();

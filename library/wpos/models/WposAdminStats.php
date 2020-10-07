@@ -238,6 +238,7 @@ class WposAdminStats {
      */
     public function getOverviewAccounting($result){
         $stats = new stdClass();
+        $stats->stockvalueBeforeMargin = 0; // set defaults
         $stats->stockvalue = 0; // set defaults
         $stats->revenue = 0;
         $stats->bills = 0;
@@ -250,6 +251,7 @@ class WposAdminStats {
         for($s=0;$s<sizeof($stocks);$s++){
             $stock = $stocks[$s];
             $stats->stockvalue += round($stock['stockvalue'], 2);
+            $stats->stockvalueBeforeMargin += round($stock['stockvalueb4margin'], 2);
         }
 
         $salesMdl = new TransactionsModel();

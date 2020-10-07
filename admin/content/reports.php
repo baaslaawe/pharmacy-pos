@@ -161,6 +161,7 @@
         var html = getReportHeader("Mini-Accounting");
         var value = repdata.stockvalue + repdata.revenue - repdata.bills - repdata.expenses;
         html += "<table class='table table-stripped' style='width: 100%'><thead><tr><td></td><td>#</td><td>Total</td></tr></thead><tbody>";
+        html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refs+'\');">Stock value b4 margin</a></td><td>'+repdata.stocktotal+'</td><td>'+WPOS.util.currencyFormat(repdata.stockvalueBeforeMargin)+'</td></tr>'                                                                                                                                                               ;
         html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refs+'\');">Stock value</a></td><td>'+repdata.stocktotal+'</td><td>'+WPOS.util.currencyFormat(repdata.stockvalue)+'</td></tr>'                                                                                                                                                               ;
         html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.refs+'\');">Revenue</a></td><td>'+repdata.stocktotal+'</td><td>'+WPOS.util.currencyFormat(repdata.revenue)+'</td></tr>';
         html += '<tr><td><a onclick="WPOS.transactions.openTransactionList(\''+repdata.billsrefs+'\');">Bills</a></td><td>'+repdata.billsnum+'</td><td>'+WPOS.util.currencyFormat(repdata.bills)+'</td></tr>';
