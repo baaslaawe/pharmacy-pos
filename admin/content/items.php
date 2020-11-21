@@ -32,7 +32,7 @@
     <th data-priority="2">Name</th>
     <th data-priority="3">Description</th>
     <th data-priority="7">Stock Type</th>
-    <th data-priority="8">DDA</th>
+<!--    <th data-priority="8">DDA</th>-->
     <th data-priority="4">Category</th>
     <th data-priority="5">Tax</th>
     <th data-priority="6">Reorder Point</th>
@@ -82,7 +82,7 @@
           </select>
         </td>
       </tr>
-        <tr>
+        <tr style="display: none">
             <td style="text-align: right;"><label>Is DDA required:&nbsp;</label></td>
             <td>
                 <input type="checkbox" checked="false" id="itemIsDaa">
@@ -124,7 +124,7 @@
             </select>
           </td>
         </tr>
-        <tr>
+        <tr style="display: none">
             <td style="text-align: right;"><label>Is DDA required:&nbsp;</label></td>
             <td>
                 <input type="checkbox" id="newItemIsDaa">
@@ -173,7 +173,7 @@
                 { "mData":"name" },
                 { "mData":"description" },
                 { "mData":function(data){return (data.stockType === '1' ?'Inventory':'Non-Inventory'); } },
-                { "mData":function(data){return (data.isDaa?'DDA':'Non-DDA'); } },
+                // { "mData":function(data){return (data.isDaa?'DDA':'Non-DDA'); } },
                 { "mData":function(data,type,val){return (categories.hasOwnProperty(data.categoryid)?categories[data.categoryid].name:'None'); } },
                 { "mData":"taxname"},
                 { "mData":"reorderPoint"},
@@ -184,7 +184,7 @@
                 {type: "numeric"},
                 {type: "string"},
                 {type: "string"},
-                {type: "string"},
+                // {type: "string"},
                 {type: "string"},
                 {type: "string"},
                 {type: "numeric"},

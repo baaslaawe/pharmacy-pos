@@ -13,7 +13,7 @@
         <option value="stats/expenses">Expenses</option>
         <option value="stats/bills">Bills</option>
         <option value="stats/stock">Current Stock</option>
-        <option value="stats/daapatients">DAA List</option>
+<!--        <option value="stats/daapatients">DAA List</option>-->
         <option value="stats/order">Purchase Order</option>
         <option value="stats/expired">Expired Items</option>
         <option value="stats/devices">Device Cash</option>

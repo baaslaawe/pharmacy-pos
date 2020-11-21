@@ -325,7 +325,7 @@ function WPOS() {
               if(result.status === 'activated') { // From free trial
                 subscriptionStatus = new Date(result.expiryDate).getTime() > new Date().getTime();
                 daysRemaining = moment(result.expiryDate).diff(moment(), 'days');
-                isTrial = true;
+                isTrial = daysRemaining <=14;
               }else { // From server
                 daysRemaining = moment(result.expiryDate).diff(moment(), 'days');
                 subscriptionStatus = daysRemaining >= 0;
