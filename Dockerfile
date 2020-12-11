@@ -1,4 +1,4 @@
-FROM php:7.2-rc-apache AS builder
+FROM php:7.3-apache AS builder
 
 MAINTAINER Joe Nyugoh <joenyugoh@gmail.com>
 
