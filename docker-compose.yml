@@ -7,8 +7,8 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "80:8050"
-      - "443:8053"
+      - "8050:80"
+      - "8053:443"
 #    links:
 #      - mariadb
 #    depends_on:
