@@ -2,7 +2,7 @@ version: "2.0"
 services:
   apache:
     image: pharmacy-pos-apache:0.2
-    container_name: pharmacy-pos-apache
+    container_name: wanga-vet-app
     build:
       context: .
       dockerfile: Dockerfile
